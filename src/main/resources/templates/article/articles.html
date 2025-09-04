@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title> Information - Articles</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<style>
+		.bg-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background-image: url('/images/bgimage.png');
+			background-size: cover;
+			background-position: center;
+			opacity: 0.08;
+			/* More light/faded */
+			z-index: -1;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f8fb;
+			color: #333;
+		}
+
+		.navbar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			/*background-color: rgb(73, 146, 180);*/
+			background-color: #d64026;
+			padding: 10px 20px;
+		}
+
+		.navbar-left {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.navbar-left img {
+			height: 40px;
+			width: 65px;
+			border-radius: 60%;
+			object-fit: cover;
+		}
+
+		.navbar-left a {
+			text-decoration: none;
+			color: white;
+			font-weight: bold;
+			padding: 8px 12px;
+			border-radius: 8px;
+			transition: background-color 0.3s;
+		}
+
+		.navbar-left a.active,
+		.navbar-left a:hover {
+			/*background-color: #17418138;*/
+			background-color: #c23c22;
+		}
+
+		.navbar-right {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.search-box {
+			background-color: white;
+			border-radius: 10px;
+			padding: 8px 12px;
+			display: flex;
+			align-items: center;
+		}
+
+		.search-box input {
+			border: none;
+			outline: none;
+			font-size: 14px;
+			margin-left: 5px;
+		}
+
+		.search-icon {
+			color: #d64026;
+			font-size: 16px;
+		}
+
+		.social-icons i {
+			font-size: 18px;
+			color: white;
+			transition: transform 0.2s;
+		}
+
+		.social-icons i:hover {
+			transform: scale(1.2);
+			color: #ffc107;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 50px auto;
+			padding: 40px;
+			background-color: white;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+			border-radius: 12px;
+		}
+
+		h1 {
+			text-align: left;
+			color: #2c3e50;
+			margin-bottom: 20px;
+		}
+
+		p {
+			font-size: 17px;
+			line-height: 1.7;
+			text-align: justify;
+		}
+
+		.footer {
+			margin-top: 30px;
+			text-align: center;
+			font-size: 14px;
+			color: #777;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 999;
+			padding-top: 60px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		.modal-content {
+			margin: auto;
+			display: block;
+			max-width: 90%;
+			max-height: 80%;
+			border-radius: 10px;
+		}
+
+		.close {
+			position: absolute;
+			top: 30px;
+			right: 50px;
+			color: #fff;
+			font-size: 35px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.close:hover {
+			color: #ccc;
+		}
+
+		h2.bullet::before {
+			content: "•";
+			font-size: 36px;
+			color: #2c3e50;
+			margin-right: 12px;
+			vertical-align: middle;
+		}
+	</style>
+</head>
+
+<body>
+	
+
+	<!-- ✅ Navbar -->
+	<div th:replace="fragments/navbar :: navbar"></div>
+	<div class="container">
+		<!--<h1>1. Understanding Borewell Services</h1>-->
+		<h1>1. Understanding Services</h1>
+		<h2 class="bullet"> What is a Borewell?</h2>
+		<p>
+			A <strong>borewell</strong> is a deep, narrow hole drilled into the ground to access groundwater for various
+			uses like drinking, irrigation, or industrial needs.
+			It is created using drilling machines, and a pipe (called <em>casing</em>) is installed to protect the water
+			source and support the structure.
+		</p>
+
+		<p>
+			Borewells are a common solution in areas where surface water is limited. The depth of a borewell can range
+			from
+			<strong>100 to 1200 feet</strong>, depending on the underground water level. A <strong>submersible
+				pump</strong> is usually installed inside the borewell
+			to lift water to the surface.
+		</p>
+
+		<h2 class="bullet"> Types of Borewell Drilling Methods</h2>
+		<ul>
+			<li><span class="highlight">DTH (Down-The-Hole):</span> Suitable for hard rock areas, uses a hammering
+				action to break rocks.</li>
+			<li><span class="highlight"><strIn-well:< /span> In this method, the drilling vehicle is parked 150–200 feet
+						away
+						from the actual borewell location due to space or access limitations. Flexible hoses or rods are
+						extended from the vehicle to the drilling spot, making it suitable for areas like narrow plots,
+						inside
+						farms, or residential locations with limited access.</li>
+			<li><span class="highlight">Rotary:</span> Used in soft or sandy formations, involves continuous rotation
+				and drilling mud.</li>
+			<li><span class="highlight">Calyx:</span> Older method used for large diameter and deep wells with specific
+				geological needs.</li>
+		</ul>
+		<h2 class="bullet"> Choosing the Right Location</h2>
+		<ul>
+			<li>The success of a borewell largely depends on selecting a proper location. It is important to choose
+				a <strong>clear and open area </strong>for drilling, where there are <strong>no underground chambers,
+					drainage pipelines, or
+					water tanks</strong> above or near the spot. These obstructions can damage equipment or affect the
+				borewell structure.
+				Avoid drilling near septic tanks or foundations, and ensure there's enough space for the boring vehicle
+				and equipment to operate smoothly.</li>
+		</ul>
+		<h2 class="bullet"> How to Choose the Right Borewell Contractor</h2>
+		<ul>
+			<li>Choosing the right borewell contractor is one of the most critical steps in ensuring the success of your
+				borewell.
+				Since drilling involves technical expertise, high-end machinery, and considerable investment, the
+				contractor you
+				select will have a direct impact on the outcome. Here are three important factors to consider:</li>
+			<li><span class="highlight">Experience:</span> An experienced contractor brings both knowledge and practical
+				exposure to the job.
+				Borewell drilling is not just about operating a machine; it requires understanding soil types, rock
+				layers, and the water table.
+				Contractors who have worked in your locality or similar terrains usually know the common depths where
+				water can be struck
+				and the challenges that may arise during drilling. Always ask about the contractor’s years of service
+				and request a list of
+				projects they have handled in your area.</li>
+			<li><span class="highlight">Equipment:</span> Modern borewell drilling relies heavily on the type and
+				quality of equipment.
+				Outdated or poorly maintained rigs may not be able to drill deep enough or may take longer, increasing
+				costs.
+				Before finalizing a contractor, check what kind of drilling rigs they use (e.g., rotary, percussion, DTH
+				rigs)
+				and whether their equipment can handle the depth and soil/rock conditions in your region. Well-equipped
+				contractors
+				can complete the job more efficiently, with less risk of damage to property or incomplete drilling.</li>
+			<li><span class="highlight">Reviews and Reputation:</span> Word of mouth and reviews are strong indicators
+				of a contractor’s reliability. Ask neighbors, community members, or even local water authorities for
+				feedback on contractors they have used. Positive reviews reflect not just successful borewell completion
+				but also honesty in pricing, timeliness, and after-service support. A reputed contractor is also more
+				likely to guide you correctly about casing pipes, motor installation, and long-term maintenance.</li>
+		</ul>
+
+		<div class="footer">
+			&copy; 2025 Borewell Services. All rights reserved.
+		</div>
+	</div>
+
+</body>
+
+</html>

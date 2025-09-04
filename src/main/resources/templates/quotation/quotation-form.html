@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Add/Edit Quotation</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		.bg-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background-image: url('/images/bgimage.png');
+			background-size: cover;
+			background-position: center;
+			opacity: 0.08;
+			/* More light/faded */
+			z-index: -1;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f8fb;
+			color: #333;
+		}
+
+		.navbar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			/*background-color: rgb(73, 146, 180);*/
+			background-color: #d64026;
+			padding: 10px 20px;
+		}
+
+		.navbar-left {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.navbar-left img {
+			height: 40px;
+			width: 65px;
+			border-radius: 60%;
+			object-fit: cover;
+		}
+
+		.navbar-left a {
+			text-decoration: none;
+			color: white;
+			font-weight: bold;
+			padding: 8px 12px;
+			border-radius: 8px;
+			transition: background-color 0.3s;
+		}
+
+		.navbar-left a.active,
+		.navbar-left a:hover {
+			/*background-color: #17418138;*/
+			background-color: #c23c22;
+		}
+
+		.navbar-right {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.search-box {
+			background-color: white;
+			border-radius: 10px;
+			padding: 8px 12px;
+			display: flex;
+			align-items: center;
+		}
+
+		.search-box input {
+			border: none;
+			outline: none;
+			font-size: 14px;
+			margin-left: 5px;
+		}
+
+		.search-icon {
+			color: #d64026;
+			font-size: 16px;
+		}
+
+		.social-icons i {
+			font-size: 18px;
+			color: white;
+			transition: transform 0.2s;
+		}
+
+		.social-icons i:hover {
+			transform: scale(1.2);
+			color: #ffc107;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 50px auto;
+			padding: 40px;
+			background-color: white;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+			border-radius: 12px;
+		}
+
+		h1 {
+			text-align: left;
+			color: #2c3e50;
+			margin-bottom: 20px;
+		}
+
+		p {
+			font-size: 17px;
+			line-height: 1.7;
+			text-align: justify;
+		}
+
+		.footer {
+			margin-top: 30px;
+			text-align: center;
+			font-size: 14px;
+			color: #777;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 999;
+			padding-top: 60px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		.modal-content {
+			margin: auto;
+			display: block;
+			max-width: 90%;
+			max-height: 80%;
+			border-radius: 10px;
+		}
+
+		.close {
+			position: absolute;
+			top: 30px;
+			right: 50px;
+			color: #fff;
+			font-size: 35px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.close:hover {
+			color: #ccc;
+		}
+
+		h2.bullet::before {
+			content: "•";
+			font-size: 36px;
+			color: #2c3e50;
+			margin-right: 12px;
+			vertical-align: middle;
+		}
+	</style>
+</head>
+
+<body class="bg-gray-100 p-6">
+
+	<!-- ✅ Background Image -->
+	<div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
+
+	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
+
+	<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
+		<h2 class="text-2xl font-bold mb-4">Add / Edit Quotation</h2>
+
+		<form th:action="@{/quotations/saveQuotation}" th:object="${quotation}" method="post" class="space-y-4">
+
+		    <!-- Hidden field for edit -->
+		    <input type="hidden" th:field="*{quotationId}" />
+
+		    <div>
+		        <label>Customer Name</label>
+		        <input type="text" th:field="*{customerName}" class="w-full border rounded px-3 py-2" />
+		    </div>
+
+		    <div>
+		        <label>Work Address</label>
+		        <input type="text" th:field="*{workAddress}" class="w-full border rounded px-3 py-2" />
+		    </div>
+
+		    <div>
+		        <label>Boring Type</label>
+		        <select th:field="*{boringType}" class="w-full border rounded px-3 py-2">
+		            <option value="">--Select Boring Type--</option>
+		            <option value="DTH">DTH</option>
+		            <option value="In-Well">In-Well</option>
+		            <option value="Rotary">Rotary</option>
+		            <option value="Callis">Callis</option>
+		        </select>
+		    </div>
+
+		    <div>
+		        <label>Boring Dia</label>
+		        <select th:field="*{boringDia}" class="w-full border rounded px-3 py-2">
+		            <option value="">--Select Boring dia--</option>
+		            <option value="5">5 inch.</option>
+		            <option value="6">6 inch.</option>
+		            <option value="8">8 inch.</option>
+		            <option value="10">10 inch.</option>
+		            <option value="12">12 inch.</option>
+		        </select>
+		    </div>
+
+		    <div>
+		        <label>Drilling Price</label>
+		        <input type="number" th:field="*{drillingPrice}" class="w-full border rounded px-3 py-2" />
+		    </div>
+
+		    <!-- ✅ Materials Dropdown with Checkboxes -->
+			<div>
+			    <label>Required Material</label>
+			    <div class="relative inline-block w-full">
+			        <div id="dropdownButton"
+			             class="w-full border rounded px-3 py-2 bg-white cursor-pointer flex justify-between">
+			            <span id="dropdownLabel">-- Select Materials --</span>
+			            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+			            </svg>
+			        </div>
+
+			        <div id="dropdownMenu"
+			             class="absolute mt-1 w-full bg-white border rounded shadow-lg hidden max-h-60 overflow-y-auto">
+						 <div th:each="mat : ${materials}" class="px-3 py-1 flex items-center hover:bg-gray-100">
+						   <input type="checkbox"
+						          th:name="requiredMaterialIds"
+						          th:value="${mat.materialId}"
+						          th:checked="${quotation.requiredMaterialIds != null and #lists.contains(quotation.requiredMaterialIds, mat.materialId)}"
+						          class="mr-2 material-checkbox">
+						   <label th:text="${mat.materialType}" class="text-gray-700"></label>
+						 </div>
+			        </div>
+			    </div>
+			    <input type="hidden" th:field="*{quotationId}" />
+			</div>
+
+		    <div>
+		        <label>Transport Vehicle Type</label>
+		        <select th:field="*{transportingVehicleType}" class="w-full border rounded px-3 py-2">
+		            <option value="">--Select Vehicle Type--</option>
+		            <option value="small">Small</option>
+		            <option value="medium">Medium</option>
+		            <option value="large">Large</option>
+		        </select>
+		    </div>
+
+		    <div>
+		        <label>Transport Price</label>
+		        <input type="number" th:field="*{transportingPrice}" class="w-full border rounded px-3 py-2" />
+		    </div>
+
+		    <div class="flex justify-end space-x-2">
+		        <a href="/quotations/getAllQuotation" class="bg-gray-400 px-4 py-2 rounded">Cancel</a>
+		        <button type="submit" class="bg-green-500 px-4 py-2 rounded text-white">Save</button>
+		    </div>
+		</form>
+	</div>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+		    const button = document.getElementById("dropdownButton");
+		    const menu = document.getElementById("dropdownMenu");
+		    const label = document.getElementById("dropdownLabel");
+		    const checkboxes = menu.querySelectorAll(".material-checkbox");
+		    const hiddenRequired = document.getElementById("materialRequired");
+
+		    // Toggle dropdown
+		    button.addEventListener("click", function () {
+		        menu.classList.toggle("hidden");
+		    });
+
+		    // Close when clicking outside
+		    document.addEventListener("click", function (e) {
+		        if (!button.contains(e.target) && !menu.contains(e.target)) {
+		            menu.classList.add("hidden");
+		        }
+		    });
+
+		    function updateSelection() {
+		        let selected = [];
+		        checkboxes.forEach(c => {
+		            if (c.checked) {
+		                let labelText = c.closest("div").querySelector("label").innerText;
+		                selected.push(labelText);
+		            }
+		        });
+
+		        label.innerText = selected.length > 0 ? selected.join(", ") : "-- Select Materials --";
+		        hiddenRequired.value = selected.length > 0 ? "ok" : "";
+		    }
+
+		    checkboxes.forEach(cb => cb.addEventListener("change", updateSelection));
+
+		    updateSelection();
+		});
+
+	</script>
+
+
+</body>
+
+</html>

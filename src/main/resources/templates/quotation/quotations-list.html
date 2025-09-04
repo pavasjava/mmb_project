@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Quotations</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		.bg-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background-image: url('/images/bgimage.png');
+			background-size: cover;
+			background-position: center;
+			opacity: 0.08;
+			/* More light/faded */
+			z-index: -1;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f8fb;
+			color: #333;
+		}
+
+		.navbar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			/*background-color: rgb(73, 146, 180);*/
+			background-color: #d64026;
+			padding: 10px 20px;
+		}
+
+		.navbar-left {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.navbar-left img {
+			height: 40px;
+			width: 65px;
+			border-radius: 60%;
+			object-fit: cover;
+		}
+
+		.navbar-left a {
+			text-decoration: none;
+			color: white;
+			font-weight: bold;
+			padding: 8px 12px;
+			border-radius: 8px;
+			transition: background-color 0.3s;
+		}
+
+		.navbar-left a.active,
+		.navbar-left a:hover {
+			/*background-color: #17418138;*/
+			background-color: #c23c22;
+		}
+
+		.navbar-right {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.search-box {
+			background-color: white;
+			border-radius: 10px;
+			padding: 8px 12px;
+			display: flex;
+			align-items: center;
+		}
+
+		.search-box input {
+			border: none;
+			outline: none;
+			font-size: 14px;
+			margin-left: 5px;
+		}
+
+		.search-icon {
+			color: #d64026;
+			font-size: 16px;
+		}
+
+		.social-icons i {
+			font-size: 18px;
+			color: white;
+			transition: transform 0.2s;
+		}
+
+		.social-icons i:hover {
+			transform: scale(1.2);
+			color: #ffc107;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 50px auto;
+			padding: 40px;
+			background-color: white;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+			border-radius: 12px;
+		}
+
+		h1 {
+			text-align: left;
+			color: #2c3e50;
+			margin-bottom: 20px;
+		}
+
+		p {
+			font-size: 17px;
+			line-height: 1.7;
+			text-align: justify;
+		}
+
+		.footer {
+			margin-top: 30px;
+			text-align: center;
+			font-size: 14px;
+			color: #777;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 999;
+			padding-top: 60px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		.modal-content {
+			margin: auto;
+			display: block;
+			max-width: 90%;
+			max-height: 80%;
+			border-radius: 10px;
+		}
+
+		.close {
+			position: absolute;
+			top: 30px;
+			right: 50px;
+			color: #fff;
+			font-size: 35px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.close:hover {
+			color: #ccc;
+		}
+
+		h2.bullet::before {
+			content: "•";
+			font-size: 36px;
+			color: #2c3e50;
+			margin-right: 12px;
+			vertical-align: middle;
+		}
+	</style>
+</head>
+
+<body class="bg-gray-100 p-6">
+
+	<!-- ✅ Background Image -->
+	<div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
+
+	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
+
+	<div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
+
+		<h2 class="text-2xl font-bold mb-4">Quotations</h2>
+
+		<a href="/quotations/addNewQuotation"
+			class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-4 inline-block">Add New</a>
+
+		<table class="w-full border-collapse border border-gray-300">
+			<thead>
+				<tr class="bg-gray-200">
+					<th class="border px-4 py-2">ID</th>
+					<th class="border px-4 py-2">Work Firm/ Customer Name</th>
+					<th class="border px-4 py-2">Work Address</th>
+					<th class="border px-4 py-2">Boring Type</th>
+					<th class="border px-4 py-2">Boring Dia</th>
+					<th class="border px-4 py-2">Drilling Price</th>
+					<th class="border px-4 py-2">Transport Vehicle</th>
+					<th class="border px-4 py-2">Transport Price</th>
+					<th class="border px-4 py-2">DOE</th>
+					<th class="border px-4 py-2">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- If quotations list has data -->
+				<tr th:each="q : ${quotations}">
+					<td class="border px-4 py-2" th:text="${q.quotationId}"></td>
+					<td class="border px-4 py-2" th:text="${q.customerName}"></td>
+					<td class="border px-4 py-2" th:text="${q.workAddress}"></td>
+					<td class="border px-4 py-2" th:text="${q.boringType}"></td>
+					<td class="border px-4 py-2" th:text="${q.boringDia}"></td>
+					<td class="border px-4 py-2" th:text="${q.drillingPrice}"></td>
+					<td class="border px-4 py-2" th:text="${q.transportingVehicleType}"></td>
+					<td class="border px-4 py-2" th:text="${q.transportingPrice}"></td>
+					<td class="border px-4 py-2" th:text="${#dates.format(q.doe,'yyyy-MM-dd')}"></td>
+					<td class="border px-4 py-2">
+						<div class="flex space-x-2">
+							<a th:href="@{'/quotations/editQuotation/' + ${q.quotationId}}"
+								class="bg-blue-500 text-white px-3 py-1 rounded">Edit</a>
+							<a th:href="@{'/quotations/deleteQuotation/' + ${q.quotationId}}"
+								class="bg-red-500 text-white px-3 py-1 rounded"
+								onclick="return confirm('Delete this quotation?')">Delete</a>
+							<a th:href="@{'/quotations/downloadQuotation/' + ${q.quotationId}}"
+								class="bg-red-500 text-white px-3 py-1 rounded">Download</a>
+						</div>
+					</td>
+				</tr>
+
+				<!-- If quotations list is empty -->
+				<tr th:if="${#lists.isEmpty(quotations)}">
+					<td class="border px-4 py-2 text-center text-gray-500" colspan="10">
+						No data found
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</body>
+
+</html>
