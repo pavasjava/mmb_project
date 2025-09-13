@@ -22,13 +22,43 @@ public class QuotationDTO {
 	private String workAddress;
 	private String boringType;
 	private String boringDia;
+	private String priceQntDtls;
 	private Double drillingPrice;
 	private String transportingVehicleType;
 	private Double transportingPrice;
 	private Date doe;
-	private List<OtherWork> otherWorks = new ArrayList<>();
+	private List<MaterialSelectionDTO> selectedMaterials = new ArrayList<>();
+	private Integer selectedMaterialTypeId;
+    private Integer selectedCompanyId;
 	@ElementCollection
 	private List<Integer> requiredMaterialIds = new ArrayList<>();
+
+    
+	
+
+	public Integer getSelectedMaterialTypeId() {
+		return selectedMaterialTypeId;
+	}
+
+	public void setSelectedMaterialTypeId(Integer selectedMaterialTypeId) {
+		this.selectedMaterialTypeId = selectedMaterialTypeId;
+	}
+
+	public Integer getSelectedCompanyId() {
+		return selectedCompanyId;
+	}
+
+	public void setSelectedCompanyId(Integer selectedCompanyId) {
+		this.selectedCompanyId = selectedCompanyId;
+	}
+
+	public List<MaterialSelectionDTO> getSelectedMaterials() {
+		return selectedMaterials;
+	}
+
+	public void setSelectedMaterials(List<MaterialSelectionDTO> selectedMaterials) {
+		this.selectedMaterials = selectedMaterials;
+	}
 
 //    @Transient
 //    private Integer requiredMaterialId;
@@ -64,6 +94,14 @@ public class QuotationDTO {
 	public void setBoringDia(String boringDia) {
 		this.boringDia = boringDia;
 	}
+	
+	public String getPriceQntDtls() {
+		return priceQntDtls;
+	}
+
+	public void setPriceQntDtls(String priceQntDtls) {
+		this.priceQntDtls = priceQntDtls;
+	}
 
 	public Double getDrillingPrice() {
 		return drillingPrice;
@@ -95,14 +133,6 @@ public class QuotationDTO {
 
 	public void setDoe(Date doe) {
 		this.doe = doe;
-	}
-
-	public List<OtherWork> getOtherWorks() {
-		return otherWorks;
-	}
-
-	public void setOtherWorks(List<OtherWork> otherWorks) {
-		this.otherWorks = otherWorks;
 	}
 
 	public String getCustomerName() {

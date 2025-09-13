@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import mmb.model.RawMaterial;
+import mmb.repository.MaterialCompanyNameRepo;
+import mmb.repository.MaterialTypeRepo;
 import mmb.repository.RawMaterialRepo;
 
 @Controller
@@ -20,6 +22,11 @@ public class RawMaterialController {
 	
 	@Autowired
     private RawMaterialRepo rawMaterialRepository;
+	
+	@Autowired
+	private MaterialTypeRepo materialTypeRepository;
+	@Autowired
+    private MaterialCompanyNameRepo materialCompanyNameRepository;
 
     @GetMapping("/getAllRawMaterials")
     public String getAllRawMaterials(Model model) {
@@ -31,6 +38,8 @@ public class RawMaterialController {
     @GetMapping("/addNewRawMaterial")
     public String addNewRawMaterial(Model model) {
         model.addAttribute("rawMaterial", new RawMaterial());
+        model.addAttribute("materialTypes", materialTypeRepository.findAll());
+        model.addAttribute("companies", materialCompanyNameRepository.findAll());
         return "rawmaterial/addNewRawMaterial";
     }
 
@@ -45,7 +54,9 @@ public class RawMaterialController {
         RawMaterial material = rawMaterialRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid RawMaterial Id:" + id));
         model.addAttribute("rawMaterial", material);
-        return "rawmaterial/addNewRawMaterial"; // reuse same form
+        model.addAttribute("materialTypes", materialTypeRepository.findAll());
+        model.addAttribute("companies", materialCompanyNameRepository.findAll());
+        return "rawmaterial/addNewRawMaterial";
     }
 
     @GetMapping("/deleteRawMaterial/{id}")

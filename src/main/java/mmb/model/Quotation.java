@@ -39,6 +39,8 @@ public class Quotation {
 	private String boringType;
 	@Column(name = "bore_dia")
 	private String boringDia;
+	@Column(name = "price_qnt_dtls")
+	private String priceQntDtls;
 	@Column(name = "drilling_price")
 	private Double drillingPrice;
 	@Column(name = "trans_vehicle_type")
@@ -64,6 +66,7 @@ public class Quotation {
 	    inverseJoinColumns = @JoinColumn(name = "material_id")
 	)
 	private List<RawMaterial> requiredMaterials = new ArrayList<>();
+//	private Integer selectedCompanyId;
 	
 //	@ManyToOne
 //	@JoinColumn(name = "material_id")
@@ -91,6 +94,14 @@ public class Quotation {
 //
 //	public void setRequiredMaterialId(Integer requiredMaterialId) {
 //		this.requiredMaterialId = requiredMaterialId;
+//	}
+
+//	public Integer getSelectedCompanyId() {
+//		return selectedCompanyId;
+//	}
+//
+//	public void setSelectedCompanyId(Integer selectedCompanyId) {
+//		this.selectedCompanyId = selectedCompanyId;
 //	}
 
 	public List<RawMaterial> getRequiredMaterials() {
@@ -134,6 +145,14 @@ public class Quotation {
 
 	public void setBoringDia(String boringDia) {
 		this.boringDia = boringDia;
+	}
+
+	public String getPriceQntDtls() {
+		return priceQntDtls;
+	}
+
+	public void setPriceQntDtls(String priceQntDtls) {
+		this.priceQntDtls = priceQntDtls;
 	}
 
 	public Double getDrillingPrice() {

@@ -24,12 +24,12 @@ public class RawMaterial {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "material_id")
 	private Integer materialId;
-	@Column(name = "material_type")
-	private String materialType;
-	@Column(name = "material_name")
-	private String materialName;
-	@Column(name = "company_name")
-	private String companyName;
+//	@Column(name = "material_type")
+//	private String materialType;
+//	@Column(name = "material_name")
+//	private String materialName;
+//	@Column(name = "company_name")
+//	private String companyName;
 	@Column(name = "quality")
 	private String Quality;
 	@Column(name = "material_price")
@@ -38,6 +38,14 @@ public class RawMaterial {
 	private String matrialSize;
 	@Column(name = "quantity")
 	private String quantity;
+	@ManyToOne
+    @JoinColumn(name = "material_type_id")
+    private MaterialType materialType;
+
+	// Relation with MaterialCompanyName
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private MaterialCompanyName companyName;
 	
 //	@ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "quotation_id")
@@ -49,23 +57,12 @@ public class RawMaterial {
 	public void setMaterialId(Integer materialId) {
 		this.materialId = materialId;
 	}
-	public String getMaterialName() {
-		return materialName;
-	}
-	public void setMaterialName(String materialName) {
-		this.materialName = materialName;
-	}
+	
 	public Double getMaterialPrice() {
 		return materialPrice;
 	}
 	public void setMaterialPrice(Double materialPrice) {
 		this.materialPrice = materialPrice;
-	}
-	public String getMaterialType() {
-		return materialType;
-	}
-	public void setMaterialType(String materialType) {
-		this.materialType = materialType;
 	}
 	public String getMatrialSize() {
 		return matrialSize;
@@ -82,13 +79,19 @@ public class RawMaterial {
 	public String getQuantity() {
 		return quantity;
 	}
+	public MaterialType getMaterialType() {
+		return materialType;
+	}
+	public MaterialCompanyName getCompanyName() {
+		return companyName;
+	}
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
-	public String getCompanyName() {
-		return companyName;
+    public void setMaterialType(MaterialType materialType) {
+		this.materialType = materialType;
 	}
-	public void setCompanyName(String companyName) {
+	public void setCompanyName(MaterialCompanyName companyName) {
 		this.companyName = companyName;
 	}
 //	public Quotation getQuotation() {

@@ -192,26 +192,24 @@
 
 			<div>
 				<label class="block text-sm font-medium text-gray-700">Material Type</label>
-				<select th:field="*{materialType}" class="w-full border rounded px-3 py-2" required onchange="toggleMaterialName(this)">
+				<select th:field="*{materialType}" class="w-full border rounded px-3 py-2">
 					<option value="">--Select Material Type--</option>
-					<option value="PVC Casing Pipe">Casing Pipe</option>
-					<option value="PVC Master Casing">Master Casing</option>
-					<option value="Gravel">Gravel</option>
-					<option value="Mod Powder">Mod Powder</option>
-					<option value="Mottor Complete Set">Mottor Complete Set</option>
-					<option value="Other">Other</option>
-				</select>
+					<option th:each="type : ${materialTypes}" th:value="${type.materialTypeId}" th:text="${type.materialName}"></option>
+			    </select>
 			</div>
 
-			<div id="materialNameField" style="display: none;">
-			    <label class="block text-sm font-medium text-gray-700">Material Name</label>
+			<!--<div id="materialNameField" style="display: none;">
+			    <label class="block text-sm font-medium text-gray-700">Company Name</label>
 			    <input type="text" th:field="*{materialName}" 
 			           class="w-full border rounded px-3 py-2" />
-			</div>
+			</div>-->
 
 			<div>
-				<label class="block text-sm font-medium text-gray-700">Brand Name</label>
-				<input type="text" th:field="*{companyName}" class="w-full border rounded px-3 py-2" required />
+				<label class="block text-sm font-medium text-gray-700">Material Company Name</label>
+				<select th:field="*{companyName}" class="w-full border rounded px-3 py-2">
+					<option value="">--Select Material Company--</option>
+					<option th:each="company : ${companies}" th:value="${company.companyId}" th:text="${company.companyName}"></option>
+				</select>
 			</div>
 			
 			<div>

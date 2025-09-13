@@ -8,6 +8,6 @@ public class AppConstants {
     public static final String[] DOCTOR_DASHBOARD_URL = {"/doctor/dashboard"};
     public static final String[] PHARMACIST_DASHBOARD_URL = {"/pharmacist/dashboard"};
     public static final String[] BASE_API_URL = {"/login","/dashboard","/articles","/home","/register","/registerreq","/loginreq","/showImages","/images/**","/getAllRawMaterials",
-    		"/addNewRawMaterial","/saveRawMaterial","/editRawMaterial/**","/deleteRawMaterial/**","/quotations/**"};
+    		"/addNewRawMaterial","/saveRawMaterial","/editRawMaterial/**","/deleteRawMaterial/**","/quotations/**","/generateBills/**"};
 
 }

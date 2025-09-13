@@ -1,5 +1,6 @@
 package mmb.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import mmb.dto.MaterialSelectionDTO;
 import mmb.dto.QuotationDTO;
 import mmb.model.Quotation;
 import mmb.model.RawMaterial;
@@ -27,10 +29,10 @@ public class QuotationServiceImpl implements QuotationService {
         this.rawMaterialRepo = rawMaterialRepo;
     }
 
-    @Override
-    public Quotation saveQuotation(Quotation quotation) {
-        return quotationRepository.save(quotation);
-    }
+//    @Override
+//    public Quotation saveQuotation(QuotationDTO quotation) {
+//        return quotationRepository.save(quotation);
+//    }
 
     @Override
     public List<Quotation> getAllQuotations() {
@@ -47,31 +49,60 @@ public class QuotationServiceImpl implements QuotationService {
         quotationRepository.deleteById(id);
     }
     
-    public Quotation saveOrUpdate(QuotationDTO dto) {
-        final Quotation entity;
+//    @Override
+//    public Quotation saveQuotation(QuotationDTO dto) {
+//        
+//    }
 
-        if (dto.getQuotationId() != null) {
-            // UPDATE path: load existing (with materials) and mutate it
-            entity = quotationRepository.findByIdWithMaterials(dto.getQuotationId())
-                    .orElseThrow(() -> new IllegalArgumentException("Quotation not found: " + dto.getQuotationId()));
-        } else {
-            entity = new Quotation();
-        }
+//    @Override
+//    public Quotation saveOrUpdate(QuotationDTO dto) {
+//        Quotation quotation = new Quotation();
+//        quotation.setQuotationId(dto.getQuotationId());
+//        quotation.setCustomerName(dto.getCustomerName());
+//        quotation.setWorkAddress(dto.getWorkAddress());
+//        quotation.setBoringType(dto.getBoringType());
+//        quotation.setBoringDia(dto.getBoringDia());
+//        quotation.setDrillingPrice(dto.getDrillingPrice());
+//        quotation.setTransportingVehicleType(dto.getTransportingVehicleType());
+//        quotation.setTransportingPrice(dto.getTransportingPrice());
+//
+//        List<RawMaterial> selectedMaterials = new ArrayList<>();
+//
+//        // 👉 Here is where you add your block
+//        for (MaterialSelectionDTO m : dto.getSelectedMaterials()) {
+//            rawMaterialRepo
+//                .findByMaterialType_MaterialTypeIdAndCompanyName_CompanyId(m.getMaterialTypeId(), m.getCompanyId())
+//                .ifPresent(selectedMaterials::add);
+//        }
+//
+//        quotation.setRequiredMaterials(selectedMaterials);
+//
+//        return quotationRepository.save(quotation);
+//    }
 
-        entity.setCustomerName(dto.getCustomerName());
-        entity.setWorkAddress(dto.getWorkAddress());
-        entity.setBoringType(dto.getBoringType());
-        entity.setBoringDia(dto.getBoringDia());
-        entity.setDrillingPrice(dto.getDrillingPrice());
-        entity.setTransportingVehicleType(dto.getTransportingVehicleType());
-        entity.setTransportingPrice(dto.getTransportingPrice());
-        entity.getRequiredMaterials().clear();
+    @Transactional
+    public void saveOrUpdate(QuotationDTO dto) {
+        Quotation quotation = new Quotation();
+
+        // map simple fields
+        quotation.setQuotationId(dto.getQuotationId());
+        quotation.setCustomerName(dto.getCustomerName());
+        quotation.setWorkAddress(dto.getWorkAddress());
+        quotation.setBoringType(dto.getBoringType());
+        quotation.setBoringDia(dto.getBoringDia());
+        quotation.setPriceQntDtls(dto.getPriceQntDtls());
+        quotation.setDrillingPrice(dto.getDrillingPrice());
+        quotation.setTransportingVehicleType(dto.getTransportingVehicleType());
+        quotation.setTransportingPrice(dto.getTransportingPrice());
+
+        // ✅ map required materials
         if (dto.getRequiredMaterialIds() != null && !dto.getRequiredMaterialIds().isEmpty()) {
-            List<RawMaterial> selected = rawMaterialRepo.findAllById(dto.getRequiredMaterialIds());
-            entity.getRequiredMaterials().addAll(selected);
+            List<RawMaterial> materials = rawMaterialRepo.findAllById(dto.getRequiredMaterialIds());
+            quotation.setRequiredMaterials(materials);
         }
 
-        return quotationRepository.save(entity);
+        quotationRepository.save(quotation);
     }
+
 
 }

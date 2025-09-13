@@ -26,9 +26,15 @@ public class OtherWork {
 	private Integer othWorkId;
 	@Column(name="oth_work_name")
 	private String othWorkName;
+	@Column(name="total_unit")
+	private String totalUnit;
 	@Column(name="oth_work_price")
 	private Double price;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bill_id")
+    private GenerateBill generateBill;
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quotation_id")
     private Quotation quotation;
@@ -63,6 +69,22 @@ public class OtherWork {
 
 	public void setQuotation(Quotation quotation) {
 		this.quotation = quotation;
+	}
+
+	public String getTotalUnit() {
+		return totalUnit;
+	}
+
+	public void setTotalUnit(String totalUnit) {
+		this.totalUnit = totalUnit;
+	}
+	
+	public GenerateBill getGenerateBill() {
+		return generateBill;
+	}
+
+	public void setGenerateBill(GenerateBill generateBill) {
+		this.generateBill = generateBill;
 	}
 
 }

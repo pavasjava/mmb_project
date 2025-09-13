@@ -33,9 +33,9 @@ public class RawMaterialServiceImpl implements RawMaterialService {
 		Optional<RawMaterial> optional = rawMaterialRepository.findById(id);
 		if (optional.isPresent()) {
 			RawMaterial rawMaterial = optional.get();
-			rawMaterial.setMaterialName(rawMaterialDTO.getMaterialName());
+//			rawMaterial.setMaterialName(rawMaterialDTO.getMaterialName());
 			rawMaterial.setMaterialPrice(rawMaterialDTO.getMaterialPrice());
-			rawMaterial.setMaterialType(rawMaterialDTO.getMaterialType());
+//			rawMaterial.setMaterialType(rawMaterialDTO.getMaterialType());
 			rawMaterial.setMatrialSize(rawMaterialDTO.getMatrialSize());
 			RawMaterial updated = rawMaterialRepository.save(rawMaterial);
 			return modelMapper.map(updated, RawMaterialDTO.class);

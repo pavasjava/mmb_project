@@ -8,9 +8,9 @@ import mmb.model.Quotation;
 
 public interface QuotationService {
 	
-	Quotation saveQuotation(Quotation quotation);
+//	Quotation saveQuotation(QuotationDTO quotation);
     List<Quotation> getAllQuotations();
     Optional<Quotation> getQuotationById(Integer id);
     void deleteQuotation(Integer id);
-    public Quotation saveOrUpdate(QuotationDTO dto);
+    public void saveOrUpdate(QuotationDTO dto);
 }

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Add/Edit Quotation</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+	<style>
+		.bg-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background-image: url('/images/bgimage.png');
+			background-size: cover;
+			background-position: center;
+			opacity: 0.08;
+			/* More light/faded */
+			z-index: -1;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f8fb;
+			color: #333;
+		}
+
+		.navbar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			/*background-color: rgb(73, 146, 180);*/
+			background-color: #d64026;
+			padding: 10px 20px;
+		}
+
+		.navbar-left {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.navbar-left img {
+			height: 40px;
+			width: 65px;
+			border-radius: 60%;
+			object-fit: cover;
+		}
+
+		.navbar-left a {
+			text-decoration: none;
+			color: white;
+			font-weight: bold;
+			padding: 8px 12px;
+			border-radius: 8px;
+			transition: background-color 0.3s;
+		}
+
+		.navbar-left a.active,
+		.navbar-left a:hover {
+			/*background-color: #17418138;*/
+			background-color: #c23c22;
+		}
+
+		.navbar-right {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+
+		.search-box {
+			background-color: white;
+			border-radius: 10px;
+			padding: 8px 12px;
+			display: flex;
+			align-items: center;
+		}
+
+		.search-box input {
+			border: none;
+			outline: none;
+			font-size: 14px;
+			margin-left: 5px;
+		}
+
+		.search-icon {
+			color: #d64026;
+			font-size: 16px;
+		}
+
+		.social-icons i {
+			font-size: 18px;
+			color: white;
+			transition: transform 0.2s;
+		}
+
+		.social-icons i:hover {
+			transform: scale(1.2);
+			color: #ffc107;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 50px auto;
+			padding: 40px;
+			background-color: white;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+			border-radius: 12px;
+		}
+
+		h1 {
+			text-align: left;
+			color: #2c3e50;
+			margin-bottom: 20px;
+		}
+
+		p {
+			font-size: 17px;
+			line-height: 1.7;
+			text-align: justify;
+		}
+
+		.footer {
+			margin-top: 30px;
+			text-align: center;
+			font-size: 14px;
+			color: #777;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 999;
+			padding-top: 60px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		.modal-content {
+			margin: auto;
+			display: block;
+			max-width: 90%;
+			max-height: 80%;
+			border-radius: 10px;
+		}
+
+		.close {
+			position: absolute;
+			top: 30px;
+			right: 50px;
+			color: #fff;
+			font-size: 35px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.close:hover {
+			color: #ccc;
+		}
+
+		h2.bullet::before {
+			content: "•";
+			font-size: 36px;
+			color: #2c3e50;
+			margin-right: 12px;
+			vertical-align: middle;
+		}
+	</style>
+</head>
+
+<body class="bg-gray-100 p-6">
+
+	<!-- ✅ Background Image -->
+	<div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
+
+	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
+
+	<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
+		<h2 class="text-2xl font-bold mb-4">Generate / Edit Bill</h2>
+
+		<form th:action="@{/generateBills/saveGenerateBill}" th:object="${generateBill}" method="post"
+			class="space-y-4">
+
+			<!-- Hidden field for edit -->
+			<input type="hidden" th:field="*{billId}" />
+
+			<div>
+				<label>Customer Name</label>
+				<input type="text" th:field="*{customerName}" class="w-full border rounded px-3 py-2" />
+			</div>
+			<div>
+				<label>Customer Mobile No.</label>
+				<input type="text" th:field="*{mobileNo}" class="w-full border rounded px-3 py-2" />
+			</div>
+
+			<div>
+				<label>Work Address</label>
+				<input type="text" th:field="*{workAddress}" class="w-full border rounded px-3 py-2" />
+			</div>
+
+			<div>
+				<div>
+					<label style="width: 250px;">Work Date</label>
+
+					<label style="width: 250px; margin-left: 70px;">Boring Type</label>
+				</div>
+
+				<input type="date" id="workDate" th:field="*{workDate}"
+					class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					style="width: 250px;" />
+
+				<select th:field="*{boringType}" class="w-full border rounded px-3 py-2"
+					style="width: 250px; margin-left: 70px;">
+					<option value="">--Select Boring Type--</option>
+					<option value="DTH">DTH</option>
+					<option value="In-Well">In-Well</option>
+					<option value="Rotary">Rotary</option>
+					<option value="Callis">Callis</option>
+				</select>
+			</div>
+
+			<div>
+				<div>
+					<label style="width: 250px;">Boring Dia</label>
+
+					<label style="width: 250px; margin-left: 70px;">Price Quantity Details</label>
+				</div>
+				<select th:field="*{boringDia}" class="w-full border rounded px-3 py-2" style="width: 250px;">
+					<option value="">--Select Boring dia--</option>
+					<option value="5">5 inch.</option>
+					<option value="6">6 inch.</option>
+					<option value="8">8 inch.</option>
+					<option value="10">10 inch.</option>
+					<option value="12">12 inch.</option>
+				</select>
+
+				<label class="inline-flex items-center" style="margin-left: 70px;">
+					<input type="radio" th:field="*{priceQntDtls}" value="1 Feet"
+						class="form-radio h-4 w-4 text-blue-600 border-gray-300" />
+					<span class="ml-2">1 Feet</span>
+				</label>
+
+				<label class="inline-flex items-center">
+					<input type="radio" th:field="*{priceQntDtls}" value="1 Mtr."
+						class="form-radio h-4 w-4 text-blue-600 border-gray-300" />
+					<span class="ml-2">1 Mtr.</span>
+				</label>
+			</div>
+			<div>
+				<label>Drilling Price</label>
+				<input type="number" th:field="*{drillingPrice}" class="w-full border rounded px-3 py-2" />
+			</div>
+
+			<div>
+				<label>Total Drilling</label>
+				<input type="number" th:field="*{totalDrilling}" class="w-full border rounded px-3 py-2" />
+			</div>
+
+			<div>
+				<div class="relative inline-block w-full">
+					<div class="mb-4">
+						<label for="material">Select
+							Material</label>
+						<select id="material" class="border rounded px-3 py-2 w-full bg-white">
+							<option value="">-- Select Material --</option>
+							<option th:each="mat : ${materials}" th:value="${mat.materialId}"
+								th:text="${mat.materialWithCmpName}">
+							</option>
+						</select>
+					</div>
+				</div>
+				<!-- Quantity input (hidden until a material is selected) -->
+				<div id="material-details" class="hidden mb-4">
+					<label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+					<input type="number" id="quantity" class="border rounded px-3 py-2 w-40"
+						placeholder="Enter quantity" />
+
+					<button type="button" id="addMaterialBtn"
+						class="ml-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+						+ Add
+					</button>
+				</div>
+
+				<!-- Added materials list -->
+				<div class="mt-4 hidden" id="selectedSection">
+					<lebel class="font-semibold mb-2">Selected Materials</lebel>
+					<ul id="materialsList" class="list-disc pl-5 text-gray-700"></ul>
+				</div>
+				<input type="hidden" th:field="*{billId}" />
+			</div>
+
+			<label>Transporting</label>
+			<!-- Transport Yes/No -->
+			<div class="flex items-center gap-6 mb-4">
+
+				<div class="flex items-center gap-4">
+					<label class="flex items-center gap-2">
+						<input type="radio" name="transportRequired" value="yes" class="transport-radio">
+						<span>Yes</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="radio" name="transportRequired" value="no" class="transport-radio" checked>
+						<span>No</span>
+					</label>
+				</div>
+
+				<!-- Hidden transport fields (inline row) -->
+				<div id="transportFields" class="hidden flex items-center gap-4">
+					<div>
+						<label class="block text-sm font-medium">Vehicle Type</label>
+						<select th:field="*{transportingVehicleType}" class="border rounded px-3 py-2">
+							<option value="">--Select--</option>
+							<option value="small">Small</option>
+							<option value="medium">Medium</option>
+							<option value="large">Large</option>
+						</select>
+					</div>
+
+					<div>
+						<label class="block text-sm font-medium">Transport Price</label>
+						<input type="number" th:field="*{transportingPrice}" class="border rounded px-3 py-2" />
+					</div>
+				</div>
+			</div>
+
+			<div class="mb-4">
+				<button type="button" id="addWorkBtn"
+					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+					+ Add Other Work
+				</button>
+			</div>
+
+			<!-- Container where new work fields will appear -->
+			<div id="otherWorkContainer" class="space-y-4"></div>
+			
+
+			<div>
+				<label class="block text-sm font-medium">Total Advance Payment</label>
+				<input type="number" th:field="*{totalAdvance}" class="border rounded px-3 py-2" />
+			</div>
+
+			<div class="flex justify-end space-x-2">
+				<a href="/quotations/getAllQuotation" class="bg-gray-400 px-4 py-2 rounded">Cancel</a>
+				<button type="submit" class="bg-green-500 px-4 py-2 rounded text-white">Save</button>
+			</div>
+		</form>
+	</div>
+	<script>
+		// elements (matching your HTML IDs)
+		const materialSelect = document.getElementById("material");
+		const materialDetails = document.getElementById("material-details");
+		const quantityInput = document.getElementById("quantity");
+		const addMaterialBtn = document.getElementById("addMaterialBtn");
+		const materialsList = document.getElementById("materialsList");
+		const selectedSection = document.getElementById("selectedSection");
+
+		// show/hide quantity area when a material is selected
+		materialSelect.addEventListener("change", () => {
+			if (materialSelect.value) materialDetails.classList.remove("hidden");
+			else materialDetails.classList.add("hidden");
+		});
+
+		// update serial numbers in the list
+		function refreshSerialNumbers() {
+			const items = materialsList.querySelectorAll("li");
+			items.forEach((item, index) => {
+				const numberSpan = item.querySelector(".serial-number");
+				if (numberSpan) numberSpan.textContent = (index + 1) + ". ";
+			});
+		}
+
+		// set correct indexed names for hidden inputs so Spring binds to materialsBill[..]
+		function updateMaterialFieldNames() {
+			const items = materialsList.querySelectorAll("li");
+			items.forEach((item, index) => {
+				const hidId = item.querySelector(".hidden-id");
+				const hidQty = item.querySelector(".hidden-qty");
+
+				if (hidId) hidId.name = `materialsBill[${index}].materialId`;
+				if (hidQty) hidQty.name = `materialsBill[${index}].totalUnit`;
+			});
+
+			// Update serial numbers
+			const numberSpans = materialsList.querySelectorAll(".serial-number");
+			numberSpans.forEach((span, index) => {
+				span.textContent = (index + 1) + ". ";
+			});
+		}
+
+		// Add material handler
+		addMaterialBtn.addEventListener("click", () => {
+			const selectedText = materialSelect.options[materialSelect.selectedIndex]?.text || "";
+			const selectedValue = materialSelect.value;
+			const quantity = quantityInput.value && quantityInput.value.trim();
+
+			if (!selectedValue || !quantity) {
+				alert("Please select a material and enter quantity.");
+				return;
+			}
+
+			const li = document.createElement("li");
+			li.className = "flex items-center justify-between bg-gray-100 px-3 py-2 rounded";
+
+			// Left side: serial + text
+			const leftDiv = document.createElement("div");
+			leftDiv.className = "flex items-center";
+			const numberSpan = document.createElement("span");
+			numberSpan.className = "serial-number font-bold mr-2";
+			const textSpan = document.createElement("span");
+			textSpan.textContent = `${selectedText} - Quantity: ${quantity}`;
+			leftDiv.appendChild(numberSpan);
+			leftDiv.appendChild(textSpan);
+
+			// ✅ Hidden inputs for Spring binding
+			const hiddenId = document.createElement("input");
+			hiddenId.type = "hidden";
+			hiddenId.name = "requiredMaterialIds";  // must match DTO
+			hiddenId.value = selectedValue;
+
+			const hiddenQty = document.createElement("input");
+			hiddenQty.type = "hidden";
+			hiddenQty.name = "requiredMaterialQuantities";  // must match DTO
+			hiddenQty.value = quantity;
+
+			// Remove button
+			const removeBtn = document.createElement("button");
+			removeBtn.type = "button";
+			removeBtn.innerHTML = "&#10006;"; // ✖
+			removeBtn.className = "text-red-600 hover:text-red-800 font-bold ml-3";
+			removeBtn.addEventListener("click", () => {
+				li.remove();
+				refreshSerialNumbers();
+			});
+
+			li.appendChild(leftDiv);
+			li.appendChild(hiddenId);
+			li.appendChild(hiddenQty);
+			li.appendChild(removeBtn);
+
+			materialsList.appendChild(li);
+			selectedSection.classList.remove("hidden");
+
+			refreshSerialNumbers();
+
+			// Reset fields
+			materialSelect.value = "";
+			quantityInput.value = "";
+			materialDetails.classList.add("hidden");
+		});
+
+	</script>
+
+
+	<script>
+		document.querySelectorAll('.transport-radio').forEach(radio => {
+			radio.addEventListener('change', function () {
+				const transportFields = document.getElementById('transportFields');
+				if (this.value === 'yes') {
+					transportFields.classList.remove('hidden');
+				} else {
+					transportFields.classList.add('hidden');
+				}
+			});
+		});
+	</script>
+
+	<script>
+		const container = document.getElementById("otherWorkContainer");
+
+		function updateSerialNumbers() {
+			const rows = container.querySelectorAll(".work-row");
+			rows.forEach((row, index) => {
+				row.querySelector(".serial").textContent = index + 1;
+			});
+		}
+
+		function updateFieldNames() {
+			const rows = container.querySelectorAll(".work-row");
+			rows.forEach((row, index) => {
+				row.querySelector(".desc").name = `otherWorks[${index}].othWorkName`;
+				row.querySelector(".unit").name = `otherWorks[${index}].totalUnit`;
+				row.querySelector(".price").name = `otherWorks[${index}].price`;
+			});
+		}
+
+		document.getElementById("addWorkBtn").addEventListener("click", function () {
+			const workDiv = document.createElement("div");
+			workDiv.className = "work-row flex items-center gap-4 bg-gray-50 p-2 rounded";
+
+			const serial = document.createElement("span");
+			serial.className = "serial font-bold w-6 text-center";
+
+			const descInput = document.createElement("input");
+			descInput.type = "text";
+			descInput.placeholder = "Description";
+			descInput.classList.add("border", "rounded", "px-3", "py-2", "w-1/3", "desc");
+
+			const unitInput = document.createElement("input");
+			unitInput.type = "text";
+			unitInput.placeholder = "Total Unit";
+			unitInput.classList.add("border", "rounded", "px-3", "py-2", "w-1/6", "unit");
+
+			const priceInput = document.createElement("input");
+			priceInput.type = "number";
+			priceInput.placeholder = "Price";
+			priceInput.classList.add("border", "rounded", "px-3", "py-2", "w-1/6", "price");
+
+			const removeBtn = document.createElement("button");
+			removeBtn.type = "button";
+			removeBtn.innerText = "✖";
+			removeBtn.classList.add("text-red-500", "font-bold");
+			removeBtn.addEventListener("click", () => {
+				workDiv.remove();
+				updateSerialNumbers();
+				updateFieldNames();
+			});
+
+			workDiv.appendChild(serial);
+			workDiv.appendChild(descInput);
+			workDiv.appendChild(unitInput);
+			workDiv.appendChild(priceInput);
+			workDiv.appendChild(removeBtn);
+
+			container.appendChild(workDiv);
+
+			updateSerialNumbers();
+			updateFieldNames();
+		});
+	</script>
+</body>
+
+</html>

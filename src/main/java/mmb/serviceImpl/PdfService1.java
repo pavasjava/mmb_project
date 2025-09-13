@@ -27,7 +27,7 @@ import mmb.model.Quotation;
 import mmb.model.RawMaterial;
 
 @Service
-public class PdfService {
+public class PdfService1 {
 
 	public void generateQuotationPdf(HttpServletResponse response, Quotation quotation)
 			throws IOException, DocumentException {

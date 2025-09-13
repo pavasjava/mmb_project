@@ -2,12 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title> Raw Materials </title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<title>Quotations</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<style>
 		.bg-overlay {
 			position: fixed;
@@ -35,6 +32,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			/*background-color: rgb(73, 146, 180);*/
 			background-color: #d64026;
 			padding: 10px 20px;
 		}
@@ -63,6 +61,7 @@
 
 		.navbar-left a.active,
 		.navbar-left a:hover {
+			/*background-color: #17418138;*/
 			background-color: #c23c22;
 		}
 
@@ -173,136 +172,72 @@
 			margin-right: 12px;
 			vertical-align: middle;
 		}
-
-		/* Table Design */
-		.styled-table {
-			width: 100%;
-			border-collapse: collapse;
-			margin-top: 20px;
-			font-size: 16px;
-			border-radius: 10px;
-			overflow: hidden;
-			box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-		}
-
-		.styled-table thead {
-			background-color: rgb(73, 146, 180);
-			color: #fff;
-			text-align: left;
-		}
-
-		.styled-table th,
-		.styled-table td {
-			padding: 14px 18px;
-		}
-
-		.styled-table tbody tr {
-			border-bottom: 1px solid #ddd;
-			transition: background-color 0.2s;
-		}
-
-		.styled-table tbody tr:hover {
-			background-color: #f9f1f0;
-		}
-
-		.styled-table tbody tr:last-child {
-			border-bottom: none;
-		}
-
-		/* Align price */
-		.price {
-			text-align: right;
-			font-weight: bold;
-			color: #2c3e50;
-		}
-
-		.button-container {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
-
-
-		.add-btn {
-			display: inline-block;
-			padding: 8px 18px;
-			background-color: transparent;
-			color: #007bff;
-			font-size: 14px;
-			font-weight: 600;
-			border: 2px solid #007bff;
-			border-radius: 25px;
-			text-decoration: none;
-			transition: all 0.3s ease;
-		}
-
-		.add-btn:hover {
-			background-color: #007bff;
-			color: #fff;
-			text-decoration: none;
-			transform: translateY(-1px);
-		}
-
-		.add-btn:active {
-			transform: translateY(0);
-		}
-
-		.thead-custom {
-			background-color: #5F9EA0;
-			color: #ffffff;
-		}
 	</style>
 </head>
 
 <body class="bg-gray-100 p-6">
+
 	<!-- ✅ Background Image -->
 	<div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
 
-	<!-- ✅ Navbar -->
 	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
 
 	<div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
-		<h2 class="text-2xl font-bold mb-4">Raw Materials</h2>
 
-		<table class="w-full border border-gray-300 text-left mb-4">
-			<thead class="bg-gray-200">
-				<tr>
-					<th class="px-4 py-2">Sl No</th>
-					<th class="px-4 py-2">Material Name</th>
-					<th class="px-4 py-2">Brand Name</th>
-					<th class="px-4 py-2">Quality</th>
-					<th class="px-4 py-2">Material Size</th>
-					<th class="px-4 py-2">Quantity</th>
-					<th class="px-4 py-2">Price</th>
-					<th class="px-4 py-2">Action</th>
+		<h2 class="text-2xl font-bold mb-4">Bill Details</h2>
+
+		<a href="/generateBills/generateNewBill"
+			class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-4 inline-block">Generate Bill</a>
+
+		<table class="w-full border-collapse border border-gray-300">
+			<thead>
+				<tr class="bg-gray-200">
+					<th class="border px-4 py-2">sl. no.</th>
+					<th class="border px-4 py-2">Work Firm/ Customer Name</th>
+					<th class="border px-4 py-2">Mobile No.</th>
+					<th class="border px-4 py-2">Work Address</th>
+					<th class="border px-4 py-2">Work Date</th>
+					<th class="border px-4 py-2">Boring Details</th>
+					<th class="border px-4 py-2">Total Amount </th>
+					<th class="border px-4 py-2">Advance</th>
+					<th class="border px-4 py-2">Balance Amount</th>
+					<th class="border px-4 py-2">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="item, iterStat : ${items}" class="border-t">
-					<td class="px-4 py-2" th:text="${iterStat.index + 1}"></td>
-					<td class="px-4 py-2" th:text="${item.materialType?.materialName}"></td>
-					<td class="px-4 py-2" th:text="${item.companyName?.companyName}"></td>
-					<td class="px-4 py-2" th:text="${item.quality}"></td>
-					<td class="px-4 py-2" th:text="${item.matrialSize}"></td>
-					<td class="px-4 py-2" th:text="${item.quantity}"></td>
-					<td class="px-4 py-2" th:text="${item.materialPrice}"></td>
-					<td class="px-4 py-2 space-x-2">
-						<a th:href="@{'/editRawMaterial/' + ${item.materialId}}"
-							class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Edit</a>
-						<a th:href="@{'/deleteRawMaterial/' + ${item.materialId}}"
-							class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-							onclick="return confirm('Are you sure?')">Delete</a>
+				<!-- If quotations list has data -->
+				<tr th:each="bill, stat : ${generateBills}">
+					<td class="border p-2" th:text="${stat.count}"></td>
+					<td class="border p-2" th:text="${bill.customerName}"></td>
+					<td class="border p-2" th:text="${bill.mobileNo}"></td>
+					<td class="border p-2" th:text="${bill.workAddress}"></td>
+					<td class="border p-2" th:text="${bill.workDate}"></td>
+					<td class="border p-2" th:text="${bill.boringDia}+' inch.' +' '+${bill.boringType + ' Boring'}"></td>
+					<td class="border p-2" th:text="${bill.totalDrillingAmt} + ${bill.totalMatrialAmt} + ${bill.totalOthWorkAmt} + ${bill.transportingPrice}"></td>
+				    <td class="border p-2" th:text="${bill.totalAdvance}"></td>
+					<td class="border p-2" th:text="(${bill.totalDrillingAmt} + ${bill.totalMatrialAmt} + ${bill.totalOthWorkAmt} + ${bill.transportingPrice}) - ${bill.totalAdvance}"></td>
+					<td class="border px-4 py-2">
+						<div class="flex space-x-2">
+							<a th:href="@{'/generateBills/editBill/' + ${bill.billId}}"
+								class="bg-blue-500 text-white px-3 py-1 rounded">Edit</a>
+							<a th:href="@{'/generateBills/delete/' + ${bill.billId}}" class="bg-red-500 text-white px-3 py-1 rounded"
+								onclick="return confirm('Delete this Bill?')">Delete</a>
+							<a th:href="@{'/generateBills/downloadBill'}"
+								class="bg-red-500 text-white px-3 py-1 rounded">Download</a>
+						</div>
+					</td>
+				</tr>
+
+				<!-- If quotations list is empty -->
+				<tr th:if="${#lists.isEmpty(generateBills)}">
+					<td class="border px-4 py-2 text-center text-gray-500" colspan="10">
+						No data found
 					</td>
 				</tr>
 			</tbody>
 		</table>
-
-		<div class="text-right">
-			<a href="/addNewRawMaterial" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">+ Add New
-				Item</a>
-		</div>
 	</div>
-</body>
 
+</body>
 
 </html>
