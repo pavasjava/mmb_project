@@ -45,8 +45,10 @@ public class GenerateBillDTO {
 
     @ElementCollection
     private List<Integer> requiredMaterialQuantities = new ArrayList<>();
+    @ElementCollection
+    private List<String> requiredMaterialwithCompanyName = new ArrayList<>();
 
-    private List<OtherWorkDTO> otherWorks = new ArrayList<>();
+	private List<OtherWorkDTO> otherWorks = new ArrayList<>();
     
     private Integer totalDrilling;
 	private Double totalAdvance;
@@ -54,7 +56,8 @@ public class GenerateBillDTO {
 	
 	private Double totalMatrialAmt;
 	private Double totalOthWorkAmt;
-
+	
+	private List<SelectedMaterialDTO> selectedMaterials;
 	public Integer getBillId() {
 		return billId;
 	}
@@ -234,4 +237,19 @@ public class GenerateBillDTO {
 		this.totalOthWorkAmt = totalOthWorkAmt;
 	}
 	
+    public List<String> getRequiredMaterialwithCompanyName() {
+		return requiredMaterialwithCompanyName;
+	}
+
+	public void setRequiredMaterialwithCompanyName(List<String> requiredMaterialwithCompanyName) {
+		this.requiredMaterialwithCompanyName = requiredMaterialwithCompanyName;
+	}
+
+	public List<SelectedMaterialDTO> getSelectedMaterials() {
+		return selectedMaterials;
+	}
+
+	public void setSelectedMaterials(List<SelectedMaterialDTO> selectedMaterials) {
+		this.selectedMaterials = selectedMaterials;
+	}	
 }

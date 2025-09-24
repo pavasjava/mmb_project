@@ -3,6 +3,7 @@ package mmb.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,12 +32,10 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http.csrf(csrf -> csrf.disable())
 	        .authorizeHttpRequests(auth -> auth
+	        	.requestMatchers("/login", "/error", "/403").permitAll()
 	            .requestMatchers(AppConstants.BASE_API_URL).permitAll()
-	            .requestMatchers(AppConstants.USER_DASHBOARD_URL).hasAnyAuthority("ROLE_USER")
+	            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 	            .requestMatchers(AppConstants.ADMIN_URL).hasAnyAuthority("ROLE_ADMIN")
-//	            .requestMatchers(AppConstants.NURSE_DASHBOARD_URL).hasAnyAuthority("ROLE_NURSE")
-//	            .requestMatchers(AppConstants.DOCTOR_DASHBOARD_URL).hasAnyAuthority("ROLE_DOCTOR")
-//	            .requestMatchers(AppConstants.PHARMACIST_DASHBOARD_URL).hasAnyAuthority("ROLE_PHARMASSIST")
 	            .anyRequest().authenticated())
 	        .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
               .authenticationProvider(authenticationProvider())
@@ -69,5 +68,4 @@ public class SecurityConfig {
 //		return new InMemoryUserDetailsManager(admin);
 	    return new CustomUserService();
 	}
-
 }

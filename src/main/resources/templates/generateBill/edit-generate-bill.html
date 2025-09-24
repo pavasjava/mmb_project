@@ -293,27 +293,26 @@
 				<div class="mt-4" id="selectedSection" 
 				     th:classappend="${#lists.isEmpty(generateBill.requiredMaterialIds)} ? 'hidden' : ''">
 				    <label class="font-semibold mb-2">Selected Materials</label>
-				    <ul id="materialsList" class="list-disc pl-5 text-gray-700">
-				        <li th:each="mat, iter : ${generateBill.requiredMaterialIds}"
-				            class="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
-				            
-				            <!-- Serial -->
-				            <div class="flex items-center">
-				                <span class="serial-number font-bold mr-2" th:text="${iter.index + 1} + '.'"></span>
-				                <span th:text="${mat} + ' - Quantity: ' + ${generateBill.requiredMaterialQuantities[iter.index]}"></span>
-				            </div>
+					<ul id="materialsList" class="list-disc pl-5 text-gray-700">
+					    <li th:each="mat, iter : ${generateBill.selectedMaterials}"
+					        class="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
 
-				            <!-- Hidden inputs for binding -->
-				            <input type="hidden" name="requiredMaterialIds" th:value="${mat}" />
-				            <input type="hidden" name="requiredMaterialQuantities"
-				                   th:value="${generateBill.requiredMaterialQuantities[iter.index]}" />
+					        <!-- Serial -->
+					        <div class="flex items-center">
+					            <span class="serial-number font-bold mr-2" th:text="${iter.index + 1} + '.'"></span>
+					            <span th:text="${mat.materialType} + ' (' + ${mat.companyName} + ') - Quantity: ' + ${mat.quantity}"></span>
+					        </div>
 
-				            <!-- Remove button -->
-				            <button type="button"
-				                    class="text-red-600 hover:text-red-800 font-bold ml-3"
-				                    onclick="this.closest('li').remove()">&#10006;</button>
-				        </li>
-				    </ul>
+					        <!-- Hidden inputs for form binding -->
+					        <input type="hidden" name="requiredMaterialIds" th:value="${mat.materialId}" />
+					        <input type="hidden" name="requiredMaterialQuantities" th:value="${mat.quantity}" />
+
+					        <!-- Remove button -->
+					        <button type="button"
+					                class="text-red-600 hover:text-red-800 font-bold ml-3"
+					                onclick="this.closest('li').remove()">&#10006;</button>
+					    </li>
+					</ul>
 				</div>
 				<input type="hidden" th:field="*{billId}" />
 			</div>
@@ -321,35 +320,42 @@
 			<label>Transporting</label>
 			<!-- Transport Yes/No -->
 			<div class="flex items-center gap-6 mb-4">
+			    <div class="flex items-center gap-4">
+			        <label class="flex items-center gap-2">
+						<input type="radio" name="transportRequired" value="yes"
+						       class="transport-radio"
+						       th:checked="${generateBill.transportingVehicleType != null or generateBill.transportingPrice != null}" />
+			            <span>Yes</span>
+			        </label>
+			        <label class="flex items-center gap-2">
 
-				<div class="flex items-center gap-4">
-					<label class="flex items-center gap-2">
-						<input type="radio" name="transportRequired" value="yes" class="transport-radio">
-						<span>Yes</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="radio" name="transportRequired" value="no" class="transport-radio" checked>
-						<span>No</span>
-					</label>
-				</div>
+						<input type="radio" name="transportRequired" value="no"
+						       class="transport-radio"
+						       th:checked="${generateBill.transportingVehicleType == null and generateBill.transportingPrice == null}" />
+			            <span>No</span>
+			        </label>
+			    </div>
 
-				<!-- Hidden transport fields (inline row) -->
-				<div id="transportFields" class="hidden flex items-center gap-4">
-					<div>
-						<label class="block text-sm font-medium">Vehicle Type</label>
-						<select th:field="*{transportingVehicleType}" class="border rounded px-3 py-2">
-							<option value="">--Select--</option>
-							<option value="small">Small</option>
-							<option value="medium">Medium</option>
-							<option value="large">Large</option>
-						</select>
-					</div>
+			    <!-- Transport fields -->
+			    <div id="transportFields"
+			         th:class="${(transportingVehicleType != null or transportingPrice != null) ? 
+			                     'flex items-center gap-4' : 
+			                     'flex items-center gap-4 hidden'}">
+			        <div>
+			            <label class="block text-sm font-medium">Vehicle Type</label>
+			            <select th:field="*{transportingVehicleType}" class="border rounded px-3 py-2">
+			                <option value="">--Select--</option>
+			                <option value="small">Small</option>
+			                <option value="medium">Medium</option>
+			                <option value="large">Large</option>
+			            </select>
+			        </div>
 
-					<div>
-						<label class="block text-sm font-medium">Transport Price</label>
-						<input type="number" th:field="*{transportingPrice}" class="border rounded px-3 py-2" />
-					</div>
-				</div>
+			        <div>
+			            <label class="block text-sm font-medium">Transport Price</label>
+			            <input type="number" th:field="*{transportingPrice}" class="border rounded px-3 py-2" />
+			        </div>
+			    </div>
 			</div>
 
 			<div class="mb-4">
@@ -498,7 +504,7 @@
 	</script>
 
 
-	<script>
+	<!--<script>
 		document.querySelectorAll('.transport-radio').forEach(radio => {
 			radio.addEventListener('change', function () {
 				const transportFields = document.getElementById('transportFields');
@@ -509,7 +515,7 @@
 				}
 			});
 		});
-	</script>
+	</script>-->
 
 	<script>
 		const container = document.getElementById("otherWorkContainer");
@@ -573,6 +579,31 @@
 			updateSerialNumbers();
 			updateFieldNames();
 		});
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+		    const radios = document.querySelectorAll(".transport-radio");
+		    const fields = document.getElementById("transportFields");
+		    const vehicle = fields.querySelector("select");
+		    const price = fields.querySelector("input");
+
+		    function toggleFields() {
+		        const selected = document.querySelector(".transport-radio:checked");
+		        if (selected && selected.value === "yes") {
+		            fields.classList.remove("hidden");
+		            vehicle.required = true;
+		            price.required = true;
+		        } else {
+		            fields.classList.add("hidden");
+		            vehicle.required = false;
+		            price.required = false;
+		        }
+		    }
+
+		    radios.forEach(radio => radio.addEventListener("change", toggleFields));
+		    toggleFields(); // run on page load (important for edit mode)
+		});
+
 	</script>
 </body>
 

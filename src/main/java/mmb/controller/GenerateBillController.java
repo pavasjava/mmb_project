@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import jakarta.servlet.http.HttpServletResponse;
 import mmb.dto.GenerateBillDTO;
 import mmb.dto.MaterialWithCompanyProjection;
-import mmb.dto.OtherWorkDTO;
-import mmb.model.GenerateBill;
-import mmb.model.GenerateMaterialsBill;
-import mmb.model.OtherWork;
 import mmb.repository.GenerateBillRepo;
 import mmb.repository.MaterialCompanyNameRepo;
 import mmb.repository.MaterialTypeRepo;
@@ -72,80 +69,33 @@ public class GenerateBillController {
 
 	@GetMapping("/editBill/{id}")
 	public String editBill(@PathVariable Integer id, Model model) {
-		GenerateBill bill = billService.getBillById(id);
-		List<MaterialWithCompanyProjection> materials = generateBillRepository.findAllMaterialsDtls();
-
-		// Convert entity to DTO
-		GenerateBillDTO dto = new GenerateBillDTO();
-		dto.setBillId(bill.getBillId());
-		dto.setCustomerName(bill.getCustomerName());
-		dto.setMobileNo(bill.getMobileNo());
-		dto.setWorkAddress(bill.getWorkAddress());
-		dto.setWorkDate(bill.getWorkDate());
-		dto.setBoringType(bill.getBoringType());
-		dto.setBoringDia(bill.getBoringDia());
-		dto.setPriceQntDtls(bill.getPriceQntDtls());
-		dto.setDrillingPrice(bill.getDrillingPrice());
-		dto.setTransportingVehicleType(bill.getTransportingVehicleType());
-		dto.setTransportingPrice(bill.getTransportingPrice());
-		dto.setTotalDrilling(bill.getTotalDrilling());
-
-//        dto.setRequiredMaterialIds(bill.getRequiredMaterials()
-//                .stream().map(RawMaterial::getMaterialId).toList());
-		// ✅ Map materials to requiredMaterialIds + Quantities
-		if (bill.getMaterialsBill() != null) {
-		    dto.setRequiredMaterialIds(
-		            bill.getMaterialsBill().stream()
-		                .map(gmb -> gmb.getRawMaterial().getMaterialId())
-		                .toList()
-		    );
-
-		    dto.setRequiredMaterialQuantities(
-		            bill.getMaterialsBill().stream()
-		                .map(GenerateMaterialsBill::getTotalUnit)
-		                .toList()
-		    );
-
-		    // 🔎 Print for debugging
-		    System.out.println("✅ DTO RequiredMaterialIds: " + dto.getRequiredMaterialIds());
-		    System.out.println("✅ DTO RequiredMaterialQuantities: " + dto.getRequiredMaterialQuantities());
-
-		    // If you want one-to-one mapping print
-		    for (int i = 0; i < dto.getRequiredMaterialIds().size(); i++) {
-		        System.out.println("MaterialId: " + dto.getRequiredMaterialIds().get(i) +
-		                           ", Quantity: " + dto.getRequiredMaterialQuantities().get(i));
-		    }
-		}
-
-		// ✅ Map other works
-		if (bill.getOtherWorks() != null) {
-		    System.out.println("🔎 Other Works from DB:");
-		    for (OtherWork ow : bill.getOtherWorks()) {
-		        System.out.println("ID: " + ow.getOthWorkId() +
-		                           ", Name: " + ow.getOthWorkName() +
-		                           ", Unit: " + ow.getTotalUnit() +
-		                           ", Price: " + ow.getPrice());
-		    }
-
-		    dto.setOtherWorks(
-		        bill.getOtherWorks().stream()
-		            .map(ow -> new OtherWorkDTO(
-		                    ow.getOthWorkId(),
-		                    ow.getOthWorkName(),
-		                    ow.getTotalUnit(),
-		                    ow.getPrice()))
-		            .toList()
-		    );
-
-		    // 🔎 Print DTO after mapping
-		    System.out.println("✅ DTO OtherWorks: " + dto.getOtherWorks());
-		}
+		GenerateBillDTO dto = billService.getBillById(id);
 
 		model.addAttribute("generateBill", dto);
-		model.addAttribute("materials", materials);
-		model.addAttribute("materialTypes", materialTypeRepository.findAll());
-		model.addAttribute("companies", materialCompanyNameRepository.findAll());
+		model.addAttribute("materials", billService.getAllMaterials());
+		model.addAttribute("materialTypes", billService.getAllMaterialTypes());
+		model.addAttribute("companies", billService.getAllCompanies());
+
 		return "generateBill/edit-generate-bill";
+	}
+
+	@GetMapping("/downloadBillPdf/{id}")
+	public void downloadPdf(@PathVariable("id") Integer id, HttpServletResponse response) {
+		try {
+	        // 1. Fetch DTO
+	        GenerateBillDTO bill = billService.getBillById(id);
+
+	        // 2. Set response headers
+	        response.setContentType("application/pdf");
+	        response.setHeader("Content-Disposition", "attachment; filename=bill_" + id + ".pdf");
+
+	        // 3. Generate PDF into response output stream
+	        billService.generateBillPdf(bill, response.getOutputStream());
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("Error while downloading bill PDF", e);
+	    }
 	}
 
 	@GetMapping("/delete/{id}")

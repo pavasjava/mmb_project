@@ -1,30 +1,49 @@
 <!-- templates/fragments/navbar.html -->
 <div class="navbar" th:fragment="navbar">
-    <div class="navbar-left">
-        <img th:src="@{/images/MMBLogo.jpg}" alt="Borewell Logo" style="height: 45px; width: 65px; border-radius: 60%; object-fit: cover;" />
+	<div class="navbar-left">
+		<img th:src="@{/images/MMBLogo.jpg}" alt="Borewell Logo"
+			style="height: 45px; width: 65px; border-radius: 60%; object-fit: cover;" />
 		<a th:href="@{/dashboard}" class="active">Home</a>
-        <a th:href="@{/articles}" class="active">Articles</a>
-        <a th:href="@{/showImages}">Images</a>
+		<a th:href="@{/articles}" class="active">Articles</a>
+		<a th:href="@{/showImages}">Images</a>
 		<a th:href="@{/getAllRawMaterials}">Raw Material</a>
-        <a th:href="@{/quotations/getAllQuotation}">Quotation</a>
-        <a href="#">Book</a>
-        <a th:href="@{/generateBills/getAllBill}">Generate Bill</a>
-        <a href="#">Price Details</a>
-        <a href="#">More <i class="fa-solid fa-chess-knight"></i></a>
-    </div>
+		<a th:href="@{/quotations/getAllQuotation}">Quotation</a>
+		<a th:href="@{/bookings/showBookingForm}">Book</a>
+		<a th:href="@{/generateBills/getAllBill}">Generate Bill</a>
+		<a href="#">Price Details</a>
+		<a th:href="@{/borewellTypes/borewellTypeList}">More <i class="fa-solid fa-chess-knight"></i></a>
+		<!--<div class="dropdown" style="display:inline-block;">
+			<a class="nav-link dropdown-toggle" href="#" role="button" id="moreDropdown" data-bs-toggle="dropdown"
+				aria-expanded="false">
+				More <i class="fa-solid fa-chess-knight"></i>
+			</a>
+			<ul class="dropdown-menu" aria-labelledby="moreDropdown">
+				<li><a class="dropdown-item" th:href="@{/borewellTypes/showTypeAddForm}">Add Borewell Type</a></li>
+				<li><a class="dropdown-item" th:href="@{/borewellTypes/BorewellTypeList}">Borewell Type List</a></li>
+			</ul>
+		</div>-->
+		<!-- ✅ Logout Form -->
+		<form th:action="@{/logout}" method="post" style="margin-left:280px;">
+			<button type="submit" class="text-white font-bold px-3 py-2 rounded bg-red-600 hover:bg-red-700">
+				Logout <i class="fa-solid fa-right-from-bracket"></i>
+			</button>
+		</form>
+	</div>
 
-    <div class="navbar-right" style="display: flex; align-items: center; gap: 20px;">
-        <div class="search-box" style="background-color: white; border-radius: 10px; padding: 8px 12px; display: flex; align-items: center;">
-            <!--<i class="fa fa-search search-icon" style="color: #d64026;"></i>-->
+	<div class="navbar-right" style="display: flex; align-items: center; gap: 20px;">
+		<div class="search-box"
+			style="background-color: white; border-radius: 10px; padding: 8px 12px; display: flex; align-items: center;">
+			<!--<i class="fa fa-search search-icon" style="color: #d64026;"></i>-->
 			<i class="fa fa-search search-icon" style="color: rgb(73, 146, 180);"></i>
-            <input type="text" placeholder="Search articles..." style="border: none; outline: none; font-size: 14px; margin-left: 5px;" />
-        </div>
+			<input type="text" placeholder="Search articles..."
+				style="border: none; outline: none; font-size: 14px; margin-left: 5px;" />
+		</div>
 
-        <div class="social-icons" style="display: flex; gap: 10px;">
-            <a href="#" target="_blank" style="color: white;"><i class="fab fa-instagram"></i></a>
-            <a href="#" target="_blank" style="color: white;"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" target="_blank" style="color: white;"><i class="fab fa-whatsapp"></i></a>
-            <a href="#" target="_blank" style="color: white;"><i class="fab fa-twitter"></i></a>
-        </div>
-    </div>
+		<div class="social-icons" style="display: flex; gap: 10px;">
+			<a href="#" target="_blank" style="color: white;"><i class="fab fa-instagram"></i></a>
+			<a href="#" target="_blank" style="color: white;"><i class="fab fa-facebook-f"></i></a>
+			<a href="#" target="_blank" style="color: white;"><i class="fab fa-whatsapp"></i></a>
+			<a href="#" target="_blank" style="color: white;"><i class="fab fa-twitter"></i></a>
+		</div>
+	</div>
 </div>

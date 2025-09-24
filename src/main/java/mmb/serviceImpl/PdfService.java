@@ -19,6 +19,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPCellEvent;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -142,9 +143,9 @@ public class PdfService {
 
 		document.add(Chunk.NEWLINE);
 
-		Color customGreen = new Color(0x30, 0x7D, 0x7E);
-		Font greenTitleFont = new Font(Font.HELVETICA, 22, Font.BOLD, customGreen);
-		Paragraph title = new Paragraph("Quotation Details", greenTitleFont);
+//		Color customGreen = new Color(0x30, 0x7D, 0x7E);
+		Font greenTitleFont = new Font(Font.HELVETICA, 22, Font.BOLD, Color.BLACK);
+		Paragraph title = new Paragraph("Quotation", greenTitleFont);
 		title.setAlignment(Element.ALIGN_CENTER);
 		title.setSpacingAfter(20);
 		document.add(title);
@@ -161,31 +162,46 @@ public class PdfService {
 		List<RawMaterial> materials = quotation.getRequiredMaterials();
 		if (materials != null && !materials.isEmpty()) {
 			PdfPTable table = new PdfPTable(4);
-			float tableWidth1 = urx - llx - 20f;
+			float tableWidth1 = urx - llx - 10f;
 			table.setTotalWidth(tableWidth1);
 			table.setLockedWidth(true);
 			table.setHorizontalAlignment(Element.ALIGN_CENTER);
 
 			Font tableFont = new Font(Font.HELVETICA, 12);
+			Font tableHeadFont = new Font(Font.HELVETICA, 12, Font.BOLD);
+			
+			PdfPCellEvent thinBorder = new PdfPCellEvent() {
+			    @Override
+			    public void cellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvas) {
+			        PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
+			        cb.setLineWidth(0.5f); // thin line
+			        cb.rectangle(rect.getLeft(), rect.getBottom(), rect.getWidth(), rect.getHeight());
+			        cb.stroke();
+			    }
+			};
 
 			PdfPCell cell;
 
-			cell = new PdfPCell(new Phrase("Sl No", tableFont));
+			cell = new PdfPCell(new Phrase("Sl No", tableHeadFont));
+			cell.setCellEvent(thinBorder);
 			cell.setPaddingTop(8f);
 			cell.setPaddingBottom(8f);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Phrase("Item Details", tableFont));
+			cell = new PdfPCell(new Phrase("Description", tableHeadFont));
+			cell.setCellEvent(thinBorder);
 			cell.setPaddingTop(8f);
 			cell.setPaddingBottom(8f);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Phrase("Quantity", tableFont));
+			cell = new PdfPCell(new Phrase("Quantity", tableHeadFont));
+			cell.setCellEvent(thinBorder);
 			cell.setPaddingTop(8f);
 			cell.setPaddingBottom(8f);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Phrase("Price", tableFont));
+			cell = new PdfPCell(new Phrase("Price", tableHeadFont));
+			cell.setCellEvent(thinBorder);
 			cell.setPaddingTop(8f);
 			cell.setPaddingBottom(8f);
 			table.addCell(cell);

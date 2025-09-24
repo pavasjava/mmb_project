@@ -22,6 +22,9 @@ public class OtherWorkDTO {
 	private String totalUnit;
 	private Double price;
 //	private Quotation quotation;
+	public OtherWorkDTO() {
+		
+	}
 	public OtherWorkDTO(Integer othWorkId, String othWorkName, String totalUnit, Double price) {
 		super();
 		this.othWorkId = othWorkId;

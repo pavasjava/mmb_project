@@ -222,7 +222,7 @@
 								class="bg-blue-500 text-white px-3 py-1 rounded">Edit</a>
 							<a th:href="@{'/generateBills/delete/' + ${bill.billId}}" class="bg-red-500 text-white px-3 py-1 rounded"
 								onclick="return confirm('Delete this Bill?')">Delete</a>
-							<a th:href="@{'/generateBills/downloadBill'}"
+							<a th:href="@{'/generateBills/downloadBillPdf/' + ${bill.billId}}"
 								class="bg-red-500 text-white px-3 py-1 rounded">Download</a>
 						</div>
 					</td>

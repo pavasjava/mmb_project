@@ -146,27 +146,28 @@
 			margin-top: 30px;
 			color: #fff;
 		}
+
 		.logo {
-		  text-align: center;
-		  margin-bottom: 20px;
+			text-align: center;
+			margin-bottom: 20px;
 		}
 
 		.circle {
-		  width: 90px;   
-		  height: 75px; 
-		  border-radius: 50%;
-		  background: #fff; 
-		  display: flex;
-		  align-items: center;
-		  justify-content: center;
-		  overflow: hidden; 
-		  margin: 0 auto;
+			width: 90px;
+			height: 75px;
+			border-radius: 50%;
+			background: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			margin: 0 auto;
 		}
 
 		.circle img {
-		  width: 100px; 
-		  height: 100px;
-		  object-fit: contain;   
+			width: 100px;
+			height: 100px;
+			object-fit: contain;
 		}
 	</style>
 </head>
@@ -175,8 +176,8 @@
 	<div class="wrapper">
 		<form method="POST" action="/loginreq">
 			<div class="circle">
-			        <img src="/images/MMBLogo.jpg" alt="Company Logo">
-			    </div>
+				<img src="/images/MMBLogo.jpg" alt="Company Logo">
+			</div>
 			<h2>Login</h2>
 			<div class="input-field">
 				<input type="text" name="username" required>
@@ -191,14 +192,23 @@
 					<input type="checkbox" id="remember" name="remember">
 					<p>Remember me</p>
 				</label>
-				<a href="#">Forgot password?</a>
+				<a href="/updateCredentials">Forgot password?</a>
 			</div>
 			<button type="submit">Log In</button>
 			<div class="register">
-				<p>Don't have an account? <a href="/register">Register</a></p>
+				<p>Don't have an account? <a href="/index">Register</a></p>
 			</div>
 		</form>
 	</div>
+	<!-- JavaScript to show error message if 'error' parameter exists in the URL -->
+	<script>
+		const urlParams = new URLSearchParams(window.location.search);
+		const errorParam = urlParams.get('error');
+
+		if (errorParam) {
+			document.getElementById('error-message').style.display = 'block';
+		}
+	</script>
 </body>
 
 </html>
