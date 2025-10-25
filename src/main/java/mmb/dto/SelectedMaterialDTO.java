@@ -14,15 +14,15 @@ public class SelectedMaterialDTO {
 	private String companyName;
 	private Integer quantity;
 
-	public SelectedMaterialDTO() {
-	}
-
-	public SelectedMaterialDTO(Integer materialId, String materialType, String companyName, Integer quantity) {
-		this.materialId = materialId;
-		this.materialType = materialType;
-		this.companyName = companyName;
-		this.quantity = quantity;
-	}
+//	public SelectedMaterialDTO() {
+//	}
+//
+//	public SelectedMaterialDTO(Integer materialId, String materialType, String companyName, Integer quantity) {
+//		this.materialId = materialId;
+//		this.materialType = materialType;
+//		this.companyName = companyName;
+//		this.quantity = quantity;
+//	}
 
 	public Integer getMaterialId() {
 		return materialId;

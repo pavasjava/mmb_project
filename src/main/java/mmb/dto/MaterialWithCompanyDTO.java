@@ -12,10 +12,10 @@ public class MaterialWithCompanyDTO {
 	private String materialWithCmpName;
 	private Integer materialTypeCompanyId; 
 	
-	public MaterialWithCompanyDTO(String materialWithCmpName, Integer materialTypeCompanyId /* , ... */) {
-		this.materialWithCmpName = materialWithCmpName;
-		this.materialTypeCompanyId = materialTypeCompanyId;
-	}
+//	public MaterialWithCompanyDTO(String materialWithCmpName, Integer materialTypeCompanyId /* , ... */) {
+//		this.materialWithCmpName = materialWithCmpName;
+//		this.materialTypeCompanyId = materialTypeCompanyId;
+//	}
 
 
 	public String getMaterialWithCmpName() {

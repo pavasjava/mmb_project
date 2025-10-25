@@ -22,16 +22,16 @@ public class OtherWorkDTO {
 	private String totalUnit;
 	private Double price;
 //	private Quotation quotation;
-	public OtherWorkDTO() {
-		
-	}
-	public OtherWorkDTO(Integer othWorkId, String othWorkName, String totalUnit, Double price) {
-		super();
-		this.othWorkId = othWorkId;
-		this.othWorkName = othWorkName;
-		this.totalUnit = totalUnit;
-		this.price = price;
-	}
+//	public OtherWorkDTO() {
+//		
+//	}
+//	public OtherWorkDTO(Integer othWorkId, String othWorkName, String totalUnit, Double price) {
+//		super();
+//		this.othWorkId = othWorkId;
+//		this.othWorkName = othWorkName;
+//		this.totalUnit = totalUnit;
+//		this.price = price;
+//	}
     
 	public Integer getOthWorkId() {
 		return othWorkId;
