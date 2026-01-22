@@ -2,430 +2,536 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Add/Edit Quotation</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		.bg-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 100%;
-			background-image: url('/images/bgimage.png');
-			background-size: cover;
-			background-position: center;
-			opacity: 0.08;
-			/* More light/faded */
-			z-index: -1;
-		}
+    <title>Add/Edit Quotation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.03;
+            z-index: -1;
+        }
 
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #f4f8fb;
-			color: #333;
-		}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+        }
 
-		.navbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			/*background-color: rgb(73, 146, 180);*/
-			background-color: #d64026;
-			padding: 10px 20px;
-		}
+        .container-card {
+            width: 1400px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-		.navbar-left {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+        .container-card:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+        }
 
-		.navbar-left img {
-			height: 40px;
-			width: 65px;
-			border-radius: 60%;
-			object-fit: cover;
-		}
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
 
-		.navbar-left a {
-			text-decoration: none;
-			color: white;
-			font-weight: bold;
-			padding: 8px 12px;
-			border-radius: 8px;
-			transition: background-color 0.3s;
-		}
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background-color: #fcfdfe;
+        }
 
-		.navbar-left a.active,
-		.navbar-left a:hover {
-			/*background-color: #17418138;*/
-			background-color: #c23c22;
-		}
+        .form-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+            background-color: white;
+        }
 
-		.navbar-right {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background-color: #fcfdfe;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 40px;
+        }
 
-		.search-box {
-			background-color: white;
-			border-radius: 10px;
-			padding: 8px 12px;
-			display: flex;
-			align-items: center;
-		}
+        .form-select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+            background-color: white;
+        }
 
-		.search-box input {
-			border: none;
-			outline: none;
-			font-size: 14px;
-			margin-left: 5px;
-		}
+        .btn-cancel {
+            background-color: #f1f5f9;
+            color: #64748b;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1.5px solid #e2e8f0;
+        }
 
-		.search-icon {
-			color: #d64026;
-			font-size: 16px;
-		}
+        .btn-cancel:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-1px);
+        }
 
-		.social-icons i {
-			font-size: 18px;
-			color: white;
-			transition: transform 0.2s;
-		}
+        .btn-save {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
 
-		.social-icons i:hover {
-			transform: scale(1.2);
-			color: #ffc107;
-		}
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
 
-		.container {
-			max-width: 1200px;
-			margin: 50px auto;
-			padding: 40px;
-			background-color: white;
-			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-			border-radius: 12px;
-		}
+        .dropdown-btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            background-color: #fcfdfe;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            transition: all 0.2s ease;
+        }
 
-		h1 {
-			text-align: left;
-			color: #2c3e50;
-			margin-bottom: 20px;
-		}
+        .dropdown-btn:after {
+            content: '▼';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #6b7280;
+        }
 
-		p {
-			font-size: 17px;
-			line-height: 1.7;
-			text-align: justify;
-		}
+        .dropdown-btn:hover {
+            border-color: #cbd5e0;
+            background-color: white;
+        }
 
-		.footer {
-			margin-top: 30px;
-			text-align: center;
-			font-size: 14px;
-			color: #777;
-		}
+        .dropdown-panel {
+            position: absolute;
+            z-index: 50;
+            margin-top: 8px;
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            max-height: 240px;
+            overflow-y: auto;
+            display: none;
+        }
 
-		.modal {
-			display: none;
-			position: fixed;
-			z-index: 999;
-			padding-top: 60px;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgba(0, 0, 0, 0.8);
-		}
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
 
-		.modal-content {
-			margin: auto;
-			display: block;
-			max-width: 90%;
-			max-height: 80%;
-			border-radius: 10px;
-		}
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+        }
 
-		.close {
-			position: absolute;
-			top: 30px;
-			right: 50px;
-			color: #fff;
-			font-size: 35px;
-			font-weight: bold;
-			cursor: pointer;
-		}
+        .dropdown-item input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1.5px solid #cbd5e0;
+            cursor: pointer;
+        }
 
-		.close:hover {
-			color: #ccc;
-		}
+        .selected-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin: 4px 4px 4px 0;
+        }
 
-		h2.bullet::before {
-			content: "•";
-			font-size: 36px;
-			color: #2c3e50;
-			margin-right: 12px;
-			vertical-align: middle;
-		}
-	</style>
+        .selected-chip i {
+            margin-left: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #4299e1 0%, #667eea 100%);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Smooth animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .main-content-expanded {
+            margin-left: 80px;
+        }
+
+        .main-content-full {
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-50">
+    <!-- Background Overlay -->
+    <div class="bg-overlay"></div>
 
-	<!-- ✅ Background Image -->
-	<div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
 
-	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div th:replace="fragments/top-navbar :: top-navbar"></div>
 
-	<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
-		<h2 class="text-2xl font-bold mb-4">Add / Edit Quotation</h2>
+        <!-- Main Form Content -->
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <div class="container-card p-8">
+                <!-- Header -->
+                <div class="mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Edit Quotation</h2>
+                    <p class="text-gray-600">Fill in the details below to update a quotation</p>
+                </div>
 
-		<form th:action="@{/quotations/saveQuotation}" th:object="${quotation}" method="post" class="space-y-4">
+                <!-- Form -->
+                <form th:action="@{/quotations/saveQuotation}" th:object="${quotation}" method="post"
+                    class="space-y-8">
 
-			<!-- Hidden field for edit -->
-			<input type="hidden" th:field="*{quotationId}" />
+                    <!-- Hidden field for edit -->
+                    <input type="hidden" th:field="*{quotationId}" />
 
-			<div>
-				<label>Customer Name</label>
-				<input type="text" th:field="*{customerName}" class="w-full border rounded px-3 py-2" />
-			</div>
+                    <!-- Section 1: Customer Details -->
+                    <div>
+                        <h3 class="section-title">Customer Information</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Customer Name</label>
+                                <input type="text" th:field="*{customerName}" class="form-input"
+                                    placeholder="Enter customer name" />
+                            </div>
+                            <div>
+                                <label class="form-label">Work Address</label>
+                                <input type="text" th:field="*{workAddress}" class="form-input"
+                                    placeholder="Enter work address" />
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<label>Work Address</label>
-				<input type="text" th:field="*{workAddress}" class="w-full border rounded px-3 py-2" />
-			</div>
+                    <!-- Section 2: Boring Details -->
+                    <div>
+                        <h3 class="section-title">Boring Specifications</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Boring Type</label>
+                                <select th:field="*{boringType}" class="form-select">
+                                    <option value="">-- Select Boring Type --</option>
+                                    <option value="DTH">DTH</option>
+                                    <option value="In-Well">In-Well</option>
+                                    <option value="Rotary">Rotary</option>
+                                    <option value="Callis">Callis</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Boring Diameter</label>
+                                <select th:field="*{boringDia}" class="form-select">
+                                    <option value="">-- Select Boring Diameter --</option>
+                                    <option value="5">5 inch</option>
+                                    <option value="6">6 inch</option>
+                                    <option value="8">8 inch</option>
+                                    <option value="10">10 inch</option>
+                                    <option value="12">12 inch</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<label>Boring Type</label>
-				<select th:field="*{boringType}" class="w-full border rounded px-3 py-2">
-					<option value="">--Select Boring Type--</option>
-					<option value="DTH">DTH</option>
-					<option value="In-Well">In-Well</option>
-					<option value="Rotary">Rotary</option>
-					<option value="Callis">Callis</option>
-				</select>
-			</div>
+                    <!-- Section 3: Pricing Details -->
+                    <div>
+                        <h3 class="section-title">Pricing Details</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Price Quantity Details</label>
+                                <select th:field="*{priceQntDtls}" class="form-select">
+                                    <option value="">-- Select Quantity Unit --</option>
+                                    <option value="1 Feet">1 Feet</option>
+                                    <option value="1 Mtr.">1 Meter</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Drilling Price</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 mr-2">₹</span>
+                                    <input type="number" th:field="*{drillingPrice}" class="form-input pl-12"
+                                        placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<label>Boring Dia</label>
-				<select th:field="*{boringDia}" class="w-full border rounded px-3 py-2">
-					<option value="">--Select Boring dia--</option>
-					<option value="5">5 inch.</option>
-					<option value="6">6 inch.</option>
-					<option value="8">8 inch.</option>
-					<option value="10">10 inch.</option>
-					<option value="12">12 inch.</option>
-				</select>
-			</div>
+                    <!-- Section 4: Materials -->
+                    <div>
+                        <h3 class="section-title">Required Materials</h3>
+                        <div class="relative">
+                            <label class="form-label mb-2">Select Required Materials</label>
+                            <div class="dropdown-btn" id="dropdown-btn">
+                                Select Materials
+                            </div>
+                            <div id="dropdown-panel" class="dropdown-panel">
+                                <div th:each="mat : ${materials}" class="dropdown-item">
+                                    <input type="checkbox" th:id="'mat-' + ${mat.materialId}"
+                                        th:value="${mat.materialId}" th:data-name="${mat.materialWithCmpName}"
+                                        th:field="*{requiredMaterialIds}" class="mr-2 material-checkbox" />
+                                    <label th:for="'mat-' + ${mat.materialId}" th:text="${mat.materialWithCmpName}"
+                                        class="cursor-pointer flex-1"></label>
+                                </div>
+                            </div>
 
-			<div>
-				<label>Price Quantity Details</label>
-				<select th:field="*{priceQntDtls}" class="w-full border rounded px-3 py-2">
-					<option value="">--Select Quantity--</option>
-					<option value="1 Feet">1 Feet</option>
-					<option value="1 Mtr.">1 Mtr.</option>
-				</select>
-			</div>
+                            <!-- Selected Materials Display -->
+                            <div id="selected-container" class="mt-4 hidden">
+                                <p class="form-label">Selected Materials:</p>
+                                <div id="selected-materials" class="flex flex-wrap gap-2 mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<label>Drilling Price</label>
-				<input type="number" th:field="*{drillingPrice}" class="w-full border rounded px-3 py-2" />
-			</div>
+                    <!-- Section 5: Transport Details -->
+                    <div>
+                        <h3 class="section-title">Transportation Details</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Transport Vehicle Type</label>
+                                <select th:field="*{transportingVehicleType}" class="form-select">
+                                    <option value="">-- Select Vehicle Type --</option>
+                                    <option value="small">Small</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="large">Large</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Transport Price</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 mr-2">₹</span>
+                                    <input type="number" th:field="*{transportingPrice}" class="form-input pl-12"
+                                        placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<div class="relative inline-block w-full">
-					<div class="relative inline-block w-full">
-						<div class="relative inline-block w-64">
-							<label class="block text-sm font-medium text-gray-700 mb-1">Required Material</label>
+                    <!-- Form Actions -->
+                    <div class="pt-8 border-t border-gray-200 flex justify-end space-x-4">
+                        <a href="/quotations/getAllQuotation" class="btn-cancel">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save mr-2"></i>Save Quotation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-							<!-- Dropdown button -->
-							<div class="border rounded px-3 py-2 w-96 cursor-pointer bg-white" id="dropdown-btn">
-								Select Materials
-							</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize main content based on sidebar state
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
 
-							<!-- Dropdown panel -->
-							<div id="dropdown-panel"
-								class="absolute z-10 mt-1 w-96 bg-white border rounded shadow-lg max-h-60 overflow-y-auto hidden">
-								<div th:each="mat : ${materials}" class="flex items-center px-3 py-1">
-									<input type="checkbox" th:id="'mat-' + ${mat.materialId}"
-										th:value="${mat.materialId}" th:data-name="${mat.materialWithCmpName}"
-										th:field="*{requiredMaterialIds}" class="mr-2 material-checkbox" />
-									<label th:for="'mat-' + ${mat.materialId}"
-										th:text="${mat.materialWithCmpName}"></label>
-								</div>
-							</div>
+            if (sidebar && mainContent) {
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    mainContent.classList.add('main-content-expanded');
+                    mainContent.classList.remove('main-content-full');
+                } else {
+                    mainContent.classList.remove('main-content-expanded');
+                    mainContent.classList.add('main-content-full');
+                }
+            }
 
-							<!-- Display selected materials (hidden by default) -->
-							<div id="selected-container" class="mt-2 text-sm text-gray-700 hidden">
-								<p class="font-medium">Selected Materials:</p>
-								<ul id="selected-materials" class="list-disc list-inside text-green-600"></ul>
-							</div>
-						</div>
-					</div>
+            // Material dropdown functionality
+            const dropdownBtn = document.getElementById("dropdown-btn");
+            const dropdownPanel = document.getElementById("dropdown-panel");
+            const checkboxes = document.querySelectorAll(".material-checkbox");
+            const selectedContainer = document.getElementById("selected-container");
+            const selectedMaterialsDiv = document.getElementById("selected-materials");
 
-					<!--<div id="dropdownButton"
-						class="w-full border rounded px-3 py-2 bg-white cursor-pointer flex justify-between">
-						<span id="dropdownLabel">-- Select Materials --</span>
-						<svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-						</svg>
-					</div><br>
+            // Toggle dropdown with animation
+            dropdownBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                dropdownPanel.style.display = dropdownPanel.style.display === 'block' ? 'none' : 'block';
+            });
 
-					<div>
-					    <label class="block text-sm font-medium text-gray-700">Required Material</label>
-					    <select th:field="*{selectedMaterialTypeId}" class="w-full border rounded px-3 py-2" required>
-					        <option value="">--Select Material Type--</option>
-					        <option th:each="type : ${materialTypes}" 
-					                th:value="${type.materialTypeId}"
-					                th:text="${type.materialName}">
-					        </option>
-					    </select>
-					</div><br>-->
+            // Update selected materials display
+            function updateSelected() {
+                selectedMaterialsDiv.innerHTML = "";
+                let selectedTexts = [];
 
-					<!-- Company dropdown
-					<div>
-					    <label class="block text-sm font-medium text-gray-700">Material Company Name</label>
-					    <select th:field="*{selectedCompanyId}" class="w-full border rounded px-3 py-2" required>
-					        <option value="">--Select Company--</option>
-					        <option th:each="company : ${companies}" 
-					                th:value="${company.companyId}" 
-					                th:text="${company.companyName}">
-					        </option>
-					    </select>
-					</div>
-					<div>
-					    <label class="block text-sm font-medium text-gray-700">Required Material</label>
-					    <select th:field="*{requiredMaterialIds}" class="w-full border rounded px-3 py-2" multiple>
-					        <option th:each="material : ${materials}" 
-					                th:value="${material.materialId}" 
-					                th:text="${material.materialType.materialName} + ' - ' + ${material.companyName.companyName}">
-					        </option>
-					    </select>
-					</div> -->
-				</div>
-				<input type="hidden" th:field="*{quotationId}" />
-			</div>
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        const materialName = cb.getAttribute("data-name");
+                        selectedTexts.push(materialName);
 
-			<div>
-				<label>Transport Vehicle Type</label>
-				<select th:field="*{transportingVehicleType}" class="w-full border rounded px-3 py-2">
-					<option value="">--Select Vehicle Type--</option>
-					<option value="small">Small</option>
-					<option value="medium">Medium</option>
-					<option value="large">Large</option>
-				</select>
-			</div>
+                        // Create chip for selected material
+                        const chip = document.createElement("div");
+                        chip.className = "selected-chip";
+                        chip.innerHTML = `
+                            ${materialName}
+                            <i class="fas fa-times" data-id="${cb.value}"></i>
+                        `;
 
-			<div>
-				<label>Transport Price</label>
-				<input type="number" th:field="*{transportingPrice}" class="w-full border rounded px-3 py-2" />
-			</div>
+                        // Add remove functionality
+                        chip.querySelector("i").addEventListener("click", function () {
+                            const checkboxId = this.getAttribute("data-id");
+                            const checkbox = document.querySelector(`.material-checkbox[value="${checkboxId}"]`);
+                            if (checkbox) {
+                                checkbox.checked = false;
+                                updateSelected();
+                            }
+                        });
 
-			<div class="flex justify-end space-x-2">
-				<a href="/quotations/getAllQuotation" class="bg-gray-400 px-4 py-2 rounded">Cancel</a>
-				<button type="submit" class="bg-green-500 px-4 py-2 rounded text-white">Save</button>
-			</div>
-		</form>
-	</div>
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const dropdownBtn = document.getElementById("dropdown-btn");
-			const dropdownPanel = document.getElementById("dropdown-panel");
-			const checkboxes = document.querySelectorAll(".material-checkbox");
-			const selectedContainer = document.getElementById("selected-container");
-			const selectedList = document.getElementById("selected-materials");
+                        selectedMaterialsDiv.appendChild(chip);
+                    }
+                });
 
-			// ✅ Toggle dropdown on button click
-			dropdownBtn.addEventListener("click", function () {
-				dropdownPanel.classList.toggle("hidden");
-			});
+                // Update dropdown button text
+                if (selectedTexts.length > 0) {
+                    dropdownBtn.textContent = `${selectedTexts.length} material(s) selected`;
+                    selectedContainer.classList.remove("hidden");
+                } else {
+                    dropdownBtn.textContent = "Select Materials";
+                    selectedContainer.classList.add("hidden");
+                }
+            }
 
-			// ✅ Close dropdown when clicking outside
-			document.addEventListener("click", function (event) {
-				if (!dropdownBtn.contains(event.target) && !dropdownPanel.contains(event.target)) {
-					dropdownPanel.classList.add("hidden");
-				}
-			});
+            // Initialize checkbox event listeners
+            checkboxes.forEach(cb => {
+                cb.addEventListener("change", updateSelected);
 
-			function updateSelectedMaterials() {
-				selectedList.innerHTML = ""; // clear old values
-				let selected = [];
+                // Prevent closing dropdown when clicking checkbox
+                cb.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                });
+            });
 
-				checkboxes.forEach(cb => {
-					if (cb.checked) {
-						selected.push(cb.getAttribute("data-name"));
-					}
-				});
+            // Close dropdown when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!dropdownBtn.contains(event.target) && !dropdownPanel.contains(event.target)) {
+                    dropdownPanel.style.display = 'none';
+                }
+            });
 
-				if (selected.length > 0) {
-					selectedContainer.classList.remove("hidden");
-					selected.forEach(name => {
-						const li = document.createElement("li");
-						li.textContent = name;
-						selectedList.appendChild(li);
-					});
+            // Close dropdown when pressing Escape
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    dropdownPanel.style.display = 'none';
+                }
+            });
 
-					// ✅ also update dropdown button text
-					dropdownBtn.textContent = selected.length + " selected";
-				} else {
-					selectedContainer.classList.add("hidden");
-					dropdownBtn.textContent = "Select Materials";
-				}
-			}
-
-			checkboxes.forEach(cb => cb.addEventListener("change", updateSelectedMaterials));
-
-			// ✅ Run once on page load (for edit case prefilled values)
-			updateSelectedMaterials();
-		});
-	</script>
-
-
-	<!--<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const button = document.getElementById("dropdownButton");
-			const menu = document.getElementById("dropdownMenu");
-			const label = document.getElementById("dropdownLabel");
-			const checkboxes = menu.querySelectorAll(".material-checkbox");
-			const hiddenRequired = document.getElementById("materialRequired");
-
-			// Toggle dropdown
-			button.addEventListener("click", function () {
-				menu.classList.toggle("hidden");
-			});
-
-			// Close when clicking outside
-			document.addEventListener("click", function (e) {
-				if (!button.contains(e.target) && !menu.contains(e.target)) {
-					menu.classList.add("hidden");
-				}
-			});
-
-			function updateSelection() {
-				let selected = [];
-				checkboxes.forEach(c => {
-					if (c.checked) {
-						let labelText = c.closest("div").querySelector("label").innerText;
-						selected.push(labelText);
-					}
-				});
-
-				label.innerText = selected.length > 0 ? selected.join(", ") : "-- Select Materials --";
-				hiddenRequired.value = selected.length > 0 ? "ok" : "";
-			}
-
-			checkboxes.forEach(cb => cb.addEventListener("change", updateSelection));
-
-			updateSelection();
-		});
-
-	</script>-->
-
+            // Initialize selected materials from existing data (if editing)
+            updateSelected();
+        });
+    </script>
 </body>
 
 </html>

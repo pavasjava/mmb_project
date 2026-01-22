@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Area-wise Item Requirement</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+</head>
+
+<body class="bg-gray-100 py-10">
+<div class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-md">
+
+    <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Area-wise Item Requirements</h1>
+
+    <!-- ✅ Fixed form action -->
+    <form th:action="${requirement.requirementId} != null ? @{/requirements/update/{id}(id=${requirement.requirementId})} : @{/requirements/save}"
+          th:object="${requirement}" method="post"
+          class="grid grid-cols-3 gap-4 mb-6">
+
+        <div style="width: 250px;">
+            <label class="block text-gray-700 mb-1">City</label>
+            <select id="city" th:field="*{city.cityId}" class="border rounded-lg p-2 w-full">
+                <option value="">-- Select City --</option>
+                <option th:each="city : ${cities}"
+                        th:value="${city.cityId}"
+                        th:text="${city.cityName}">
+                </option>
+            </select>
+        </div>
+
+        <div style="width: 250px;">
+            <label class="block text-gray-700 mb-1">Area</label>
+            <select id="area" th:field="*{area.locationAreaId}" class="border rounded-lg p-2 w-full">
+                <option value="">-- Select Area --</option>
+                <option th:each="a : ${areas}"
+                        th:value="${a.locationAreaId}"
+                        th:text="${a.locationAreaName}">
+                </option>
+            </select>
+        </div>
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">Borewell Type</label>
+			<select id="area" th:field="*{borewellType.borewelTypeid}" class="border rounded-lg p-2 w-full">
+				<option value="">-- Select Borewell Type --</option>
+				<option th:each="b : ${borewellTypes}" th:value="${b.borewelTypeid}" th:text="${b.name}">
+				</option>
+			</select>
+		</div>
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">Req. Drilling Depth</label>
+			<input type="number" th:field="*{reqDrillingDepth}" class="border rounded-lg p-2 w-full">
+		</div>
+		
+        <div style="width: 250px;">
+            <label class="block text-gray-700 mb-1">Req. Casing Pipe</label>
+            <input type="number" th:field="*{reqCasingPipe}" class="border rounded-lg p-2 w-full">
+        </div>
+
+        <div style="width: 250px;">
+            <label class="block text-gray-700 mb-1">Req. 8inch. Master Casing Pipe</label>
+            <input type="number" th:field="*{reqMasterCasingPipe}" class="border rounded-lg p-2 w-full">
+        </div>
+		
+		<div style="width: 250px;">
+		    <label class="block text-gray-700 mb-1">Req. 10inch. Master Casing Pipe</label>
+		    <input type="number" th:field="*{req10MasterCasingPipe}" class="border rounded-lg p-2 w-full">
+		</div>
+		
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">Req. 12inch. Master Casing Pipe</label>
+			<input type="number" th:field="*{req12MasterCasingPipe}" class="border rounded-lg p-2 w-full">
+		</div>
+		
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">Req. 14inch. Master Casing Pipe</label>
+			<input type="number" th:field="*{req14MasterCasingPipe}" class="border rounded-lg p-2 w-full">
+		</div>
+
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">No. of Sloting</label>
+			<input type="number" th:field="*{noOfSloting}" class="border rounded-lg p-2 w-full">
+		</div>
+
+        <div style="width: 250px;">
+            <label class="block text-gray-700 mb-1">Req. Mod Powder</label>
+            <input type="number" th:field="*{reqModPowder}" class="border rounded-lg p-2 w-full">
+        </div>
+		
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">No. Gravel</label>
+			<input type="number" th:field="*{reqGravel}" class="border rounded-lg p-2 w-full">
+		</div>
+
+        <div style="width: 250px;">
+            <label class="block text-gray-700 mb-1">Washing Hours</label>
+            <input type="number" th:field="*{washingHours}" class="border rounded-lg p-2 w-full">
+        </div>
+		
+		<div style="width: 250px;">
+			<label class="block text-gray-700 mb-1">Req. Casing Cone</label>
+			<input type="number" th:field="*{reqCasingCone}" class="border rounded-lg p-2 w-full">
+		</div>
+
+        <div class="col-span-3 text-center mt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                <span th:text="${requirement.requirementId != null ? 'Update Requirement' : 'Add Requirement'}"></span>
+            </button>
+			<a th:href="@{/requirements}"
+				class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 inline-flex items-center justify-center">
+				Cancel
+			</a>
+        </div>
+    </form>
+
+    <!-- Table -->
+    <table class="min-w-full border border-gray-300 rounded-lg text-sm">
+        <thead class="bg-gray-200">
+        <tr>
+            <th class="p-2 border">ID</th>
+			<th class="p-2 border">Required Drilling Depth</th>
+            <th class="p-2 border">Required Casing Pipe</th>
+            <th class="p-2 border">Required Master Casing Pipe</th>
+            <th class="p-2 border">No. of Sloting</th>
+            <th class="p-2 border">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${requirements}">
+            <td class="border p-2" th:text="${item.requirementId}"></td>
+			<td class="border p-2" th:text="${item.reqDrillingDepth}"></td>
+            <td class="border p-2" th:text="${item.reqCasingPipe}"></td>
+            <td class="border p-2" th:text="${item.reqMasterCasingPipe}"></td>
+            <td class="border p-2" th:text="${item.noOfSloting}"></td>
+            <td class="border p-2 text-center">
+                <a th:href="@{/requirements/edit/{id}(id=${item.requirementId})}" class="text-blue-600 hover:underline">Edit</a> |
+                <a th:href="@{/requirements/delete/{id}(id=${item.requirementId})}" class="text-red-600 hover:underline"
+                   onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("city").addEventListener("change", loadAreas);
+
+    function loadAreas() {
+        const cityId = document.getElementById("city").value;
+        const areaDropdown = document.getElementById("area");
+        areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
+
+        if (cityId) {
+            fetch("/api/areas/byCity/" + cityId)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(area => {
+                        const option = document.createElement("option");
+                        option.value = area.locationAreaId;
+                        option.text = area.locationAreaName;
+                        areaDropdown.appendChild(option);
+                    });
+                })
+                .catch(err => console.error("Error fetching areas:", err));
+        }
+    }
+});
+</script>
+
+</body>
+</html>

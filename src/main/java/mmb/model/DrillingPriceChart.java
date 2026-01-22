@@ -1,5 +1,7 @@
 package mmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="drillingPrice")
+@Table(name="drilling_price", schema = "mmb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -48,6 +50,7 @@ public class DrillingPriceChart {
     
     @ManyToOne
     @JoinColumn(name = "borewell_type_id", nullable = true) // make nullable for now
+    @JsonIgnore
     private BorewellType borewellType;
 
 }

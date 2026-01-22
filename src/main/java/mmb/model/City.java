@@ -3,6 +3,8 @@ package mmb.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -22,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class City {
 
     @Id
@@ -34,6 +37,10 @@ public class City {
 
     // One City has many Areas
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference  // Prevent infinite recursion in JSON
+    @JsonIgnore  // Prevent infinite recursion in JSON
     private List<WorkLocationArea> locationAreas = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore  // Add this to break the circular reference
+    private List<AreaWiseItemRequirement> itemRequirements = new ArrayList<>();
 }

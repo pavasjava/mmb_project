@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>New Booking | MMB Borewell Services</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- Include common head -->
+    <div th:replace="fragments/head :: head"></div>
+    
+    <style>
+        /* EXACT SAME STYLES AS DRILLING PRICE FORM */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding-bottom: 2rem;
+        }
+        
+        .main-content-expanded {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        .main-content-full {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        /* Top navbar wrapper */
+        .top-nav-wrapper {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            width: 100%;
+        }
+        
+        /* Form container styling */
+        .form-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-left: 310px;
+        }
+        
+        /* Card styling - Enhanced for larger size */
+        .form-card {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-card:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        /* Form header - Enhanced */
+        .form-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 80px;
+        }
+        
+        .form-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        .form-title i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Form content - Expanded */
+        .form-content {
+            padding: 2.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Add a subtle background pattern to the form content */
+        .form-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at top right, rgba(42, 82, 152, 0.03), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Grid container for form fields */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Form group styling - Enhanced */
+        .form-group {
+            margin-bottom: 1.75rem;
+            position: relative;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label i {
+            color: #4a5568;
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .form-input:hover, .form-select:hover {
+            border-color: #cbd5e0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+        
+        .form-input:read-only {
+            background: #f7fafc;
+            color: #718096;
+            cursor: not-allowed;
+        }
+        
+		/* Borewell Type Container - Fixed Size */
+		.borewell-type-container {
+		    display: grid;
+		    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+		    gap: 1rem;
+		    margin-top: 0.5rem;
+		}
+
+		.borewell-type-option {
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    padding: 1rem;
+		    border: 2px solid #e2e8f0;
+		    border-radius: 12px;
+		    cursor: pointer;
+		    transition: all 0.3s ease;
+		    background: #f7fafc;
+		    text-align: center;
+		    position: relative;
+		    overflow: hidden;
+		    height: auto;
+		    min-height: 160px; /* Reduced from 180px */
+		    justify-content: flex-start;
+		}
+
+		/* Original image size */
+		.borewell-type-option img {
+		    width: 100px; /* Fixed width */
+		    height: 70px; /* Fixed height */
+		    object-fit: contain; /* Keep this for full image */
+		    border-radius: 8px;
+		    margin-bottom: 0.75rem;
+		    border: 2px solid #e2e8f0;
+		    background: white;
+		    padding: 5px;
+		    transition: all 0.3s ease;
+		}
+
+		.borewell-type-option span {
+		    font-size: 0.9rem;
+		    font-weight: 600;
+		    color: #2d3748;
+		    margin-top: auto;
+		}
+
+		/* Add checkmark for selected option - KEEP THIS */
+		.borewell-type-option.selected::before {
+		    content: '✓';
+		    position: absolute;
+		    top: 8px;
+		    right: 8px;
+		    width: 24px;
+		    height: 24px;
+		    background: #2a5298;
+		    color: white;
+		    border-radius: 50%;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    font-size: 14px;
+		    font-weight: bold;
+		    z-index: 2;
+		}
+
+		/* Add border for selected option - SIMPLIFIED */
+		.borewell-type-option.selected::after {
+		    content: '';
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+		    bottom: 0;
+		    border: 3px solid #2a5298;
+		    border-radius: 10px;
+		    z-index: 1;
+		}
+
+		/* Enhance selected state */
+		.borewell-type-option.selected {
+		    border-color: #2a5298;
+		    background: linear-gradient(135deg, #e6f0ff 0%, #d4e4ff 100%);
+		    box-shadow: 0 8px 20px rgba(42, 82, 152, 0.2);
+		    transform: translateY(-2px);
+		}
+
+		.borewell-type-option.selected img {
+		    border-color: #2a5298;
+		    transform: scale(1.02); /* Reduced from 1.05 */
+		}
+
+		.borewell-type-option.selected span {
+		    color: #2a5298;
+		    font-weight: 700;
+		}
+
+		/* Add hover effect */
+		.borewell-type-option:hover:not(.selected) {
+		    border-color: #4a6fa9;
+		    background: #edf2f7;
+		    transform: translateY(-1px);
+		    box-shadow: 0 4px 12px rgba(42, 82, 152, 0.1);
+		}
+
+		.borewell-type-option:hover:not(.selected) img {
+		    border-color: #4a6fa9;
+		}
+
+		/* Remove the blue overlay background - too heavy */
+		.borewell-type-option.selected::after {
+		    background: transparent; /* Remove the blue overlay */
+		}
+
+		/* Keep pulse animation but make it subtler */
+		@keyframes pulse {
+		    0% {
+		        box-shadow: 0 0 0 0 rgba(42, 82, 152, 0.3);
+		    }
+		    70% {
+		        box-shadow: 0 0 0 6px rgba(42, 82, 152, 0);
+		    }
+		    100% {
+		        box-shadow: 0 0 0 0 rgba(42, 82, 152, 0);
+		    }
+		}
+
+		.borewell-type-option.selected {
+		    animation: pulse 1.5s ease;
+		}
+
+		/* Responsive adjustments */
+		@media (max-width: 768px) {
+		    .borewell-type-container {
+		        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+		        gap: 0.8rem;
+		    }
+		    
+		    .borewell-type-option {
+		        min-height: 150px;
+		        padding: 0.8rem;
+		    }
+		    
+		    .borewell-type-option img {
+		        width: 90px;
+		        height: 65px;
+		    }
+		    
+		    .borewell-type-option.selected::before {
+		        top: 6px;
+		        right: 6px;
+		        width: 22px;
+		        height: 22px;
+		        font-size: 13px;
+		    }
+		}
+
+		@media (max-width: 480px) {
+		    .borewell-type-container {
+		        grid-template-columns: repeat(2, 1fr);
+		        gap: 0.6rem;
+		    }
+		    
+		    .borewell-type-option {
+		        min-height: 140px;
+		        padding: 0.7rem;
+		    }
+		    
+		    .borewell-type-option img {
+		        width: 85px;
+		        height: 60px;
+		    }
+		    
+		    .borewell-type-option.selected::before {
+		        top: 5px;
+		        right: 5px;
+		        width: 20px;
+		        height: 20px;
+		        font-size: 12px;
+		    }
+		}
+
+		/* Responsive adjustments */
+		@media (max-width: 768px) {
+		    .borewell-type-option.selected::before {
+		        top: 6px;
+		        right: 6px;
+		        width: 22px;
+		        height: 22px;
+		        font-size: 13px;
+		    }
+		}
+
+		@media (max-width: 480px) {
+		    .borewell-type-option.selected::before {
+		        top: 5px;
+		        right: 5px;
+		        width: 20px;
+		        height: 20px;
+		        font-size: 12px;
+		    }
+		}
+        
+        /* Radio Button Styling */
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .radio-label:hover {
+            border-color: #2a5298;
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+        
+        .radio-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .radio-input:checked {
+            border-color: #2a5298;
+            background: #2a5298;
+        }
+        
+        .radio-input:checked::after {
+            content: '';
+            position: absolute;
+            width: 0.5rem;
+            height: 0.5rem;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Date Input Styling */
+        input[type="date"] {
+            font-family: inherit;
+            max-width: 250px;
+        }
+        
+        /* Price display styling */
+        .price-display .form-input {
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border-color: #9ae6b4;
+            color: #22543d;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* Help text below inputs */
+        .form-help {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        
+        /* Required field indicator */
+        .required::after {
+            content: " *";
+            color: #e53e3e;
+            font-weight: 700;
+        }
+        
+        /* Form actions - Enhanced */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 2px solid #f1f5f9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            border: none;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .btn-cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+            border: 2px solid transparent;
+        }
+        
+        .btn-save:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        /* Info section - Enhanced */
+        .info-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 1rem;
+            border-left: 5px solid #2a5298;
+            grid-column: 1 / -1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .info-title i {
+            color: #2a5298;
+            font-size: 1.4rem;
+        }
+        
+        .info-text {
+            color: #4a5568;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+        
+        .info-text ul {
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        
+        .info-text li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Animation for form */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-card {
+            animation: slideInUp 0.6s ease;
+        }
+        
+        /* Toast animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .animate-slideInRight {
+            animation: slideInRight 0.3s ease;
+        }
+        
+        /* Validation error styling */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .error-message i {
+            font-size: 0.875rem;
+        }
+        
+        .form-input.error, .form-select.error {
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .form-container {
+                margin-left: 280px !important;
+            }
+            
+            .form-card {
+                max-width: 90%;
+                margin: 1.5rem auto;
+            }
+            
+            .form-grid {
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .main-content-expanded {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .form-container {
+                padding: 1rem;
+                margin-left: 0 !important;
+            }
+            
+            .form-card {
+                margin: 1rem auto;
+                border-radius: 20px;
+                min-height: auto;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.8rem;
+            }
+            
+            .form-title i {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+            
+            .form-content {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .borewell-type-container {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-input, .form-select {
+                padding: 0.875rem 1rem;
+                font-size: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.875rem 1.5rem;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+            }
+            
+            .info-section {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-card {
+                border-radius: 16px;
+            }
+            
+            .form-header {
+                padding: 1.25rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+                gap: 10px;
+            }
+            
+            .form-title i {
+                padding: 8px;
+                font-size: 1.3rem;
+            }
+            
+            .form-content {
+                padding: 1.25rem;
+            }
+            
+            .form-grid {
+                gap: 1.25rem;
+            }
+            
+            .borewell-type-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Background overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('/images/bgimage.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- ✅ Background Image -->
+    <div class="bg-overlay"></div>
+    
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div class="top-nav-wrapper" th:replace="fragments/bill-top-navbar :: top-navbar"></div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-card">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h1 class="form-title">
+                        <i class="fas fa-calendar-plus"></i>
+                        New Booking
+                    </h1>
+                </div>
+                
+                <!-- Form Content -->
+                <div class="form-content">
+                    <form th:action="@{/bookings/confirmBooking}" th:object="${booking}" method="post" id="bookingForm">
+                        
+                        <!-- Grid container for form fields -->
+                        <div class="form-grid">
+                            <!-- Customer Name -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-user"></i> Customer Name
+                                </label>
+                                <input type="text" th:field="*{customerName}" class="form-input" required placeholder="Enter customer full name">
+                                <span class="form-help">
+                                    Enter the full name of the customer
+                                </span>
+                            </div>
+                            
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-phone"></i> Phone Number
+                                </label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-input" required placeholder="Enter 10-digit mobile number">
+                                <span class="form-help">
+                                    10-digit mobile number for communication
+                                </span>
+                            </div>
+                            
+                            <!-- City -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-city"></i> City
+                                </label>
+                                <select id="city" th:field="*{city.cityId}" class="form-select" required>
+                                    <option value="">-- Select City --</option>
+                                    <option th:each="city : ${cities}" th:value="${city.cityId}" th:text="${city.cityName}"></option>
+                                </select>
+                                <span class="form-help">
+                                    Select the city for borewell service
+                                </span>
+                            </div>
+                            
+                            <!-- Area -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-map-marker-alt"></i> Area
+                                </label>
+                                <select id="area" th:field="*{area.locationAreaId}" class="form-select" required>
+                                    <option value="">-- Select Area --</option>
+                                    <option th:each="area : ${areas}" th:value="${area.locationAreaId}" th:text="${area.locationAreaName}"></option>
+                                </select>
+                                <span class="form-help">
+                                    Select the area within the city
+                                </span>
+                            </div>
+                            
+                            <!-- Borewell Type Selection -->
+                            <div class="form-group full-width">
+                                <label class="form-label required">
+                                    <i class="fas fa-tools"></i> Borewell Type
+                                </label>
+                                <div class="borewell-type-container">
+                                    <!-- AJAX will load data here -->
+                                </div>
+                                <input type="hidden" id="borewellTypeId" name="borewellType.borewelTypeid">
+                                <span class="form-help">
+                                    Select borewell type by clicking on the image
+                                </span>
+                                <p id="infoMessage" class="error-message hidden mt-2">
+                                    <i class="fas fa-info-circle"></i> Please select City, Area, and Borewell Size to calculate the drilling price.
+                                </p>
+                            </div>
+                            
+                            <!-- Borewell Size -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-expand-alt"></i> Borewell Size
+                                </label>
+                                <select id="drillingSizeSelect" th:field="*{drillingSize}" class="form-select" required>
+                                    <option value="">-- Select Boring Size --</option>
+                                    <option value="5">5 inch/127mm</option>
+                                    <option value="6">6 inch/152.4mm</option>
+                                    <option value="8">8 inch/203.2mm</option>
+                                    <option value="oth">Other</option>
+                                </select>
+                                <div class="mt-2" th:classappend="${booking.drillingSize == 'oth'} ? '' : 'hidden'">
+                                    <input type="text" 
+                                           id="otherDrillingSize" 
+                                           th:field="*{otherSize}" 
+                                           class="form-input" 
+                                           placeholder="Enter custom drilling size">
+                                    <span class="form-help">
+                                        Enter custom drilling size (e.g., 10 inch, 250mm)
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Price -->
+                            <div class="form-group price-display">
+                                <label class="form-label required">
+                                    <i class="fas fa-rupee-sign"></i> Drilling Price
+                                </label>
+                                <input type="number" step="0.01" id="price" th:field="*{price}" class="form-input" readonly placeholder="Auto-calculated">
+                                <span class="form-help">
+                                    Price will be calculated automatically
+                                </span>
+                            </div>
+                            
+                            <!-- Casing Pipe -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-pipe"></i> Casing Pipe
+                                </label>
+                                <select id="companyName" th:field="*{companyName.companyId}" class="form-select">
+                                    <option value="">-- Select Casing Pipe --</option>
+                                    <option th:each="companyName : ${companyNames}" 
+                                            th:value="${companyName.companyId}"
+                                            th:text="${companyName.companyName}">
+                                    </option>
+                                </select>
+                                <span class="form-help">
+                                    Select casing pipe brand (optional)
+                                </span>
+                            </div>
+                            
+                            <!-- Pipe Quality -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-filter"></i> Pipe Quality
+                                </label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" th:field="*{pipeQuality}" value="80" class="radio-input" checked>
+                                        <span>Schedule 80 (Heavy Duty)</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" th:field="*{pipeQuality}" value="40" class="radio-input">
+                                        <span>Schedule 40 (Standard)</span>
+                                    </label>
+                                </div>
+                                <span class="form-help">
+                                    Select pipe quality standard
+                                </span>
+                            </div>
+                            
+                            <!-- Casing Pipe Price -->
+                            <div class="form-group price-display">
+                                <label class="form-label">
+                                    <i class="fas fa-rupee-sign"></i> Casing Pipe Price
+                                </label>
+                                <input type="number" step="0.01" id="materialPrice" th:field="*{casingPrice}" class="form-input" readonly placeholder="Auto-calculated">
+                                <span class="form-help">
+                                    Price will be calculated automatically
+                                </span>
+                            </div>
+                            
+                            <!-- Booking Date -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-calendar-alt"></i> Booking Date
+                                </label>
+                                <input type="date" th:field="*{bookingDate}" class="form-input" required>
+                                <span class="form-help">
+                                    Select preferred service date
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Section -->
+                        <div class="info-section">
+                            <h3 class="info-title">
+                                <i class="fas fa-info-circle"></i>
+                                Booking Information
+                            </h3>
+                            <p class="info-text">
+                                • All required fields must be filled before submission<br>
+                                • Drilling price is calculated automatically based on location and specifications<br>
+                                • Select "Other" size option for custom drilling sizes<br>
+                                • Casing pipe selection is optional<br>
+                                • Bookings can be modified before confirmation
+                            </p>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a th:href="@{/bookings/getAllBookings}" class="btn btn-cancel">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-save" id="submitBtn">
+                                <i class="fas fa-calendar-check"></i>
+                                Confirm Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KEEP ALL ORIGINAL JAVASCRIPT FUNCTIONALITY -->
+    <script>
+        function selectBorewellType(element) {
+          const alreadySelected = element.classList.contains('selected');
+          const hiddenInput = document.getElementById('borewellTypeId');
+
+          // Remove selection from all first
+          document.querySelectorAll('.borewell-type-option').forEach(el => {
+            el.classList.remove('selected');
+          });
+
+          if (alreadySelected) {
+            // If clicked same image again → unselect it
+            hiddenInput.value = "";
+          } else {
+            // Select new one
+            element.classList.add('selected');
+            const id = element.getAttribute('data-id');
+            hiddenInput.value = id;
+          }
+
+          // ✅ Trigger change event manually so dependent logic (like price update) runs
+          const event = new Event('change');
+          hiddenInput.dispatchEvent(event);
+        }
+
+        function showMessage(typeId) {
+                // Store selected type
+                document.getElementById('borewellType').value = typeId;
+
+                // Add visual selection border
+                document.querySelectorAll('.borewell-option').forEach(opt => {
+                    opt.classList.remove('ring-2', 'ring-blue-500');
+                });
+                event.currentTarget.classList.add('ring-2', 'ring-blue-500');
+
+                // ✅ Show message only when the first type is selected
+                const message = document.getElementById('infoMessage');
+                if (typeId === 1) {
+                    message.classList.remove('hidden');
+                } else {
+                    message.classList.add('hidden');
+                }
+            }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize main content based on sidebar state
+            const mainContent = document.getElementById('mainContent');
+            const savedState = localStorage.getItem('sidebarCollapsed');
+            
+            if (savedState === 'true') {
+                mainContent.classList.add('main-content-expanded');
+                mainContent.classList.remove('main-content-full');
+            } else {
+                mainContent.classList.remove('main-content-expanded');
+                mainContent.classList.add('main-content-full');
+            }
+
+            document.getElementById("city").addEventListener("change", loadAreas);
+
+            // Handle other drilling size input
+            document.getElementById("drillingSizeSelect").addEventListener("change", function() {
+                const otherInput = document.getElementById("otherDrillingSize");
+                if (this.value === "oth") {
+                    otherInput.style.display = "block";
+                    otherInput.parentElement.classList.remove('hidden');
+                } else {
+                    otherInput.style.display = "none";
+                    otherInput.parentElement.classList.add('hidden');
+                    otherInput.value = "";
+                }
+            });
+
+            // ✅ Price should update when these change
+            document.querySelectorAll('#city, #area, #drillingSizeSelect, #borewellTypeId')
+                .forEach(el => el.addEventListener('change', fetchPrice));
+
+            // ✅ Casing price updates
+            document.getElementById("companyName").addEventListener("change", fetchCasingPrice);
+            document.getElementById("drillingSizeSelect").addEventListener("change", fetchCasingPrice);
+            document.querySelectorAll('input[name="pipeQuality"]').forEach(el => {
+                el.addEventListener("change", fetchCasingPrice);
+            });
+            
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[type="date"]').min = today;
+        });
+
+        function loadAreas() {
+            const cityId = document.getElementById("city").value;
+            const areaDropdown = document.getElementById("area");
+            areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
+
+            if (cityId) {
+                fetch("/api/areas/byCity/" + cityId)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.forEach(area => {
+                            const option = document.createElement("option");
+                            option.value = area.locationAreaId;
+                            option.text = area.locationAreaName;
+                            areaDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(err => console.error("Error fetching areas:", err));
+            }
+        }
+
+        function fetchPrice() {
+            const cityId = document.getElementById("city").value;
+            const areaId = document.getElementById("area").value;
+            const borewellTypeId = document.getElementById("borewellTypeId").value;
+            const drillingSize = document.getElementById("drillingSizeSelect").value;
+
+            if (cityId && areaId && borewellTypeId && drillingSize) {
+                fetch(`/api/prices/findPrice?borewellTypeId=${borewellTypeId}&cityId=${cityId}&locationAreaId=${areaId}&drillingSize=${drillingSize}`)
+                    .then(response => response.json())
+                    .then(price => {
+                        const priceInput = document.getElementById("price");
+                        if (price && price > 0) {
+                            priceInput.value = price;
+                            priceInput.style.color = "#22543d";
+                        } else {
+                            priceInput.value = "0.00";
+                            priceInput.style.color = "#718096";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching price:", error);
+                        document.getElementById("price").value = "0.00";
+                    });
+            }
+        }
+
+        function fetchCasingPrice() {
+            const companyId = document.getElementById("companyName").value;
+            const borewellTypeId = document.getElementById("borewellTypeId").value;
+            const drillingSize = document.getElementById("drillingSizeSelect").value;
+            const casingQuality = document.querySelector('input[name="pipeQuality"]:checked')?.value;
+
+            if (companyId && borewellTypeId && drillingSize && casingQuality) {
+                fetch(`/api/bookings/findCasingPrice?companyId=${companyId}&borewellTypeId=${borewellTypeId}&borewellSize=${drillingSize}&quality=${casingQuality}`)
+                    .then(response => response.json())
+                    .then(materialPrice => {
+                        const materialPriceInput = document.getElementById("materialPrice");
+                        if (materialPrice && materialPrice > 0) {
+                            materialPriceInput.value = materialPrice;
+                            materialPriceInput.style.color = "#22543d";
+                        } else {
+                            materialPriceInput.value = "0.00";
+                            materialPriceInput.style.color = "#718096";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching casing price:", error);
+                        document.getElementById("materialPrice").value = "0.00";
+                    });
+            }
+        }
+    </script>
+    
+    <script>
+        // When city or area changes → send AJAX to backend + load borewell types
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("city").addEventListener("change", autoSendSelection);
+            document.getElementById("area").addEventListener("change", autoSendSelection);
+        });
+
+        // AUTO SEND CITY & AREA TO BACKEND + LOAD BOREWELL TYPES
+        function autoSendSelection() {
+            const cityId = document.getElementById("city").value;
+            const areaId = document.getElementById("area").value;
+
+            if (!cityId || !areaId) {
+                return; // do nothing until both selected
+            }
+
+            // 1️⃣ Send selection to backend
+            fetch(`/api/bookings/selection?cityId=${cityId}&areaId=${areaId}`)
+                .then(res => res.text())
+                .then(response => console.log("Backend Received:", response));
+
+            // 2️⃣ Fetch Borewell Types dynamically
+            loadBorewellTypes(cityId, areaId);
+        }
+
+        // LOAD BOREWELL TYPES USING AJAX
+        function loadBorewellTypes(cityId, areaId) {
+            const container = document.querySelector(".borewell-type-container");
+            container.innerHTML = '<div class="borewell-type-option loading"><div class="skeleton-image"></div><span class="skeleton-text"></span></div>';
+            
+            fetch(`/api/bookings/getBorewellTypeByAreaWise?cityId=${cityId}&locationAreaId=${areaId}`)
+                .then(res => res.json())
+                .then(data => {
+                    container.innerHTML = "";   // clear old items
+
+                    data.forEach(b => {
+                        const div = document.createElement("div");
+                        div.classList.add("borewell-type-option");
+                        div.setAttribute("data-id", b.borewelTypeid);
+                        div.setAttribute("data-name", b.name);
+                        div.setAttribute("title", b.name);
+                        div.onclick = function () { selectBorewellType(this); };
+
+                        div.innerHTML = `
+                            <img src="/api/bookings/image/${b.borewelTypeid}" alt="${b.name}" 
+                                 onerror="this.src='https://via.placeholder.com/100x70/2a5298/ffffff?text=Borewell'">
+                            <span>${b.name}</span>
+                        `;
+
+                        container.appendChild(div);
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading borewell types:", err);
+                    container.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-circle"></i> Failed to load borewell types. Please try again.</div>';
+                });
+        }
+    </script>
+
+    <script>
+        // Initialize main content based on sidebar state
+        document.addEventListener("DOMContentLoaded", function() {
+            // Form validation
+            const form = document.getElementById('bookingForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all required fields
+                let isValid = true;
+                const requiredFields = form.querySelectorAll('[required]');
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('error');
+                    } else {
+                        field.classList.remove('error');
+                    }
+                });
+                
+                if (!isValid) {
+                    showToast('Please fill all required fields', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                
+                // Show success message
+                showToast('Creating booking...', 'success');
+                
+                // Submit form after a short delay to show loading state
+                setTimeout(() => {
+                    form.submit();
+                }, 1000);
+            });
+            
+            // Toast notification function
+            function showToast(message, type) {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+                
+                const toast = document.createElement('div');
+                toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
+                    type === 'error' ? 'bg-red-500 text-white' : 
+                    type === 'success' ? 'bg-green-500 text-white' : 
+                    'bg-blue-500 text-white'
+                }`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                                      type === 'success' ? 'fa-check-circle' : 
+                                      'fa-info-circle'}"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Prevent back button
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function() {
+                window.history.pushState(null, "", window.location.href);
+            };
+        });
+    </script>
+</body>
+</html>

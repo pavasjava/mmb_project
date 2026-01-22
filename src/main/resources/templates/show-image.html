@@ -2,200 +2,920 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Show Images - MAA MANGALA BOREWELL</title>
+    <title>Gallery | MAA MANGALA BOREWELL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-		.bg-overlay {
-		    position: fixed;
-		    top: 0;
-		    left: 0;
-		    height: 100%;
-		    width: 100%;
-		    background-image: url('/images/bgimage.png');
-		    background-size: cover;
-		    background-position: center;
-		    opacity: 0.08; /* More light/faded */
-		    z-index: -1;
-		}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .navbar {
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.92), rgba(245, 247, 250, 0.95)),
+                        url('/images/bgimage.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        /* Floating Home Button */
+        .home-button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .home-button {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background-color: #d64026;
-            padding: 10px 20px;
-        }
-
-        .navbar-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .navbar-left img {
-            height: 40px;
-            width: 65px;
-            border-radius: 60%;
-            object-fit: cover;
-        }
-
-        .navbar-left a {
+            gap: 12px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
             text-decoration: none;
-            color: white;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.3);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
-        .navbar-left a.active,
-        .navbar-left a:hover {
-            background-color: #c23c22;
+        .home-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
         }
 
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        .home-button:hover::before {
+            left: 100%;
         }
 
-        .search-box {
-            background-color: white;
-            border-radius: 10px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
+        .home-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(42, 82, 152, 0.4);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .search-box input {
-            border: none;
-            outline: none;
-            font-size: 14px;
-            margin-left: 5px;
+        .home-button:active {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(42, 82, 152, 0.3);
         }
 
-        .search-icon {
-            color: #d64026;
-            font-size: 16px;
-        }
-
-        .social-icons i {
-            font-size: 18px;
-            color: white;
-            transition: transform 0.2s;
-        }
-
-        .social-icons i:hover {
-            transform: scale(1.2);
-            color: #ffc107;
-        }
-
-        h1 {
-            text-align: center;
-            color: #d64026;
-            margin: 30px 0 10px;
-        }
-
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            padding: 30px 0;
-        }
-
-        .image-gallery img {
-            width: 250px;
-            height: 290px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        .home-button i {
+            font-size: 1.2rem;
             transition: transform 0.3s ease;
         }
 
-        .image-gallery img:hover {
+        .home-button:hover i {
+            transform: translateX(5px) rotate(360deg);
+        }
+
+        .home-button-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #1e40af, #0ea5e9);
+            padding: 100px 0 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 50px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease;
+        }
+
+        /* Gallery Container */
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 12px 28px;
+            background: white;
+            border: 2px solid #e1e8f0;
+            border-radius: 50px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            border-color: #2a5298;
+            color: #2a5298;
+            box-shadow: 0 6px 12px rgba(42, 82, 152, 0.15);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border-color: #2a5298;
+            box-shadow: 0 6px 12px rgba(42, 82, 152, 0.2);
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: white;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.7));
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover .gallery-img {
             transform: scale(1.05);
         }
-		/* Lightbox modal */
-		        .modal {
-		            display: none;
-		            position: fixed;
-		            z-index: 999;
-		            padding-top: 60px;
-		            left: 0;
-		            top: 0;
-		            width: 100%;
-		            height: 100%;
-		            overflow: auto;
-		            background-color: rgba(0,0,0,0.8);
-		        }
 
-		        .modal-content {
-		            margin: auto;
-		            display: block;
-		            max-width: 90%;
-		            max-height: 80%;
-		            border-radius: 10px;
-		        }
+        .gallery-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 25px;
+            z-index: 2;
+            color: white;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
 
-		        .close {
-		            position: absolute;
-		            top: 30px;
-		            right: 50px;
-		            color: #fff;
-		            font-size: 35px;
-		            font-weight: bold;
-		            cursor: pointer;
-		        }
+        .gallery-item:hover .gallery-info {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
-		        .close:hover {
-		            color: #ccc;
-		        }
+        .gallery-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .gallery-description {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: scale(1);
+        }
+
+        .gallery-overlay i {
+            color: #2a5298;
+            font-size: 1.3rem;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            border-radius: 25px;
+            padding: 60px 40px;
+            margin: 60px auto;
+            max-width: 1200px;
+            color: white;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(42, 82, 152, 0.2);
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #a0b8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 25px;
+            margin: 60px auto;
+            max-width: 800px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .cta-title {
+            font-size: 2.2rem;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .cta-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(42, 82, 152, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(42, 82, 152, 0.3);
+            gap: 15px;
+        }
+
+        /* Lightbox Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 85%;
+            border-radius: 15px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            z-index: 1001;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .modal-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .modal-prev {
+            left: 30px;
+        }
+
+        .modal-next {
+            right: 30px;
+        }
+
+        .modal-info {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            padding: 0 40px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .modal-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .home-button {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .home-button-container {
+                top: 15px;
+                right: 15px;
+            }
+            
+            .home-button {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-section {
+                padding: 80px 0 50px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            
+            .filter-tabs {
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .stats-section {
+                grid-template-columns: 1fr;
+                padding: 40px 20px;
+            }
+            
+            .modal-prev, .modal-next {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .close {
+                top: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .home-button {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+            
+            .home-button i {
+                font-size: 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
-	<!-- ✅ Background Image -->
-	    <div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
+    <!-- Background Overlay -->
+    <div class="bg-overlay"></div>
 
-	    <!-- ✅ Navbar -->
-	    <div th:replace="fragments/navbar :: navbar"></div>
+    <!-- Floating Home Button -->
+    <div class="home-button-container">
+        <a th:href="@{/dashboard}" class="home-button">
+            <i class="fas fa-home"></i>
+            <span class="home-button-text">Go to Home</span>
+        </a>
+    </div>
 
-    <!-- ✅ Heading -->
-    <h1>Our Equipment</h1>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Our Equipment Gallery</h1>
+            <p class="hero-subtitle">
+                Explore our state-of-the-art borewell drilling machinery and equipment that powers our commitment to excellence
+                in every project we undertake.
+            </p>
+        </div>
+    </section>
 
-    <!-- ✅ Image Gallery -->
-	<div class="image-gallery">
-	    <img src="/images/img/dthmounting.jpg" alt="DTH Mounting" onclick="openModal(this)">
-	    <img src="/images/img/inwellmounting.jpg" alt="Inwell Mounting" onclick="openModal(this)">
-	    <img src="/images/img/image1.jpg" alt="Image 1" onclick="openModal(this)">
-	    <img src="/images/img/image2.jpg" alt="Image 2" onclick="openModal(this)">
-	    <img src="/images/img/image3.jpg" alt="Image 3" onclick="openModal(this)">
-	    <img src="/images/img/image4.jpg" alt="Image 4" onclick="openModal(this)">
-	</div>
+    <!-- Gallery Container -->
+    <div class="gallery-container">
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-layer-group"></i> All Equipment
+            </button>
+            <button class="filter-btn" data-filter="drilling">
+                <i class="fas fa-hard-hat"></i> Drilling Machines
+            </button>
+            <button class="filter-btn" data-filter="mounting">
+                <i class="fas fa-cogs"></i> Mounting Systems
+            </button>
+            <button class="filter-btn" data-filter="tools">
+                <i class="fas fa-tools"></i> Special Tools
+            </button>
+        </div>
 
-	<!-- Modal -->
-	<div id="imgModal" class="modal" onclick="closeModal()">
-	    <span class="close" onclick="closeModal()">&times;</span>
-	    <img class="modal-content" id="modalImage">
-	</div>
+        <!-- Gallery Grid -->
+        <div class="gallery-grid">
+            <!-- Item 1 -->
+            <div class="gallery-item" data-category="mounting">
+                <div class="gallery-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <img src="/images/img/dthmounting.jpg" alt="DTH Mounting System" class="gallery-img" onclick="openModal(this)">
+                <div class="gallery-info">
+                    <h3 class="gallery-title">DTH Mounting System</h3>
+                    <p class="gallery-description">Advanced Down-The-Hole hammer mounting for efficient drilling operations</p>
+                </div>
+            </div>
 
-	<script>
-	    function openModal(imgElement) {
-	        const modal = document.getElementById("imgModal");
-	        const modalImg = document.getElementById("modalImage");
-	        modal.style.display = "block";
-	        modalImg.src = imgElement.src;
-	    }
+            <!-- Item 2 -->
+            <div class="gallery-item" data-category="mounting">
+                <div class="gallery-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <img src="/images/img/inwellmounting.jpg" alt="Inwell Mounting" class="gallery-img" onclick="openModal(this)">
+                <div class="gallery-info">
+                    <h3 class="gallery-title">Inwell Mounting System</h3>
+                    <p class="gallery-description">Precision inwell mounting for stable and secure borewell operations</p>
+                </div>
+            </div>
 
-	    function closeModal() {
-	        document.getElementById("imgModal").style.display = "none";
-	    }
-	</script>
+            <!-- Item 3 -->
+            <div class="gallery-item" data-category="drilling">
+                <div class="gallery-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <img src="/images/img/image1.jpg" alt="Heavy Drilling Rig" class="gallery-img" onclick="openModal(this)">
+                <div class="gallery-info">
+                    <h3 class="gallery-title">Heavy Drilling Rig</h3>
+                    <p class="gallery-description">Industrial-grade drilling rig for deep borewell operations</p>
+                </div>
+            </div>
 
+            <!-- Item 4 -->
+            <div class="gallery-item" data-category="drilling">
+                <div class="gallery-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <img src="/images/img/image2.jpg" alt="Mobile Drilling Unit" class="gallery-img" onclick="openModal(this)">
+                <div class="gallery-info">
+                    <h3 class="gallery-title">Mobile Drilling Unit</h3>
+                    <p class="gallery-description">Portable drilling setup for remote location operations</p>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="gallery-item" data-category="tools">
+                <div class="gallery-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <img src="/images/img/image3.jpg" alt="Specialized Drilling Tools" class="gallery-img" onclick="openModal(this)">
+                <div class="gallery-info">
+                    <h3 class="gallery-title">Specialized Drilling Tools</h3>
+                    <p class="gallery-description">High-quality drilling tools for various geological conditions</p>
+                </div>
+            </div>
+
+            <!-- Item 6 -->
+            <div class="gallery-item" data-category="tools">
+                <div class="gallery-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <img src="/images/img/image4.jpg" alt="Equipment Maintenance" class="gallery-img" onclick="openModal(this)">
+                <div class="gallery-info">
+                    <h3 class="gallery-title">Equipment Maintenance</h3>
+                    <p class="gallery-description">Regular maintenance ensures peak performance and reliability</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-item">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">Successful Projects</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Service Support</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Specialized Tools</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2 class="cta-title">Need Professional Borewell Services?</h2>
+            <p class="cta-text">
+                Our team of experts is ready to provide you with the best borewell solutions using our advanced equipment 
+                and years of experience. Contact us today for a consultation.
+            </p>
+            <a href="/contact" class="cta-button">
+                <i class="fas fa-phone-alt"></i>
+                Contact Our Team
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="imgModal" class="modal" onclick="closeModal(event)">
+        <span class="close" onclick="closeModal(event)">&times;</span>
+        <div class="modal-nav modal-prev" onclick="navigateImage(-1, event)">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="modal-nav modal-next" onclick="navigateImage(1, event)">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+        <img class="modal-content" id="modalImage">
+        <div class="modal-info">
+            <h3 class="modal-title" id="modalTitle"></h3>
+            <p class="modal-description" id="modalDescription"></p>
+        </div>
+    </div>
+
+    <script>
+        // Image data with titles and descriptions
+        const images = [
+            {
+                src: "/images/img/dthmounting.jpg",
+                title: "DTH Mounting System",
+                description: "Advanced Down-The-Hole hammer mounting system designed for efficient and precise drilling operations in challenging geological conditions.",
+                category: "mounting"
+            },
+            {
+                src: "/images/img/inwellmounting.jpg",
+                title: "Inwell Mounting System",
+                description: "Precision engineered inwell mounting system providing stable and secure borewell operations with enhanced safety features.",
+                category: "mounting"
+            },
+            {
+                src: "/images/img/image1.jpg",
+                title: "Heavy Drilling Rig",
+                description: "Industrial-grade heavy drilling rig capable of handling deep borewell operations with maximum efficiency and reliability.",
+                category: "drilling"
+            },
+            {
+                src: "/images/img/image2.jpg",
+                title: "Mobile Drilling Unit",
+                description: "Fully equipped mobile drilling unit designed for operations in remote locations with quick setup and deployment capabilities.",
+                category: "drilling"
+            },
+            {
+                src: "/images/img/image3.jpg",
+                title: "Specialized Drilling Tools",
+                description: "High-quality specialized drilling tools engineered for various geological conditions ensuring optimal performance and durability.",
+                category: "tools"
+            },
+            {
+                src: "/images/img/image4.jpg",
+                title: "Equipment Maintenance",
+                description: "Comprehensive maintenance program ensuring all equipment operates at peak performance with regular servicing and inspections.",
+                category: "tools"
+            }
+        ];
+
+        let currentImageIndex = 0;
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                const galleryItems = document.querySelectorAll('.gallery-item');
+                
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 100);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Open modal
+        function openModal(imgElement) {
+            const modal = document.getElementById("imgModal");
+            const modalImg = document.getElementById("modalImage");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalDescription = document.getElementById("modalDescription");
+            
+            // Find the clicked image index
+            const src = imgElement.src;
+            currentImageIndex = images.findIndex(img => img.src === src);
+            
+            if (currentImageIndex !== -1) {
+                const imageData = images[currentImageIndex];
+                modalImg.src = imageData.src;
+                modalTitle.textContent = imageData.title;
+                modalDescription.textContent = imageData.description;
+            }
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal(event) {
+            if (event) event.stopPropagation();
+            if (event && event.target.className !== 'modal' && event.target.className !== 'close') return;
+            
+            const modal = document.getElementById("imgModal");
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Navigate between images
+        function navigateImage(direction, event) {
+            if (event) event.stopPropagation();
+            
+            currentImageIndex += direction;
+            
+            // Loop around
+            if (currentImageIndex < 0) currentImageIndex = images.length - 1;
+            if (currentImageIndex >= images.length) currentImageIndex = 0;
+            
+            const modalImg = document.getElementById("modalImage");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalDescription = document.getElementById("modalDescription");
+            
+            const imageData = images[currentImageIndex];
+            modalImg.src = imageData.src;
+            modalTitle.textContent = imageData.title;
+            modalDescription.textContent = imageData.description;
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById("imgModal");
+            if (!modal.classList.contains('show')) return;
+            
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') navigateImage(-1);
+            if (e.key === 'ArrowRight') navigateImage(1);
+        });
+
+        // Close modal when clicking outside image
+        document.getElementById('imgModal').addEventListener('click', function(e) {
+            if (e.target === this || e.target.className === 'close') {
+                closeModal();
+            }
+        });
+
+        // Home button hover effect
+        const homeButton = document.querySelector('.home-button');
+        if (homeButton) {
+            homeButton.addEventListener('mouseenter', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'float 3s ease-in-out infinite';
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>

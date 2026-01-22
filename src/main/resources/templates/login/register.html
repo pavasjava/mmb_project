@@ -1,146 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMS</title>
+    <title>LMS | Register</title>
+
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Poppins", sans-serif;
         }
 
         body {
+            height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), rgb(0, 64, 128);
+            align-items: center;
             padding: 20px;
+
+            /* 🔥 YOUR STATIC IMAGE HERE */
+            background: 
+                linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url("/images/groundwater.jpg")
+                no-repeat center center/cover;
         }
 
-        .wrapper {
+        .glass-card {
             width: 100%;
-            max-width: 400px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            max-width: 430px;
+            padding: 40px;
+            border-radius: 18px;
+
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #333;
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
-        .input-field {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .input-field input {
+        .input-box {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
+            margin-bottom: 18px;
         }
 
-        .input-field input:focus {
-            border-color: #4A90E2;
-            box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-        }
-
-        button {
+        .input-box input {
             width: 100%;
-            background: #4A90E2;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.25);
             color: #fff;
             font-size: 1rem;
-            font-weight: bold;
-            padding: 12px;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        .input-box input::placeholder {
+            color: #e8e8e8;
+        }
+
+        .input-box input:focus {
+            background: rgba(255,255,255,0.35);
+            box-shadow: 0 0 10px rgba(255,255,255,0.6);
+            border-color: #fff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease;
+
+            background: linear-gradient(135deg, #00aaff, #0077c9);
+            color: #fff;
+            transition: 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 153, 255, 0.4);
         }
 
-        button:hover {
-            background: #357ABD;
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #00bdff, #0090ff);
+            transform: translateY(-2px);
         }
 
-        .register {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #555;
+        .login-text {
+            text-align: center;
+            margin-top: 18px;
+            color: #f1f1f1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
-        .register a {
-            color: #4A90E2;
+        .login-text a {
+            color: #ffdf00;
+            font-weight: 600;
             text-decoration: none;
-            font-weight: bold;
         }
 
-        .register a:hover {
-            color: #357ABD;
+        .login-text a:hover {
+            color: #ffffff;
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(255, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            color: #ff3b3b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 0, 0, 0.4);
         }
     </style>
 </head>
 
 <body>
-    <div class="wrapper">
-        <form method="POST" action="/register">
-            <h2>Register</h2>
-            
-            <!-- Display error message if email is already registered -->
-            <div id="unique-email" style="color: red; display: none;">
-                Email is already Exist!
-            </div>
-            <div class="input-field">
-                <input type="text" name="fname" placeholder="First Name" required>
-            </div>
-            <div class="input-field">
-                <input type="text" name="mname" placeholder="Middle Name">
-            </div>
-            <div class="input-field">
-                <input type="text" name="lname" placeholder="Last Name" required>
-            </div>
-            <div class="input-field">
-                <input type="text" name="mobile" placeholder="Mobile No." required>
-            </div>
-            <div class="input-field">
-                <input type="email" name="email" placeholder="Email" required>
-            </div>
-            <div class="input-field">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit">Register</button>
-            <div class="register">
-                <p>Already have an account? <a href="/login">Login</a></p>
-            </div>
-        </form>
-    </div>
 
-    <script>
-        // Check if the URL has an error parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const errorParam = urlParams.get('error');
+<div class="glass-card">
 
-        if (errorParam === 'email') {
-            document.getElementById('unique-email').style.display = 'block';
-        }
-    </script>
+    <form action="/register" method="POST">
+
+        <h2>Create Account</h2>
+
+        <div id="email-error"
+             class="error-message"
+             th:if="${param.error != null}">
+            Email already exists!
+        </div>
+
+        <div class="input-box">
+            <input type="text" name="fname" placeholder="First Name" required>
+        </div>
+
+        <div class="input-box">
+            <input type="text" name="mname" placeholder="Middle Name">
+        </div>
+
+        <div class="input-box">
+            <input type="text" name="lname" placeholder="Last Name" required>
+        </div>
+
+        <div class="input-box">
+            <input type="text" name="mobile" placeholder="Mobile Number" required>
+        </div>
+
+        <div class="input-box">
+            <input type="email" name="email" placeholder="Email Address" required>
+        </div>
+
+        <div class="input-box">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Register</button>
+
+        <div class="login-text">
+            Already have an account?
+            <a th:href="@{/login}">Login</a>
+        </div>
+
+    </form>
+</div>
+
 </body>
-
-
-
-
 </html>

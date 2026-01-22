@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Our Services | Borewell Solutions</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-md py-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6">
+        <h1 class="text-2xl font-bold text-blue-700">Borewell Services</h1>
+
+        <ul class="flex gap-6 text-gray-700 font-medium">
+            <li><a href="/" class="hover:text-blue-700">Home</a></li>
+            <li><a href="/booking" class="hover:text-blue-700">Book Now</a></li>
+            <li><a href="/services" class="text-blue-700 font-semibold">Services</a></li>
+            <li><a href="/contact" class="hover:text-blue-700">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Services Header -->
+<section class="bg-blue-600 text-white py-16">
+    <div class="max-w-6xl mx-auto text-center px-6">
+        <h2 class="text-4xl font-bold mb-3">Our Borewell Services</h2>
+        <p class="text-lg text-blue-100">Quality. Reliability. Professionalism.</p>
+    </div>
+</section>
+
+<!-- Services List -->
+<section class="max-w-6xl mx-auto py-12 px-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Service Card 1 -->
+        <div class="bg-white rounded-xl shadow-md border p-6">
+            <img src="https://images.unsplash.com/photo-1581092795360-f829d3d1d9cd?auto=format&fit=crop&w=800&q=60"
+                 alt="Drilling Service"
+                 class="rounded-lg h-40 w-full object-cover mb-4">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">Borewell Drilling</h3>
+            <p class="text-gray-600 mb-4">
+                We provide professional residential, industrial, and commercial borewell drilling with modern machinery.
+            </p>
+            <a href="/booking"
+               class="text-blue-700 font-medium hover:underline">Book Now →</a>
+        </div>
+
+        <!-- Service Card 2 -->
+        <div class="bg-white rounded-xl shadow-md border p-6">
+            <img src="https://images.unsplash.com/photo-1601758003122-58a66b4c2e19?auto=format&fit=crop&w=800&q=60"
+                 alt="Pipe Installation"
+                 class="rounded-lg h-40 w-full object-cover mb-4">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">Casing Pipe Installation</h3>
+            <p class="text-gray-600 mb-4">
+                High-quality PVC, MS, and HDPE pipe installation with perfect alignment & durability.
+            </p>
+            <a href="/booking"
+               class="text-blue-700 font-medium hover:underline">Book Now →</a>
+        </div>
+
+        <!-- Service Card 3 -->
+        <div class="bg-white rounded-xl shadow-md border p-6">
+            <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=60"
+                 alt="Drilling Price"
+                 class="rounded-lg h-40 w-full object-cover mb-4">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">Drilling Price Estimation</h3>
+            <p class="text-gray-600 mb-4">
+                Accurate drilling depth calculation and transparent pricing based on geology and equipment used.
+            </p>
+            <a href="/booking"
+               class="text-blue-700 font-medium hover:underline">Get Estimate →</a>
+        </div>
+
+        <!-- Service Card 4 -->
+        <div class="bg-white rounded-xl shadow-md border p-6">
+            <img src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=60"
+                 alt="Pipe Quality"
+                 class="rounded-lg h-40 w-full object-cover mb-4">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">Pipe Quality Selection</h3>
+            <p class="text-gray-600 mb-4">
+                Choose from premium pipe brands and qualities suitable for various soil & water conditions.
+            </p>
+            <a href="/booking"
+               class="text-blue-700 font-medium hover:underline">Choose Quality →</a>
+        </div>
+
+        <!-- Service Card 5 -->
+        <div class="bg-white rounded-xl shadow-md border p-6">
+            <img src="https://images.unsplash.com/photo-1619272052399-e0fb1923112e?auto=format&fit=crop&w=800&q=60"
+                 alt="Soil Test"
+                 class="rounded-lg h-40 w-full object-cover mb-4">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">Water Level & Soil Testing</h3>
+            <p class="text-gray-600 mb-4">
+                Identify the best borewell spot using groundwater analysis & soil testing.
+            </p>
+            <a href="/booking"
+               class="text-blue-700 font-medium hover:underline">Check Now →</a>
+        </div>
+
+        <!-- Service Card 6 -->
+        <div class="bg-white rounded-xl shadow-md border p-6">
+            <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=800&q=60"
+                 alt="Maintenance"
+                 class="rounded-lg h-40 w-full object-cover mb-4">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">Borewell Repair & Maintenance</h3>
+            <p class="text-gray-600 mb-4">
+                Complete repair, motor fitting, flushing, and cleaning services for all borewell types.
+            </p>
+            <a href="/contact"
+               class="text-blue-700 font-medium hover:underline">Request Service →</a>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-300 py-6 mt-12">
+    <div class="max-w-7xl mx-auto text-center">
+        <p class="text-sm">© 2025 Borewell Services. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

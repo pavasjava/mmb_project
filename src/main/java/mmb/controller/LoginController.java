@@ -51,6 +51,7 @@ public class LoginController {
 
 	@GetMapping("/index")
 	public String showRegistrationForm(Model model) {
+		model.addAttribute("user", new UserInfo());
 		return "login/register";
 	}
 	
@@ -77,6 +78,12 @@ public class LoginController {
 //	public String showRegistrationForm() {
 //		return "register";
 //	}	
+	
+	@GetMapping("/home")
+	public String showHomepage(Model model) {
+		model.addAttribute("user", new UserInfo());
+		return "login/home";
+	}
 
 
 	@GetMapping("/login")
@@ -110,6 +117,7 @@ public class LoginController {
 				System.out.println("userInfoOpt -> "+ userInfoOpt.get());
 				if (userInfoOpt.isPresent()) {
 					UserInfo userInfo = userInfoOpt.get();
+					session.setAttribute("loggedInUser", userInfo);
 					int status = userInfo.getStatus();
 
 					if (roles.contains("ROLE_USER")) {

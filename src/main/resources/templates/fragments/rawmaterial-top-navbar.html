@@ -1,0 +1,116 @@
+<!-- fragments/rawmaterial-top-navbar.html -->
+<div class="top-navbar" th:fragment="top-navbar">
+    <style>
+        .top-navbar-wrapper {
+            width: 100%;
+        }
+        
+        .top-navbar .page-header {
+            background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%);
+            padding: 1.5rem 0;
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .top-navbar .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .top-navbar .header-left {
+            flex: 1;
+        }
+        
+        .top-navbar .page-header h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .top-navbar .page-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .top-navbar .btn-add {
+            background: white;
+            color: #2563eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .top-navbar .btn-add:hover {
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .top-navbar .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .top-navbar .page-header {
+                padding: 1rem 0;
+            }
+            
+            .top-navbar .page-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .top-navbar .btn-add {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+
+    <div class="top-navbar-wrapper">
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>
+                        <i class="fas fa-boxes"></i>
+                        Raw Materials Management
+                    </h1>
+                    <p>Create, manage, and track all your Raw Materials in one place</p>
+                </div>
+                
+                <a th:href="@{/addNewRawMaterial}" class="btn-add">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Material</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Raw Material top navbar loaded');
+        });
+        /*]]>*/
+    </script>
+</div>

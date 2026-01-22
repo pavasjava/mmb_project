@@ -1,46 +1,1012 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Add/Edit Borewell Type</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Borewell Type Management | MMB Borewell Services</title>
+    
+    <!-- Include common head -->
+    <div th:replace="fragments/head :: head"></div>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        /* Main content alignment for sidebar */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding-bottom: 2rem;
+        }
+        
+        .main-content-expanded {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        .main-content-full {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        /* Top navbar wrapper */
+        .top-nav-wrapper {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+        
+        /* Form container styling */
+        .form-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-left: 450px;
+        }
+        
+        /* Card styling - Enhanced for larger size */
+        .form-card {
+            max-width: 1140px;
+            margin: 0rem auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-card:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        /* Form header - Enhanced */
+        .form-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 80px;
+        }
+        
+        .form-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        .form-title i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Form content - Expanded */
+        .form-content {
+            padding: 2.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Add a subtle background pattern to the form content */
+        .form-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at top right, rgba(42, 82, 152, 0.03), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Grid container for form fields */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Form group styling - Enhanced */
+        .form-group {
+            margin-bottom: 1.75rem;
+            position: relative;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label i {
+            color: #4a5568;
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2d3748;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .form-input:hover, .form-select:hover, .form-textarea:hover {
+            border-color: #cbd5e0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #a0aec0;
+        }
+        
+        /* File input styling */
+        .file-input-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-input-container input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 1rem 1.25rem;
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #4a5568;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .file-input-label:hover {
+            border-color: #2a5298;
+            background: rgba(42, 82, 152, 0.05);
+        }
+        
+        .file-input-label i {
+            font-size: 1.5rem;
+            color: #2a5298;
+        }
+        
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Image preview */
+        .image-preview {
+            margin-top: 1rem;
+            position: relative;
+        }
+        
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e2e8f0;
+        }
+        
+        .current-image-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        /* Help text below inputs */
+        .form-help {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        
+        /* Required field indicator */
+        .required::after {
+            content: " *";
+            color: #e53e3e;
+            font-weight: 700;
+        }
+        
+        /* Form actions - Enhanced */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 2px solid #f1f5f9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            border: none;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .btn-cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+            border: 2px solid transparent;
+        }
+        
+        .btn-save:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        /* Info section - Enhanced */
+        .info-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 1rem;
+            border-left: 5px solid #2a5298;
+            grid-column: 1 / -1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .info-title i {
+            color: #2a5298;
+            font-size: 1.4rem;
+        }
+        
+        .info-text {
+            color: #4a5568;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+        
+        .info-text ul {
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        
+        .info-text li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Animation for form */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-card {
+            animation: slideInUp 0.6s ease;
+        }
+        
+        /* Toast animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .animate-slideInRight {
+            animation: slideInRight 0.3s ease;
+        }
+        
+        /* Validation error styling */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .error-message i {
+            font-size: 0.875rem;
+        }
+        
+        .form-input.error, .form-select.error, .form-textarea.error {
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+        
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive adjustments for larger form */
+        @media (max-width: 1024px) {
+            .form-container {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .form-card {
+                max-width: 90%;
+                margin: 1.5rem auto;
+            }
+            
+            .form-grid {
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-card {
+                margin: 1rem auto;
+                border-radius: 20px;
+                min-height: auto;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.8rem;
+            }
+            
+            .form-title i {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+            
+            .form-content {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                padding: 0.875rem 1rem;
+                font-size: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.875rem 1.5rem;
+            }
+            
+            .info-section {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-card {
+                border-radius: 16px;
+            }
+            
+            .form-header {
+                padding: 1.25rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+                gap: 10px;
+            }
+            
+            .form-title i {
+                padding: 8px;
+                font-size: 1.3rem;
+            }
+            
+            .form-content {
+                padding: 1.25rem;
+            }
+            
+            .form-grid {
+                gap: 1.25rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-primary text-white text-center rounded-top-4">
-            <h3 class="mb-0" th:text="${borewellType.borewelTypeid != null ? 'Edit Borewell Type' : 'Add Borewell Type'}"></h3>
-        </div>
-        <div class="card-body p-4">
-			<form th:action="@{/borewellTypes/saveBorewellType}"
-			      th:object="${borewellType}"
-			      method="post"
-			      enctype="multipart/form-data" class="row g-3">
-
-			    <input type="hidden" th:field="*{borewelTypeid}">
-
-			    <div class="col-12">
-			        <label class="form-label">Name</label>
-			        <input type="text" th:field="*{name}" class="form-control" placeholder="Enter name" required>
-			    </div>
-
-			    <div class="col-12">
-			        <label class="form-label">Description</label>
-			        <textarea th:field="*{description}" class="form-control" rows="2" placeholder="Enter description"></textarea>
-			    </div>
-
-			    <div class="col-12">
-			        <label class="form-label">Upload Image</label>
-			        <input type="file" th:field="*{imageFile}" accept="image/*" class="form-control"/>
-			    </div>
-
-			    <div class="col-12 text-center mt-4">
-			        <button type="submit" class="btn btn-success btn-lg px-5 shadow">Save</button>
-			        <a href="/borewell-types/list" class="btn btn-secondary btn-lg px-5 shadow">Cancel</a>
-			    </div>
-			</form>
-
+<body class="bg-gray-50">
+    
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div class="top-nav-wrapper" th:replace="fragments/borewelltype-top-navbar :: top-navbar"></div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-card">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h1 class="form-title">
+                        <i class="bi bi-droplet"></i>
+                        <span th:text="${borewellType.borewelTypeid != null ? 'Edit Borewell Type' : 'Add Borewell Type'}"></span>
+                    </h1>
+                </div>
+                
+                <!-- Form Content -->
+                <div class="form-content">
+                    <form th:action="@{/borewellTypes/saveBorewellType}"
+                          th:object="${borewellType}"
+                          method="post"
+                          enctype="multipart/form-data"
+                          id="borewellTypeForm">
+                        
+                        <input type="hidden" th:field="*{borewelTypeid}">
+                        
+                        <!-- Grid container for form fields -->
+                        <div class="form-grid">
+                            <!-- Name -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="bi bi-card-heading"></i> Name
+                                </label>
+                                <input type="text" 
+                                       th:field="*{name}" 
+                                       class="form-input" 
+                                       placeholder="Enter borewell type name"
+                                       required />
+                                <span class="form-help">
+                                    Enter a descriptive name for the borewell type (e.g., Submersible, Open Well)
+                                </span>
+                            </div>
+                            
+                            <!-- Description -->
+                            <div class="form-group full-width">
+                                <label class="form-label">
+                                    <i class="bi bi-text-paragraph"></i> Description
+                                </label>
+                                <textarea th:field="*{description}" 
+                                          class="form-textarea" 
+                                          placeholder="Enter description about this borewell type"></textarea>
+                                <span class="form-help">
+                                    Optional: Add details about specifications, applications, or special features
+                                </span>
+                            </div>
+                            
+                            <!-- Image Upload -->
+                            <div class="form-group full-width">
+                                <label class="form-label">
+                                    <i class="bi bi-image"></i> Borewell Type Image
+                                </label>
+                                <div class="file-input-container">
+                                    <input type="file" 
+                                           th:field="*{imageFile}" 
+                                           accept="image/*" 
+                                           class="form-input" 
+                                           id="imageFileInput" />
+                                    <div class="file-input-label">
+                                        <i class="bi bi-cloud-upload"></i>
+                                        <span>Click to upload image or drag and drop</span>
+                                    </div>
+                                </div>
+                                <div class="file-name" id="fileNameDisplay">
+                                    <i class="bi bi-file-earmark"></i>
+                                    <span>No file selected</span>
+                                </div>
+                                <span class="form-help">
+                                    Upload an image representing this borewell type (JPG, PNG, GIF - Max 5MB)
+                                </span>
+                            </div>
+                            
+                            <!-- Current Image Preview -->
+                            <div class="form-group full-width" th:if="${borewellType.imageUrl != null and borewellType.imageUrl != ''}">
+                                <span class="current-image-label">Current Image:</span>
+                                <div class="image-preview">
+                                    <img th:src="@{${borewellType.imageUrl}}" 
+                                         alt="Current Borewell Type Image" 
+                                         class="preview-image" 
+                                         id="currentImage" />
+                                </div>
+                                <span class="form-help">
+                                    This is the current image. Upload a new image to replace it.
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Section -->
+                        <div class="info-section">
+                            <h3 class="info-title">
+                                <i class="bi bi-info-circle"></i>
+                                Quick Tips
+                            </h3>
+                            <p class="info-text">
+                                • Provide a clear and descriptive name for easy identification<br>
+                                • Add detailed descriptions to help users understand the borewell type<br>
+                                • Upload high-quality images that accurately represent the borewell type<br>
+                                • Supported image formats: JPG, PNG, GIF<br>
+                                • Maximum file size: 5MB<br>
+                                • Contact support if you need assistance with image uploads
+                            </p>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a href="/borewellTypes/borewellTypeList" class="btn btn-cancel">
+                                <i class="bi bi-x-circle"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-save" id="submitBtn">
+                                <i class="bi bi-check-circle"></i>
+                                <span th:text="${borewellType.borewelTypeid != null ? 'Update Borewell Type' : 'Save Borewell Type'}"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Borewell Type form page loaded');
+            
+            // Initialize main content based on sidebar state
+            const mainContent = document.getElementById('mainContent');
+            if (mainContent) {
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    mainContent.classList.add('main-content-expanded');
+                    mainContent.classList.remove('main-content-full');
+                } else {
+                    mainContent.classList.remove('main-content-expanded');
+                    mainContent.classList.add('main-content-full');
+                }
+            }
+            
+            // File input handling
+            const fileInput = document.getElementById('imageFileInput');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            const currentImage = document.getElementById('currentImage');
+            
+            if (fileInput) {
+                // Update file name display
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        // Check file size (max 5MB)
+                        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                        if (file.size > maxSize) {
+                            showToast('File size exceeds 5MB limit. Please choose a smaller file.', 'error');
+                            this.value = '';
+                            fileNameDisplay.innerHTML = '<i class="bi bi-file-earmark"></i><span>No file selected</span>';
+                            return;
+                        }
+                        
+                        // Check file type
+                        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+                        if (!validTypes.includes(file.type)) {
+                            showToast('Please select a valid image file (JPG, PNG, GIF).', 'error');
+                            this.value = '';
+                            fileNameDisplay.innerHTML = '<i class="bi bi-file-earmark"></i><span>No file selected</span>';
+                            return;
+                        }
+                        
+                        // Update display
+                        fileNameDisplay.innerHTML = `<i class="bi bi-file-image"></i><span>${file.name} (${formatBytes(file.size)})</span>`;
+                        
+                        // Preview image
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            if (currentImage) {
+                                currentImage.src = e.target.result;
+                            } else {
+                                // Create new preview if it doesn't exist
+                                const imagePreview = document.querySelector('.image-preview');
+                                if (imagePreview) {
+                                    const img = document.createElement('img');
+                                    img.src = e.target.result;
+                                    img.alt = "Image Preview";
+                                    img.className = "preview-image";
+                                    img.id = "currentImage";
+                                    imagePreview.innerHTML = '';
+                                    imagePreview.appendChild(img);
+                                    
+                                    // Update current image label
+                                    const label = imagePreview.previousElementSibling;
+                                    if (label && label.classList.contains('current-image-label')) {
+                                        label.textContent = 'New Image Preview:';
+                                    }
+                                }
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        fileNameDisplay.innerHTML = '<i class="bi bi-file-earmark"></i><span>No file selected</span>';
+                    }
+                });
+                
+                // Drag and drop functionality
+                const fileInputLabel = fileInput.parentElement.querySelector('.file-input-label');
+                if (fileInputLabel) {
+                    fileInputLabel.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#2a5298';
+                        this.style.background = 'rgba(42, 82, 152, 0.1)';
+                    });
+                    
+                    fileInputLabel.addEventListener('dragleave', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#e2e8f0';
+                        this.style.background = '#f8fafc';
+                    });
+                    
+                    fileInputLabel.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#e2e8f0';
+                        this.style.background = '#f8fafc';
+                        
+                        if (e.dataTransfer.files.length) {
+                            fileInput.files = e.dataTransfer.files;
+                            fileInput.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+            }
+            
+            // Form validation and submission
+            const form = document.getElementById('borewellTypeForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (form) {
+                const requiredInputs = form.querySelectorAll('[required]');
+                
+                // Add validation feedback
+                requiredInputs.forEach(input => {
+                    input.addEventListener('blur', function() {
+                        validateField(this);
+                    });
+                    
+                    input.addEventListener('input', function() {
+                        // Clear error when user starts typing
+                        if (this.classList.contains('error')) {
+                            clearFieldError(this);
+                        }
+                    });
+                });
+                
+                // Form submission handler
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Validate all required fields
+                    let isValid = true;
+                    requiredInputs.forEach(input => {
+                        if (!validateField(input)) {
+                            isValid = false;
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        // Scroll to first error
+                        const firstError = form.querySelector('.error');
+                        if (firstError) {
+                            firstError.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                            firstError.focus();
+                        }
+                        
+                        showToast('Please fill all required fields correctly.', 'error');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                    
+                    // Show success message
+                    showToast('Saving borewell type information...', 'success');
+                    
+                    // Submit form after a short delay to show loading state
+                    setTimeout(() => {
+                        form.submit();
+                    }, 1000);
+                });
+            }
+            
+            // Field validation function
+            function validateField(field) {
+                // Remove existing error message
+                clearFieldError(field);
+                
+                // Check if required field is empty
+                if (field.hasAttribute('required') && !field.value.trim()) {
+                    showFieldError(field, 'This field is required');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            function showFieldError(field, message) {
+                field.classList.add('error');
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = `<i class="bi bi-exclamation-circle"></i> ${message}`;
+                
+                field.parentNode.appendChild(errorDiv);
+            }
+            
+            function clearFieldError(field) {
+                field.classList.remove('error');
+                
+                const errorDiv = field.parentNode.querySelector('.error-message');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+            
+            // Helper function to format bytes
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+            
+            // Toast notification function
+            function showToast(message, type) {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+                
+                const toast = document.createElement('div');
+                toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
+                    type === 'error' ? 'bg-red-500 text-white' : 
+                    type === 'success' ? 'bg-green-500 text-white' : 
+                    'bg-blue-500 text-white'
+                }`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="bi ${type === 'error' ? 'bi-exclamation-circle' : 
+                                      type === 'success' ? 'bi-check-circle' : 
+                                      'bi-info-circle'}"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + S to save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    if (submitBtn) {
+                        submitBtn.click();
+                    }
+                }
+                
+                // Escape to cancel
+                if (e.key === 'Escape') {
+                    window.location.href = '/borewell-types/list';
+                }
+            });
+            
+            // Add hover effects to form groups
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                group.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                group.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+        
+        // Fallback: Also try initializing when window loads
+        window.addEventListener('load', function() {
+            console.log('Window fully loaded');
+        });
+    </script>
 </body>
 </html>

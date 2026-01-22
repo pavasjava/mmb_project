@@ -94,4 +94,8 @@ public class BorewellTypeServiceImpl implements BorewellTypeService{
         borewellTypeRepo.deleteById(id);
     }
 
+    @Override
+    public List<BorewellType> getBorewellTypeByAreaWise(String cityId, String areaId, String drillingSize) {
+        return borewellTypeRepo.getBorewellTypeByAreaWise(cityId, areaId, drillingSize);
+    }
 }

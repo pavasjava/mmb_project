@@ -1,0 +1,157 @@
+<!-- templates/fragments/admin-topbar.html -->
+<div th:fragment="admin-topbar">
+    <!-- Admin Dashboard Top Bar -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center space-x-4">
+                <button id="mobileToggle" class="mobile-toggle text-gray-700 lg:hidden">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                
+                <div class="hidden md:block">
+                    <h1 class="text-2xl font-bold text-gray-800" id="pageTitle">Dashboard</h1>
+                    <p class="text-gray-600" id="pageSubtitle">Welcome back, Admin! Here's what's happening today.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Search -->
+                <div class="hidden md:block relative">
+                    <input type="text" placeholder="Search..." 
+                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+                
+                <!-- Notifications -->
+                <div class="relative dropdown">
+                    <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">7</span>
+                    </button>
+                    <div class="dropdown-menu absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 z-50">
+                        <div class="px-4 py-3 border-b">
+                            <h3 class="font-semibold text-gray-800">Notifications</h3>
+                            <p class="text-sm text-gray-600">You have 7 new notifications</p>
+                        </div>
+                        <div class="max-h-60 overflow-y-auto">
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-50 border-b">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                                        <i class="fas fa-file-invoice text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">New quotation request</p>
+                                        <p class="text-xs text-gray-500">2 minutes ago</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-50 border-b">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                                        <i class="fas fa-calendar-check text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">Booking confirmed</p>
+                                        <p class="text-xs text-gray-500">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <a href="#" class="block text-center py-3 text-blue-600 hover:bg-gray-50 font-medium">
+                            View All Notifications
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="hidden md:flex items-center space-x-2">
+                    <a th:href="@{/quotations/getAllQuotation}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                        <i class="fas fa-plus mr-2"></i> New Quotation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Overlay for sidebar -->
+    <div class="mobile-menu-overlay" id="adminMobileOverlay"></div>
+
+    <script>
+        // Mobile toggle for admin
+        const mobileToggle = document.getElementById('mobileToggle');
+        const adminMobileOverlay = document.getElementById('adminMobileOverlay');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                if (sidebar) {
+                    sidebar.classList.toggle('sidebar-mobile-open');
+                    if (adminMobileOverlay) adminMobileOverlay.style.display = 'block';
+                }
+            });
+        }
+        
+        if (adminMobileOverlay) {
+            adminMobileOverlay.addEventListener('click', () => {
+                if (sidebar) sidebar.classList.remove('sidebar-mobile-open');
+                adminMobileOverlay.style.display = 'none';
+            });
+        }
+    </script>
+    
+    <style>
+        .mobile-toggle {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block !important;
+            }
+            
+            .sidebar-mobile-open {
+                transform: translateX(0) !important;
+            }
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</div>

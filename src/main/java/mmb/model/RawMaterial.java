@@ -31,11 +31,11 @@ public class RawMaterial {
 //	@Column(name = "company_name")
 //	private String companyName;
 	@Column(name = "quality")
-	private String Quality;
+	private String quality;
 	@Column(name = "material_price")
 	private Double materialPrice;
 	@Column(name = "material_size")
-	private String matrialSize;
+	private String materialSize;
 	@Column(name = "quantity")
 	private String quantity;
 	@ManyToOne
@@ -64,17 +64,17 @@ public class RawMaterial {
 	public void setMaterialPrice(Double materialPrice) {
 		this.materialPrice = materialPrice;
 	}
-	public String getMatrialSize() {
-		return matrialSize;
+	public String getMaterialSize() {
+		return materialSize;
 	}
-	public void setMatrialSize(String matrialSize) {
-		this.matrialSize = matrialSize;
+	public void setMaterialSize(String matrialSize) {
+		this.materialSize = matrialSize;
 	}
 	public String getQuality() {
-		return Quality;
+		return quality;
 	}
 	public void setQuality(String quality) {
-		Quality = quality;
+		this.quality = quality;
 	}
 	public String getQuantity() {
 		return quantity;

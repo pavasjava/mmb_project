@@ -11,5 +11,8 @@ public interface RawMaterialService {
     void deleteMaterial(int id);
     RawMaterialDTO getMaterialById(int id);
     List<RawMaterialDTO> getAllMaterials();
+    RawMaterialDTO findMasterCasingDetails(String materialSize, String quality);
+    RawMaterialDTO findMasterCasingDetails(String materialSize);
+    RawMaterialDTO findMaterialDetailsByMaterialName(String materialName);
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import jakarta.servlet.http.HttpServletResponse;
 import mmb.dto.GenerateBillDTO;
 import mmb.dto.MaterialWithCompanyProjection;
+import mmb.model.GenerateBill;
 import mmb.repository.GenerateBillRepo;
 import mmb.repository.MaterialCompanyNameRepo;
 import mmb.repository.MaterialTypeRepo;
@@ -45,10 +46,38 @@ public class GenerateBillController {
 	@Autowired
 	private PdfService pdfService;
 
+//	@GetMapping("/getAllBill")
+//	public String generateBills(Model model) {
+//		model.addAttribute("generateBills", billService.getAllBills());
+//		return "generateBill/bill-list";
+//	}
+	
 	@GetMapping("/getAllBill")
-	public String generateBills(Model model) {
-		model.addAttribute("generateBills", billService.getAllBills());
-		return "generateBill/bill-list";
+	public String getAllBills(Model model) {
+	    List<GenerateBill> bills = billService.getAllBills();
+	    model.addAttribute("generateBills", bills);
+	    
+	    // Calculate totals - using double for precision
+	    double totalAmount = bills.stream()
+	        .mapToDouble(b -> 
+	            b.getTotalDrillingAmt() + 
+	            b.getTotalMatrialAmt() + 
+	            b.getTotalOthWorkAmt() + 
+	            b.getTransportingPrice()
+	        )
+	        .sum();
+	    
+	    double totalAdvance = bills.stream()
+	        .mapToDouble(GenerateBill::getTotalAdvance)
+	        .sum();
+	    
+	    double balanceAmount = totalAmount - totalAdvance;
+	    
+	    model.addAttribute("totalAmount", totalAmount);
+	    model.addAttribute("totalAdvance", totalAdvance);
+	    model.addAttribute("balanceAmount", balanceAmount);
+	    
+	    return "generateBill/bill-list";
 	}
 
 	@GetMapping("/generateNewBill")

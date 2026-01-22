@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmation | Borewell Services</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .gradient-header {
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+        }
+        
+        .price-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .stagger-animation > * {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+        .stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .water-wave {
+            background: radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+        }
+        
+        .table-row-hover:hover {
+            background-color: #f8fafc;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .price-badge {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .price-badge::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .receipt-container {
+            position: relative;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .receipt-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .receipt-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+            border-radius: 0 0 16px 16px;
+        }
+        
+        .section-divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #cbd5e1 50%, transparent 100%);
+        }
+        
+        .section-divider span {
+            background: white;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .billing-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .billing-table thead {
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+        
+        .billing-table th {
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+        
+        .billing-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .billing-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .total-row {
+            background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-weight: 700;
+        }
+        
+        .tax-row {
+            background: #f8fafc;
+        }
+        
+        .final-total {
+            background: linear-gradient(90deg, #dcfce7 0%, #bbf7d0 100%);
+            font-weight: 800;
+            color: #065f46;
+        }
+        
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+
+<body class="py-10 water-wave">
+    <div class="max-w-5xl mx-auto px-4">
+        
+        <!-- Progress Indicator -->
+        <div class="mb-3">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm text-gray-600">Booking Confirmation</div>
+                <div class="text-sm text-gray-600">Step 2 of 3</div>
+            </div>
+        </div>
+
+        <!-- Main Receipt Container -->
+        <div class="receipt-container stagger-animation">
+            
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="relative">
+                        <i class="fas fa-water text-4xl text-blue-600"></i>
+                        <div class="pulse-ring"></div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800 ml-4">Borewell Services</h1>
+                </div>
+                <p class="text-gray-600">Drilling Solutions You Can Trust</p>
+                <div class="mt-4 inline-block px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+                    <i class="fas fa-receipt mr-2"></i>Booking Receipt
+                </div>
+            </div>
+
+            <!-- Customer Info Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="stat-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-blue-100 rounded-full mr-4">
+                            <i class="fas fa-user text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Customer Details</h3>
+                            <h2 class="text-xl font-bold text-gray-800" th:text="${booking.customerName}"></h2>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-gray-600">
+                            <i class="fas fa-phone-alt text-blue-500 mr-2 w-5"></i>
+                            <span th:text="${booking.phoneNumber}"></span>
+                        </p>
+                        <p class="text-gray-600">
+                            <i class="fas fa-map-marker-alt text-green-500 mr-2 w-5"></i>
+                            <span th:text="${booking.city.cityName}"></span>, 
+                            <span th:text="${booking.area.locationAreaName}"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="stat-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-green-100 rounded-full mr-4">
+                            <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Booking Date</h3>
+                            <h2 class="text-xl font-bold text-gray-800" 
+                                th:text="${#temporals.format(booking.bookingDate, 'dd MMMM yyyy')}"></h2>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-gray-600">
+                            <i class="fas fa-tools text-yellow-500 mr-2 w-5"></i>
+                            Borewell Type: <span class="font-semibold" th:text="${booking.borewellType.name}"></span>
+                        </p>
+                        <p class="text-gray-600">
+                            <i class="fas fa-ruler-combined text-purple-500 mr-2 w-5"></i>
+                            Drilling Size: <span class="font-semibold" th:text="${booking.drillingSize}"></span> inch
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Details -->
+            <div class="section-divider">
+                <span class="text-lg font-bold text-gray-700">
+                    <i class="fas fa-file-invoice-dollar mr-2 text-blue-600"></i>
+                    Billing Details
+                </span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl shadow-sm mb-8">
+                <table class="billing-table w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Service Description</th>
+                            <th class="text-right">Unit Price (₹)</th>
+                            <th class="text-right">Units</th>
+                            <th class="text-right">Amount (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Drilling Service -->
+                        <tr class="table-row-hover">
+                            <td class="font-medium text-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-digging text-blue-500 mr-3"></i>
+                                    <div>
+                                        <div th:text="${booking.borewellType.name} + ' Drilling (' + ${booking.drillingSize} + ' inch)'"></div>
+                                        <div class="text-xs text-gray-500">Depth-based drilling service</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-right" th:text="${booking.price}"></td>
+                            <td class="text-right" th:text="${booking.totalDrillingUnit}"></td>
+                            <td class="text-right font-semibold" th:text="${booking.totalDrillingPrice}"></td>
+                        </tr>
+
+                        <!-- Casing Pipe -->
+                        <tr class="table-row-hover">
+                            <td class="font-medium text-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-pipe text-green-500 mr-3"></i>
+                                    <div>
+                                        <div th:text="${booking.companyName.companyName} + ' Casing Pipe'"></div>
+                                        <div class="text-xs text-gray-500">Quality: <span th:text="${booking.pipeQuality}"></span></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-right" th:text="${booking.casingPrice}"></td>
+                            <td class="text-right" th:text="${booking.totalUnitCasing}"></td>
+                            <td class="text-right font-semibold" th:text="${booking.totalCasingPrice}"></td>
+                        </tr>
+
+                        <!-- Master Casing -->
+                        <tr class="table-row-hover">
+                            <td class="font-medium text-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-layer-group text-yellow-500 mr-3"></i>
+                                    Master Casing (4kg)
+                                </div>
+                            </td>
+                            <td class="text-right" th:text="${booking.masterCasingPricePerUnit}"></td>
+                            <td class="text-right" th:text="${booking.totalUnitMasterCasing}"></td>
+                            <td class="text-right font-semibold" th:text="${booking.totalMasterCasingPrice}"></td>
+                        </tr>
+
+                        <!-- Casing Sloting -->
+                        <tr class="table-row-hover">
+                            <td class="font-medium text-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-cut text-purple-500 mr-3"></i>
+                                    Casing Pipe Slotting
+                                </div>
+                            </td>
+                            <td class="text-right" th:text="${booking.casingSlotingPerUnit}"></td>
+                            <td class="text-right" th:text="${booking.totalUnitSloting}"></td>
+                            <td class="text-right font-semibold" th:text="${booking.totalSlotingPrice}"></td>
+                        </tr>
+
+                        <!-- Bore Washing -->
+                        <tr class="table-row-hover">
+                            <td class="font-medium text-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shower text-blue-400 mr-3"></i>
+                                    Bore Washing Service
+                                </div>
+                            </td>
+                            <td class="text-right" th:text="${booking.washingPricePerUnit}"></td>
+                            <td class="text-right" th:text="${booking.totalWashingUnit}"></td>
+                            <td class="text-right font-semibold" th:text="${booking.totalWashingPrice}"></td>
+                        </tr>
+
+                        <!-- Transportation -->
+                        <tr class="table-row-hover">
+                            <td class="font-medium text-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-truck text-red-500 mr-3"></i>
+                                    Transportation Charges
+                                </div>
+                            </td>
+                            <td class="text-right" th:text="${booking.casingTransporting}"></td>
+                            <td class="text-right">1</td>
+                            <td class="text-right font-semibold" th:text="${booking.casingTransporting}"></td>
+                        </tr>
+
+                        <!-- Conditional ROTARY Items -->
+                        <th:block th:if="${booking.borewellType != null and booking.borewellType.name != null and (booking.borewellType.name == 'ROTTARY' 
+                                    or booking.borewellType.name == 'CALLIX' or booking.borewellType.name == 'DTH-ROTTARY')}">
+                            <!-- Gravel -->
+                            <tr class="table-row-hover">
+                                <td class="font-medium text-gray-700">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-cubes text-orange-500 mr-3"></i>
+                                        Gravel Packing
+                                    </div>
+                                </td>
+                                <td class="text-right" th:text="${booking.price}"></td>
+                                <td class="text-right" th:text="${booking.totalUnitGravel}"></td>
+                                <td class="text-right font-semibold" th:text="${booking.totalUnitGravelPrice}"></td>
+                            </tr>
+
+                            <!-- Mod-Powder -->
+                            <tr class="table-row-hover">
+                                <td class="font-medium text-gray-700">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-flask text-teal-500 mr-3"></i>
+                                        Mod-Powder
+                                    </div>
+                                </td>
+                                <td class="text-right" th:text="${booking.price}"></td>
+                                <td class="text-right" th:text="${booking.totalUnitModPowder}"></td>
+                                <td class="text-right font-semibold" th:text="${booking.totalModPowderPrice}"></td>
+                            </tr>
+                        </th:block>
+
+                        <!-- Totals and Taxes -->
+                        <tr class="total-row">
+                            <td colspan="3" class="text-right font-bold">Subtotal</td>
+                            <td class="text-right font-bold" th:text="${booking.totAmtBeforeDiscount}"></td>
+                        </tr>
+
+                        <tr class="tax-row">
+                            <td colspan="3" class="text-right">
+                                <div class="flex justify-end items-center">
+                                    <i class="fas fa-tag text-green-600 mr-2"></i>
+                                    <span>Discount (15%)</span>
+                                </div>
+                            </td>
+                            <td class="text-right font-semibold text-green-600" th:text="${booking.totDiscountAmt}"></td>
+                        </tr>
+
+                        <tr class="total-row">
+                            <td colspan="3" class="text-right font-bold">Taxable Amount</td>
+                            <td class="text-right font-bold" th:text="${booking.totalAmtAfterDiscount}"></td>
+                        </tr>
+
+                        <tr class="tax-row">
+                            <td colspan="3" class="text-right">
+                                <div class="flex justify-end items-center">
+                                    <i class="fas fa-balance-scale text-blue-600 mr-2"></i>
+                                    <span>CGST (6%)</span>
+                                </div>
+                            </td>
+                            <td class="text-right font-semibold" th:text="${booking.cgst}"></td>
+                        </tr>
+
+                        <tr class="tax-row">
+                            <td colspan="3" class="text-right">
+                                <div class="flex justify-end items-center">
+                                    <i class="fas fa-balance-scale-left text-blue-600 mr-2"></i>
+                                    <span>SGST (6%)</span>
+                                </div>
+                            </td>
+                            <td class="text-right font-semibold" th:text="${booking.sgst}"></td>
+                        </tr>
+
+                        <!-- Grand Total -->
+                        <tr class="final-total">
+                            <td colspan="3" class="text-right">
+                                <div class="flex justify-end items-center">
+                                    <i class="fas fa-crown text-yellow-600 mr-2"></i>
+                                    <span class="text-lg">GRAND TOTAL</span>
+                                </div>
+                            </td>
+                            <td class="text-right text-lg font-bold" th:text="${booking.grandTotal}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8 border border-blue-100">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-wallet text-blue-600 mr-2"></i>
+                            Payment Summary
+                        </h3>
+                        <p class="text-gray-600 text-sm mt-1">All prices are in Indian Rupees (₹)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-sm text-gray-500 mb-1">Total Amount Payable</div>
+                        <div class="text-4xl font-bold text-green-700 flex items-center justify-center">
+                            <span th:text="${booking.grandTotal}"></span>
+                            <div class="price-badge ml-3 px-4 py-1 rounded-full text-sm font-bold">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                All Inclusive
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Call to Action -->
+            <div class="text-center border-t pt-8">
+                <div class="mb-6">
+                    <div class="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 mb-4">
+                        <i class="fas fa-gem text-green-600 mr-2"></i>
+                        <span class="text-green-800 font-bold">🎉 FINAL BOOKING AMOUNT 🎉</span>
+                    </div>
+                    
+                    <div class="flex justify-center items-center space-x-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-500">Booking Date</div>
+                            <div class="text-lg font-semibold text-blue-700" 
+                                 th:text="${#temporals.format(booking.bookingDate, 'dd-MMM-yyyy')}"></div>
+                        </div>
+                        <div class="w-8 h-px bg-gray-300"></div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-500">Invoice #</div>
+                            <div class="text-lg font-semibold text-blue-700" th:text="${booking.bookingId}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                    Please review all details carefully. Your booking will be confirmed once payment is processed.
+                </p>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/"
+                       class="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 hover:shadow-lg">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Home
+                    </a>
+                    
+                    <button onclick="confirmBooking()"
+                            class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl shadow-lg">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Confirm & Proceed to Payment
+                    </button>
+                    
+                    <button onclick="printReceipt()"
+                            class="inline-flex items-center justify-center px-6 py-3 border-2 border-green-600 text-green-700 font-semibold rounded-xl hover:bg-green-50 transition-all duration-300">
+                        <i class="fas fa-print mr-2"></i>
+                        Print Receipt
+                    </button>
+                </div>
+                
+                <p class="text-xs text-gray-500 mt-6">
+                    <i class="fas fa-shield-alt text-green-500 mr-1"></i>
+                    Your information is secured with 256-bit SSL encryption
+                </p>
+            </div>
+        </div>
+
+        <!-- Company Footer -->
+        <div class="text-center mt-8 text-gray-500 text-sm">
+            <p>© 2024 Borewell Services. All rights reserved.</p>
+            <p class="mt-1">
+                <i class="fas fa-phone-alt mr-1"></i> Customer Support: 1800-XXX-XXXX | 
+                <i class="fas fa-envelope ml-3 mr-1"></i> support@borewellservices.com
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add staggered animation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate progress bar
+            const progressBar = document.querySelector('.progress-bar');
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 100);
+            
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('.table-row-hover');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+            
+            // Update page title with customer name
+            const customerName = document.querySelector('[th\\:text="${booking.customerName}"]')?.textContent || 'Customer';
+            document.title = `Booking Confirmation - ${customerName} | Borewell Services`;
+        });
+        
+        function confirmBooking() {
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            
+            // Show loading state
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+            button.disabled = true;
+            button.classList.remove('hover:-translate-y-1', 'hover:shadow-xl');
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Success animation
+                button.innerHTML = '<i class="fas fa-check mr-2"></i> Booking Confirmed!';
+                button.classList.remove('from-blue-600', 'to-indigo-600');
+                button.classList.add('from-green-600', 'to-emerald-600');
+                
+                // Show success message
+                showSuccessMessage();
+                
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    //window.location.href = '/booking-success';
+					window.location.href = '/bookings/payment';
+                }, 2000);
+            }, 1500);
+        }
+        
+        function showSuccessMessage() {
+            const message = document.createElement('div');
+            message.innerHTML = `
+                <div class="fixed top-4 right-4 z-50 animate-fade-in-down">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center">
+                        <i class="fas fa-check-circle text-2xl mr-3"></i>
+                        <div>
+                            <div class="font-bold">Booking Confirmed Successfully!</div>
+                            <div class="text-sm opacity-90">Redirecting to payment page...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(message);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                message.remove();
+            }, 5000);
+        }
+        
+        function printReceipt() {
+            window.print();
+        }
+        
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fade-in-down {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .animate-fade-in-down {
+                animation: fade-in-down 0.5s ease-out;
+            }
+            
+            @media print {
+                body {
+                    background: white !important;
+                }
+                
+                .receipt-container {
+                    box-shadow: none !important;
+                    border: 2px solid #000 !important;
+                }
+                
+                button, a {
+                    display: none !important;
+                }
+                
+                .progress-bar, .pulse-ring {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Open Sans", sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), rgb(0, 64, 128);
+            padding: 20px;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-field input:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+        }
+
+        button {
+            width: 100%;
+            background: #4A90E2;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #357ABD;
+        }
+
+        .register {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .register a {
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register a:hover {
+            color: #357ABD;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <form method="POST" action="/register">
+            <h2>Register</h2>
+            
+            <!-- Display error message if email is already registered -->
+            <div id="unique-email" style="color: red; display: none;">
+                Email is already Exist!
+            </div>
+            <div class="input-field">
+                <input type="text" name="fname" placeholder="First Name" required>
+            </div>
+            <div class="input-field">
+                <input type="text" name="mname" placeholder="Middle Name">
+            </div>
+            <div class="input-field">
+                <input type="text" name="lname" placeholder="Last Name" required>
+            </div>
+            <div class="input-field">
+                <input type="text" name="mobile" placeholder="Mobile No." required>
+            </div>
+            <div class="input-field">
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+            <div class="input-field">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Register</button>
+            <div class="register">
+                <p>Already have an account? <a href="/login">Login</a></p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Check if the URL has an error parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorParam = urlParams.get('error');
+
+        if (errorParam === 'email') {
+            document.getElementById('unique-email').style.display = 'block';
+        }
+    </script>
+</body>
+
+
+
+
+</html>

@@ -18,8 +18,8 @@ public class RawMaterialDTO {
 	private String materialName;
 	private String companyName;
 	private Double materialPrice;
-	private String matrialSize;
-	private String Quality;
+	private String materialSize;
+	private String quality;
 	private String quantity;
 	
 //	@ManyToOne(fetch = FetchType.LAZY)
@@ -50,17 +50,17 @@ public class RawMaterialDTO {
 	public void setMaterialType(String materialType) {
 		this.materialType = materialType;
 	}
-	public String getMatrialSize() {
-		return matrialSize;
+	public String getMaterialSize() {
+		return materialSize;
 	}
-	public void setMatrialSize(String matrialSize) {
-		this.matrialSize = matrialSize;
+	public void setMaterialSize(String materialSize) {
+		this.materialSize = materialSize;
 	}
 	public String getQuality() {
-		return Quality;
+		return quality;
 	}
 	public void setQuality(String quality) {
-		Quality = quality;
+		this.quality = quality;
 	}
 	public String getQuantity() {
 		return quantity;

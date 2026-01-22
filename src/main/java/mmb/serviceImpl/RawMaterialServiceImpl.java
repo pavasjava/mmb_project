@@ -36,7 +36,7 @@ public class RawMaterialServiceImpl implements RawMaterialService {
 //			rawMaterial.setMaterialName(rawMaterialDTO.getMaterialName());
 			rawMaterial.setMaterialPrice(rawMaterialDTO.getMaterialPrice());
 //			rawMaterial.setMaterialType(rawMaterialDTO.getMaterialType());
-			rawMaterial.setMatrialSize(rawMaterialDTO.getMatrialSize());
+			rawMaterial.setMaterialSize(rawMaterialDTO.getMaterialSize());
 			RawMaterial updated = rawMaterialRepository.save(rawMaterial);
 			return modelMapper.map(updated, RawMaterialDTO.class);
 		}
@@ -58,6 +58,24 @@ public class RawMaterialServiceImpl implements RawMaterialService {
 	public List<RawMaterialDTO> getAllMaterials() {
 		return rawMaterialRepository.findAll().stream().map(material -> modelMapper.map(material, RawMaterialDTO.class))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public RawMaterialDTO findMasterCasingDetails(String materialSize, String quality) {
+		RawMaterial rawMaterial = rawMaterialRepository.findMasterCasingDetails(materialSize, quality);
+		return rawMaterial != null ? modelMapper.map(rawMaterial, RawMaterialDTO.class) : null;
+	}
+	
+	@Override
+	public RawMaterialDTO findMasterCasingDetails(String materialSize) {
+		RawMaterial rawMaterial = rawMaterialRepository.findMasterCasingDetails(materialSize);
+		return rawMaterial != null ? modelMapper.map(rawMaterial, RawMaterialDTO.class) : null;
+	}
+
+	@Override
+	public RawMaterialDTO findMaterialDetailsByMaterialName(String materialName) {
+		RawMaterial rawMaterial = rawMaterialRepository.findMaterialDetailsByMaterialName(materialName);
+		return rawMaterial != null ? modelMapper.map(rawMaterial, RawMaterialDTO.class) : null;
 	}
 
 }

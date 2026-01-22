@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Borewell Booking | Home</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100">
+
+<!-- Top Navigation -->
+<nav class="bg-white shadow-md py-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6">
+        <h1 class="text-2xl font-bold text-blue-700">Borewell Services</h1>
+
+        <ul class="flex gap-6 text-gray-700 font-medium">
+            <!--<li><a href="/" class="hover:text-blue-700">Home</a></li>-->
+            <li><a href="/login" class="hover:text-blue-700">Login</a></li>
+            <li><a href="/services" class="hover:text-blue-700">Services</a></li>
+            <li><a href="/contact" class="hover:text-blue-700">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Hero Banner -->
+<!--<section class="relative bg-cover bg-center h-[400px]"
+         style="background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=60');">-->
+    <section class="relative bg-cover bg-center h-[500px]"
+		          style="background-image: url('/images/homeimg.png');">
+
+    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="text-center text-white px-4">
+            <h2 class="text-4xl font-bold mb-3">Reliable Borewell Drilling Services</h2>
+            <p class="text-lg text-gray-200 mb-6">Fast, affordable & professional borewell solutions.</p>
+
+            <a href="/index"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg">
+                Book Your Borewell Now
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="max-w-6xl mx-auto py-12 px-6">
+    <h3 class="text-3xl font-bold text-gray-800 text-center mb-6">Why Choose Us?</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <div class="bg-white shadow-md rounded-xl p-6 text-center border">
+            <h4 class="text-xl font-semibold text-blue-700 mb-2">Experienced Team</h4>
+            <p class="text-gray-600">20+ years of professional borewell drilling & installation experience.</p>
+        </div>
+
+        <div class="bg-white shadow-md rounded-xl p-6 text-center border">
+            <h4 class="text-xl font-semibold text-blue-700 mb-2">Modern Equipment</h4>
+            <p class="text-gray-600">High-performance rigs ensuring efficient and fast drilling.</p>
+        </div>
+
+        <div class="bg-white shadow-md rounded-xl p-6 text-center border">
+            <h4 class="text-xl font-semibold text-blue-700 mb-2">Affordable Pricing</h4>
+            <p class="text-gray-600">Transparent rates with no hidden charges. Pay only for what you choose.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="bg-white py-12 border-t">
+    <div class="max-w-6xl mx-auto px-6">
+
+        <h3 class="text-3xl font-bold text-gray-800 text-center mb-8">Our Services</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <div class="bg-gray-50 shadow-md rounded-xl p-6 border">
+                <h4 class="text-xl font-semibold mb-2">Borewell Drilling</h4>
+                <p class="text-gray-600 mb-4">High-quality drilling services for domestic & commercial needs.</p>
+            </div>
+
+            <div class="bg-gray-50 shadow-md rounded-xl p-6 border">
+                <h4 class="text-xl font-semibold mb-2">Pipe Installation</h4>
+                <p class="text-gray-600 mb-4">Branded PVC, casing, and MS pipes with professional fitting.</p>
+            </div>
+
+            <div class="bg-gray-50 shadow-md rounded-xl p-6 border">
+                <h4 class="text-xl font-semibold mb-2">Water Testing</h4>
+                <p class="text-gray-600 mb-4">Accurate groundwater level & water quality assessments.</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-300 py-6 mt-12">
+    <div class="max-w-7xl mx-auto text-center">
+        <p class="text-sm">© 2025 Borewell Services. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

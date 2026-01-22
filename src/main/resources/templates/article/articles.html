@@ -1,266 +1,1024 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<title> Information - Articles</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
-	<style>
-		.bg-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 100%;
-			background-image: url('/images/bgimage.png');
-			background-size: cover;
-			background-position: center;
-			opacity: 0.08;
-			/* More light/faded */
-			z-index: -1;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borewell Articles & Information | MMB Borewell Services</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1e40af;
+            --secondary: #0ea5e9;
+            --accent: #06b6d4;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.7;
+        }
+        
+        .article-gradient-bg {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.03) 0%, rgba(14, 165, 233, 0.03) 100%);
+        }
+        
+        .article-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .article-header {
+            background: linear-gradient(135deg, #1e40af, #0ea5e9);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .article-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .article-title {
+            font-family: 'Source Serif Pro', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .article-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 3rem;
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .article-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .article-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-family: 'Source Serif Pro', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 40px;
+            background: linear-gradient(to bottom, #3b82f6, #0ea5e9);
+            border-radius: 4px;
+            margin-right: 1rem;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .info-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .method-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .method-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .method-item:hover {
+            border-color: #0ea5e9;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.1);
+        }
+        
+        .method-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contractor-checklist {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .checklist-icon {
+            width: 24px;
+            height: 24px;
+            background: #0ea5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+        
+        .table-of-contents {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+        
+        .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .toc-item {
+            margin-bottom: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .toc-item:hover {
+            background: #f0f9ff;
+            padding-left: 1.5rem;
+        }
+        
+        .toc-item a {
+            color: #334155;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .toc-item a:hover {
+            color: #1e40af;
+        }
+        
+        .toc-number {
+            width: 28px;
+            height: 28px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .toc-item:hover .toc-number {
+            background: #0ea5e9;
+            color: white;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: #1e40af;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(30, 64, 175, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .back-to-top:hover {
+            background: #0ea5e9;
+            transform: translateY(-5px);
+        }
+        
+        .share-article {
+            position: fixed;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 100;
+        }
+        
+        .share-button {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+        
+        .share-button.facebook { background: #1877f2; }
+        .share-button.twitter { background: #1da1f2; }
+        .share-button.linkedin { background: #0a66c2; }
+        .share-button.whatsapp { background: #25d366; }
+        
+        .share-button:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2.25rem;
+            }
+            
+            .article-content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .share-article {
+                display: none;
+            }
+            
+            .method-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .reading-time {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+		.home-button-container {
+		            position: fixed;
+		            top: 20px;
+		            right: 20px;
+		            z-index: 1000;
+		        }
 
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #f4f8fb;
-			color: #333;
-		}
+		        .home-button {
+		            display: flex;
+		            align-items: center;
+		            gap: 12px;
+		            padding: 14px 28px;
+		            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+		            color: white;
+		            text-decoration: none;
+		            border-radius: 50px;
+		            font-weight: 600;
+		            font-size: 1rem;
+		            transition: all 0.4s ease;
+		            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.3);
+		            border: 2px solid transparent;
+		            position: relative;
+		            overflow: hidden;
+		        }
 
-		.navbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			/*background-color: rgb(73, 146, 180);*/
-			background-color: #d64026;
-			padding: 10px 20px;
-		}
+		        .home-button::before {
+		            content: '';
+		            position: absolute;
+		            top: 0;
+		            left: -100%;
+		            width: 100%;
+		            height: 100%;
+		            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		            transition: left 0.7s ease;
+		        }
 
-		.navbar-left {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+		        .home-button:hover::before {
+		            left: 100%;
+		        }
 
-		.navbar-left img {
-			height: 40px;
-			width: 65px;
-			border-radius: 60%;
-			object-fit: cover;
-		}
+		        .home-button:hover {
+		            transform: translateY(-3px) scale(1.05);
+		            box-shadow: 0 12px 25px rgba(42, 82, 152, 0.4);
+		            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+		            border-color: rgba(255, 255, 255, 0.3);
+		        }
 
-		.navbar-left a {
-			text-decoration: none;
-			color: white;
-			font-weight: bold;
-			padding: 8px 12px;
-			border-radius: 8px;
-			transition: background-color 0.3s;
-		}
+		        .home-button:active {
+		            transform: translateY(-1px) scale(1.02);
+		            box-shadow: 0 6px 15px rgba(42, 82, 152, 0.3);
+		        }
 
-		.navbar-left a.active,
-		.navbar-left a:hover {
-			/*background-color: #17418138;*/
-			background-color: #c23c22;
-		}
+		        .home-button i {
+		            font-size: 1.2rem;
+		            transition: transform 0.3s ease;
+		        }
 
-		.navbar-right {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+		        .home-button:hover i {
+		            transform: translateX(5px) rotate(360deg);
+		        }
 
-		.search-box {
-			background-color: white;
-			border-radius: 10px;
-			padding: 8px 12px;
-			display: flex;
-			align-items: center;
-		}
+		        .home-button-text {
+		            position: relative;
+		            z-index: 2;
+		        }
+				/* Animations */
+				       @keyframes fadeInUp {
+				           from {
+				               opacity: 0;
+				               transform: translateY(30px);
+				           }
+				           to {
+				               opacity: 1;
+				               transform: translateY(0);
+				           }
+				       }
 
-		.search-box input {
-			border: none;
-			outline: none;
-			font-size: 14px;
-			margin-left: 5px;
-		}
+				       @keyframes float {
+				           0%, 100% {
+				               transform: translateY(0);
+				           }
+				           50% {
+				               transform: translateY(-5px);
+				           }
+				       }
 
-		.search-icon {
-			color: #d64026;
-			font-size: 16px;
-		}
+				       .home-button {
+				           animation: float 3s ease-in-out infinite;
+				       }
 
-		.social-icons i {
-			font-size: 18px;
-			color: white;
-			transition: transform 0.2s;
-		}
+				       /* Responsive Design */
+				       @media (max-width: 768px) {
+				           .home-button-container {
+				               top: 15px;
+				               right: 15px;
+				           }
+				           
+				           .home-button {
+				               padding: 12px 20px;
+				               font-size: 0.9rem;
+				           }
+				           
+				           .hero-title {
+				               font-size: 2.5rem;
+				           }
+				           
+				           .hero-section {
+				               padding: 80px 0 50px;
+				           }
+				           
+				           .gallery-grid {
+				               grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				               gap: 20px;
+				           }
+				           
+				           .filter-tabs {
+				               gap: 10px;
+				           }
+				           
+				           .filter-btn {
+				               padding: 10px 20px;
+				               font-size: 0.9rem;
+				           }
+				           
+				           .stats-section {
+				               grid-template-columns: 1fr;
+				               padding: 40px 20px;
+				           }
+				           
+				           .modal-prev, .modal-next {
+				               width: 50px;
+				               height: 50px;
+				               font-size: 20px;
+				           }
+				           
+				           .close {
+				               top: 20px;
+				               right: 20px;
+				           }
+				       }
 
-		.social-icons i:hover {
-			transform: scale(1.2);
-			color: #ffc107;
-		}
-
-		.container {
-			max-width: 1200px;
-			margin: 50px auto;
-			padding: 40px;
-			background-color: white;
-			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-			border-radius: 12px;
-		}
-
-		h1 {
-			text-align: left;
-			color: #2c3e50;
-			margin-bottom: 20px;
-		}
-
-		p {
-			font-size: 17px;
-			line-height: 1.7;
-			text-align: justify;
-		}
-
-		.footer {
-			margin-top: 30px;
-			text-align: center;
-			font-size: 14px;
-			color: #777;
-		}
-
-		.modal {
-			display: none;
-			position: fixed;
-			z-index: 999;
-			padding-top: 60px;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgba(0, 0, 0, 0.8);
-		}
-
-		.modal-content {
-			margin: auto;
-			display: block;
-			max-width: 90%;
-			max-height: 80%;
-			border-radius: 10px;
-		}
-
-		.close {
-			position: absolute;
-			top: 30px;
-			right: 50px;
-			color: #fff;
-			font-size: 35px;
-			font-weight: bold;
-			cursor: pointer;
-		}
-
-		.close:hover {
-			color: #ccc;
-		}
-
-		h2.bullet::before {
-			content: "•";
-			font-size: 36px;
-			color: #2c3e50;
-			margin-right: 12px;
-			vertical-align: middle;
-		}
-	</style>
+				       @media (max-width: 480px) {
+				           .home-button {
+				               padding: 10px 16px;
+				               font-size: 0.85rem;
+				           }
+				           
+				           .home-button i {
+				               font-size: 1rem;
+				           }
+				           
+				           .hero-title {
+				               font-size: 2rem;
+				           }
+				           
+				           .gallery-grid {
+				               grid-template-columns: 1fr;
+				           }
+				           
+				           .filter-tabs {
+				               flex-direction: column;
+				               align-items: center;
+				           }
+				       }
+    </style>
 </head>
 
-<body>
-	
-
-	<!-- ✅ Navbar -->
-	<div th:replace="fragments/navbar :: navbar"></div>
-	<div class="container">
-		<!--<h1>1. Understanding Borewell Services</h1>-->
-		<h1>1. Understanding Services</h1>
-		<h2 class="bullet"> What is a Borewell?</h2>
-		<p>
-			A <strong>borewell</strong> is a deep, narrow hole drilled into the ground to access groundwater for various
-			uses like drinking, irrigation, or industrial needs.
-			It is created using drilling machines, and a pipe (called <em>casing</em>) is installed to protect the water
-			source and support the structure.
-		</p>
-
-		<p>
-			Borewells are a common solution in areas where surface water is limited. The depth of a borewell can range
-			from
-			<strong>100 to 1200 feet</strong>, depending on the underground water level. A <strong>submersible
-				pump</strong> is usually installed inside the borewell
-			to lift water to the surface.
-		</p>
-
-		<h2 class="bullet"> Types of Borewell Drilling Methods</h2>
-		<ul>
-			<li><span class="highlight">DTH (Down-The-Hole):</span> Suitable for hard rock areas, uses a hammering
-				action to break rocks.</li>
-			<li><span class="highlight"><strIn-well:< /span> In this method, the drilling vehicle is parked 150–200 feet
-						away
-						from the actual borewell location due to space or access limitations. Flexible hoses or rods are
-						extended from the vehicle to the drilling spot, making it suitable for areas like narrow plots,
-						inside
-						farms, or residential locations with limited access.</li>
-			<li><span class="highlight">Rotary:</span> Used in soft or sandy formations, involves continuous rotation
-				and drilling mud.</li>
-			<li><span class="highlight">Calyx:</span> Older method used for large diameter and deep wells with specific
-				geological needs.</li>
-		</ul>
-		<h2 class="bullet"> Choosing the Right Location</h2>
-		<ul>
-			<li>The success of a borewell largely depends on selecting a proper location. It is important to choose
-				a <strong>clear and open area </strong>for drilling, where there are <strong>no underground chambers,
-					drainage pipelines, or
-					water tanks</strong> above or near the spot. These obstructions can damage equipment or affect the
-				borewell structure.
-				Avoid drilling near septic tanks or foundations, and ensure there's enough space for the boring vehicle
-				and equipment to operate smoothly.</li>
-		</ul>
-		<h2 class="bullet"> How to Choose the Right Borewell Contractor</h2>
-		<ul>
-			<li>Choosing the right borewell contractor is one of the most critical steps in ensuring the success of your
-				borewell.
-				Since drilling involves technical expertise, high-end machinery, and considerable investment, the
-				contractor you
-				select will have a direct impact on the outcome. Here are three important factors to consider:</li>
-			<li><span class="highlight">Experience:</span> An experienced contractor brings both knowledge and practical
-				exposure to the job.
-				Borewell drilling is not just about operating a machine; it requires understanding soil types, rock
-				layers, and the water table.
-				Contractors who have worked in your locality or similar terrains usually know the common depths where
-				water can be struck
-				and the challenges that may arise during drilling. Always ask about the contractor’s years of service
-				and request a list of
-				projects they have handled in your area.</li>
-			<li><span class="highlight">Equipment:</span> Modern borewell drilling relies heavily on the type and
-				quality of equipment.
-				Outdated or poorly maintained rigs may not be able to drill deep enough or may take longer, increasing
-				costs.
-				Before finalizing a contractor, check what kind of drilling rigs they use (e.g., rotary, percussion, DTH
-				rigs)
-				and whether their equipment can handle the depth and soil/rock conditions in your region. Well-equipped
-				contractors
-				can complete the job more efficiently, with less risk of damage to property or incomplete drilling.</li>
-			<li><span class="highlight">Reviews and Reputation:</span> Word of mouth and reviews are strong indicators
-				of a contractor’s reliability. Ask neighbors, community members, or even local water authorities for
-				feedback on contractors they have used. Positive reviews reflect not just successful borewell completion
-				but also honesty in pricing, timeliness, and after-service support. A reputed contractor is also more
-				likely to guide you correctly about casing pipes, motor installation, and long-term maintenance.</li>
-		</ul>
-
-		<div class="footer">
-			&copy; 2025 Borewell Services. All rights reserved.
-		</div>
-	</div>
-
+<body class="article-gradient-bg">
+    
+    <!-- Navigation (using our modern navbar) -->
+    <!--<div th:replace="fragments/navbar :: navbar"></div>-->
+	<div class="home-button-container">
+	        <a th:href="@{/dashboard}" class="home-button">
+	            <i class="fas fa-home"></i>
+	            <span class="home-button-text">Go to Home</span>
+	        </a>
+	    </div>
+    <!-- Article Header -->
+    <header class="article-header">
+        <div class="article-container">
+            <div class="text-center">
+                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+                    <i class="fas fa-book-open"></i>
+                    <span class="text-sm font-medium">Comprehensive Guide</span>
+                </div>
+                
+                <h1 class="article-title">Understanding Borewell Services</h1>
+                
+                <p class="article-subtitle">
+                    A complete guide to borewell drilling, methods, location selection, and choosing the right contractor for your water needs.
+                </p>
+                
+                <div class="article-meta justify-center">
+                    <div class="meta-item">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>Last Updated: March 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="far fa-user"></i>
+                        <span>By MMB Technical Team</span>
+                    </div>
+                    <div class="reading-time">
+                        <i class="far fa-clock"></i>
+                        <span>10 min read</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Table of Contents -->
+    <div class="article-container">
+        <div class="table-of-contents">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-list-ol mr-3 text-blue-600"></i> Table of Contents
+            </h3>
+            <ul class="toc-list">
+                <li class="toc-item">
+                    <a href="#section1">
+                        <span class="toc-number">1</span>
+                        What is a Borewell?
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#section2">
+                        <span class="toc-number">2</span>
+                        Types of Borewell Drilling Methods
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#section3">
+                        <span class="toc-number">3</span>
+                        Choosing the Right Location
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#section4">
+                        <span class="toc-number">4</span>
+                        How to Choose the Right Contractor
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Main Article Content -->
+    <main class="article-container">
+        <article class="article-content">
+            
+            <!-- Section 1: What is a Borewell -->
+            <section class="article-section" id="section1">
+                <h2 class="section-title">What is a Borewell?</h2>
+                
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <p class="text-lg text-gray-700 mb-4">
+                        A <strong class="text-blue-700">borewell</strong> is a deep, narrow hole drilled into the ground to access groundwater for various uses like drinking, irrigation, or industrial needs. It is created using specialized drilling machines, and a pipe (called <em>casing</em>) is installed to protect the water source and support the structure.
+                    </p>
+                    
+                    <div class="highlight-box">
+                        <div class="flex items-start">
+                            <i class="fas fa-lightbulb text-yellow-500 text-xl mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-2">Key Insight</h4>
+                                <p class="text-gray-700">
+                                    Borewells are a primary solution in areas where surface water is limited. The depth can range from <strong>100 to 1200 feet</strong>, depending on the underground water table. A <strong>submersible pump</strong> is typically installed inside to lift water to the surface efficiently.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-3xl font-bold text-blue-700 mb-2">100-1200</div>
+                            <div class="text-sm font-medium text-gray-700">Depth Range (feet)</div>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-3xl font-bold text-blue-700 mb-2">20-50</div>
+                            <div class="text-sm font-medium text-gray-700">Years Lifespan</div>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-3xl font-bold text-blue-700 mb-2">1-3</div>
+                            <div class="text-sm font-medium text-gray-700">Days Installation</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 2: Drilling Methods -->
+            <section class="article-section" id="section2">
+                <h2 class="section-title">Types of Borewell Drilling Methods</h2>
+                
+                <p class="text-lg text-gray-700 mb-6">
+                    Selecting the right drilling method is crucial for successful borewell installation. The method depends on geological conditions, depth requirements, and budget constraints.
+                </p>
+                
+                <div class="method-list">
+                    <!-- DTH Method -->
+                    <div class="method-item">
+                        <div class="method-icon">
+                            <i class="fas fa-hammer"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">DTH (Down-The-Hole)</h3>
+                        <p class="text-gray-600 mb-4">
+                            Suitable for hard rock areas, uses a hammering action to break rocks. This method is efficient for deep drilling in rocky terrain.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <span class="font-medium">Best for:</span> Hard rock formations
+                        </div>
+                    </div>
+                    
+                    <!-- In-Well Method -->
+                    <div class="method-item">
+                        <div class="method-icon">
+                            <i class="fas fa-truck-moving"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">In-Well Method</h3>
+                        <p class="text-gray-600 mb-4">
+                            In this method, the drilling vehicle is parked 150–200 feet away from the actual borewell location. Flexible hoses or rods are extended to the drilling spot.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <span class="font-medium">Best for:</span> Narrow plots & limited access areas
+                        </div>
+                    </div>
+                    
+                    <!-- Rotary Method -->
+                    <div class="method-item">
+                        <div class="method-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Rotary Drilling</h3>
+                        <p class="text-gray-600 mb-4">
+                            Used in soft or sandy formations, involves continuous rotation and drilling mud for stabilization during the drilling process.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <span class="font-medium">Best for:</span> Soft soil & sandy areas
+                        </div>
+                    </div>
+                    
+                    <!-- Calyx Method -->
+                    <div class="method-item">
+                        <div class="method-icon">
+                            <i class="fas fa-hard-hat"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Calyx Method</h3>
+                        <p class="text-gray-600 mb-4">
+                            An older method used for large diameter and deep wells with specific geological needs. Less common but still used in certain applications.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <span class="font-medium">Best for:</span> Large diameter wells
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: Location Selection -->
+            <section class="article-section" id="section3">
+                <h2 class="section-title">Choosing the Right Location</h2>
+                
+                <p class="text-lg text-gray-700 mb-6">
+                    The success of a borewell largely depends on selecting a proper location. Strategic planning can prevent future issues and ensure optimal water yield.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i> Things to DO
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Choose a <strong>clear and open area</strong> for drilling operations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Ensure sufficient space for drilling vehicles and equipment</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Consult with a hydrogeologist for water table assessment</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Check local regulations and obtain necessary permits</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-times-circle text-red-500 mr-3"></i> Things to AVOID
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-500 mt-1 mr-3"></i>
+                                <span>Avoid areas with <strong>underground chambers, pipelines, or water tanks</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-500 mt-1 mr-3"></i>
+                                <span>Don't drill near septic tanks or building foundations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-500 mt-1 mr-3"></i>
+                                <span>Avoid low-lying areas prone to flooding</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-500 mt-1 mr-3"></i>
+                                <span>Stay away from contaminated soil or industrial waste areas</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-orange-500 mr-3"></i> Important Note
+                    </h4>
+                    <p class="text-gray-700">
+                        Underground obstructions can damage equipment or affect borewell structure. Always conduct a thorough site survey before drilling commences. Consider using geophysical methods to identify underground structures and water-bearing zones.
+                    </p>
+                </div>
+            </section>
+            
+            <!-- Section 4: Choosing a Contractor -->
+            <section class="article-section" id="section4">
+                <h2 class="section-title">How to Choose the Right Borewell Contractor</h2>
+                
+                <p class="text-lg text-gray-700 mb-6">
+                    Selecting the right contractor is critical for borewell success. Since drilling involves technical expertise and significant investment, your contractor choice directly impacts the outcome.
+                </p>
+                
+                <div class="contractor-checklist">
+                    <h3 class="text-2xl font-bold text-white mb-6">Contractor Selection Checklist</h3>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-icon">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Experience & Expertise</h4>
+                            <p class="text-gray-300">
+                                An experienced contractor brings knowledge of soil types, rock layers, and water tables. Ask about years in service and request a list of local projects they've completed.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-icon">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Equipment Quality</h4>
+                            <p class="text-gray-300">
+                                Modern, well-maintained rigs complete jobs efficiently. Check if they use rotary, percussion, or DTH rigs suitable for your soil conditions.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-icon">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Reputation & Reviews</h4>
+                            <p class="text-gray-300">
+                                Word-of-mouth and reviews indicate reliability. Ask neighbors and check online feedback about pricing honesty, timeliness, and after-service support.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-icon">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Licensing & Insurance</h4>
+                            <p class="text-gray-300">
+                                Ensure the contractor has proper licenses and insurance to protect against accidents or damages during drilling operations.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-icon">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Transparent Pricing</h4>
+                            <p class="text-gray-300">
+                                A reputable contractor provides detailed quotations with clear breakdowns of costs, including drilling, casing, pump installation, and any additional charges.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white border border-gray-200 rounded-xl p-6 mt-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Questions to Ask Your Contractor</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink: 0;">
+                                <span class="text-blue-700 font-bold">1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800 mb-1">What is your experience in this specific area?</h4>
+                                <p class="text-gray-600 text-sm">Local knowledge of water tables and geological conditions is invaluable.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink: 0;">
+                                <span class="text-blue-700 font-bold">2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800 mb-1">Can you provide references from recent projects?</h4>
+                                <p class="text-gray-600 text-sm">Past clients can offer honest feedback about the contractor's work.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink: 0;">
+                                <span class="text-blue-700 font-bold">3</span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800 mb-1">What type of warranty or guarantee do you offer?</h4>
+                                <p class="text-gray-600 text-sm">Understand what is covered and for how long after installation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Article Footer -->
+            <footer class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <p class="text-gray-600 text-sm">
+                            <i class="far fa-calendar-alt mr-2"></i> Article last updated: March 2025
+                        </p>
+                        <p class="text-gray-600 text-sm">
+                            <i class="far fa-user mr-2"></i> Written by MMB Borewell Technical Team
+                        </p>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <span class="text-gray-600 text-sm">Share this article:</span>
+                        <a href="#" class="text-gray-500 hover:text-blue-600">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-blue-400">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-blue-700">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-green-500">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center text-gray-500 text-sm">
+                    <p>&copy; 2025 MMB Borewell Services. All rights reserved. This content is for informational purposes only.</p>
+                </div>
+            </footer>
+        </article>
+    </main>
+    
+    <!-- Side Share Buttons -->
+    <div class="share-article">
+        <a href="#" class="share-button facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="share-button twitter">
+            <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="share-button linkedin">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="#" class="share-button whatsapp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+    
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+    
+    <script>
+        // Back to Top functionality
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Table of Contents smooth scrolling
+        document.querySelectorAll('.toc-item a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Highlight current section in TOC while scrolling
+        const sections = document.querySelectorAll('.article-section');
+        const tocLinks = document.querySelectorAll('.toc-item a');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            tocLinks.forEach(link => {
+                link.parentElement.classList.remove('bg-blue-50');
+                link.classList.remove('text-blue-700');
+                
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.parentElement.classList.add('bg-blue-50');
+                    link.classList.add('text-blue-700');
+                }
+            });
+        });
+        
+        // Reading time calculator
+        const articleText = document.querySelector('article').innerText;
+        const wordCount = articleText.split(/\s+/).length;
+        const readingTime = Math.ceil(wordCount / 200); // 200 words per minute
+        
+        // Update reading time in meta if needed
+        const readingTimeElement = document.querySelector('.reading-time span');
+        if (readingTimeElement) {
+            readingTimeElement.textContent = `${readingTime} min read`;
+        }
+    </script>
 </body>
-
 </html>

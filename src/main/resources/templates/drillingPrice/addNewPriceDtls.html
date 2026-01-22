@@ -1,286 +1,929 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-	<meta charset="UTF-8">
-	<title>Raw Materials</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-	<style>
-		.bg-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 100%;
-			background-image: url('/images/bgimage.png');
-			background-size: cover;
-			background-position: center;
-			opacity: 0.08;
-			z-index: -1;
-		}
-
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #f4f8fb;
-			color: #333;
-		}
-
-		.navbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			background-color: #d64026;
-			padding: 10px 20px;
-		}
-
-		.navbar-left {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
-
-		.navbar-left img {
-			height: 40px;
-			width: 65px;
-			border-radius: 60%;
-			object-fit: cover;
-		}
-
-		.navbar-left a {
-			text-decoration: none;
-			color: white;
-			font-weight: bold;
-			padding: 8px 12px;
-			border-radius: 8px;
-			transition: background-color 0.3s;
-		}
-
-		.navbar-left a.active,
-		.navbar-left a:hover {
-			background-color: #c23c22;
-		}
-
-		.navbar-right {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
-
-		.search-box {
-			background-color: white;
-			border-radius: 10px;
-			padding: 8px 12px;
-			display: flex;
-			align-items: center;
-		}
-
-		.search-box input {
-			border: none;
-			outline: none;
-			font-size: 14px;
-			margin-left: 5px;
-		}
-
-		.search-icon {
-			color: #d64026;
-			font-size: 16px;
-		}
-
-		.social-icons i {
-			font-size: 18px;
-			color: white;
-			transition: transform 0.2s;
-		}
-
-		.social-icons i:hover {
-			transform: scale(1.2);
-			color: #ffc107;
-		}
-
-		.container {
-			max-width: 1200px;
-			margin: 50px auto;
-			padding: 40px;
-			background-color: white;
-			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-			border-radius: 12px;
-		}
-
-		h1 {
-			text-align: left;
-			color: #2c3e50;
-			margin-bottom: 20px;
-		}
-
-		p {
-			font-size: 17px;
-			line-height: 1.7;
-			text-align: justify;
-		}
-
-		.footer {
-			margin-top: 30px;
-			text-align: center;
-			font-size: 14px;
-			color: #777;
-		}
-
-		.modal {
-			display: none;
-			position: fixed;
-			z-index: 999;
-			padding-top: 60px;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgba(0, 0, 0, 0.8);
-		}
-
-		.modal-content {
-			margin: auto;
-			display: block;
-			max-width: 90%;
-			max-height: 80%;
-			border-radius: 10px;
-		}
-
-		.close {
-			position: absolute;
-			top: 30px;
-			right: 50px;
-			color: #fff;
-			font-size: 35px;
-			font-weight: bold;
-			cursor: pointer;
-		}
-
-		.close:hover {
-			color: #ccc;
-		}
-
-		h2.bullet::before {
-			content: "•";
-			font-size: 36px;
-			color: #2c3e50;
-			margin-right: 12px;
-			vertical-align: middle;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>Drilling Price Management | MMB Borewell Services</title>
+    
+    <!-- Include common head -->
+    <div th:replace="fragments/head :: head"></div>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <style>
+        /* Main content alignment for sidebar */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding-bottom: 2rem;
+        }
+        
+        .main-content-expanded {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        .main-content-full {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        /* Top navbar wrapper */
+        .top-nav-wrapper {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            width: 100%;
+        }
+        
+        /* Form container styling */
+        .form-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+			margin-left: 310px;
+        }
+        
+        /* Card styling - Enhanced for larger size */
+        .form-card {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-card:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        /* Form header - Enhanced */
+        .form-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 80px;
+        }
+        
+        .form-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        .form-title i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Form content - Expanded */
+        .form-content {
+            padding: 2.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Add a subtle background pattern to the form content */
+        .form-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at top right, rgba(42, 82, 152, 0.03), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Grid container for form fields */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Form group styling - Enhanced */
+        .form-group {
+            margin-bottom: 1.75rem;
+            position: relative;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label i {
+            color: #4a5568;
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .form-input:hover, .form-select:hover {
+            border-color: #cbd5e0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+        
+        /* Help text below inputs */
+        .form-help {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        
+        /* Required field indicator */
+        .required::after {
+            content: " *";
+            color: #e53e3e;
+            font-weight: 700;
+        }
+        
+        /* Form actions - Enhanced */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 2px solid #f1f5f9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            border: none;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .btn-cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+            border: 2px solid transparent;
+        }
+        
+        .btn-save:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        /* Info section - Enhanced */
+        .info-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 1rem;
+            border-left: 5px solid #2a5298;
+            grid-column: 1 / -1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .info-title i {
+            color: #2a5298;
+            font-size: 1.4rem;
+        }
+        
+        .info-text {
+            color: #4a5568;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+        
+        .info-text ul {
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        
+        .info-text li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Animation for form */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-card {
+            animation: slideInUp 0.6s ease;
+        }
+        
+        /* Toast animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .animate-slideInRight {
+            animation: slideInRight 0.3s ease;
+        }
+        
+        /* Validation error styling */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .error-message i {
+            font-size: 0.875rem;
+        }
+        
+        .form-input.error, .form-select.error {
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+        
+        /* Responsive adjustments for larger form */
+        @media (max-width: 1024px) {
+            .form-card {
+                max-width: 90%;
+                margin: 1.5rem auto;
+            }
+            
+            .form-grid {
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .main-content-expanded {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-card {
+                margin: 1rem auto;
+                border-radius: 20px;
+                min-height: auto;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.8rem;
+            }
+            
+            .form-title i {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+            
+            .form-content {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-input, .form-select {
+                padding: 0.875rem 1rem;
+                font-size: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.875rem 1.5rem;
+            }
+            
+            .info-section {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-card {
+                border-radius: 16px;
+            }
+            
+            .form-header {
+                padding: 1.25rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+                gap: 10px;
+            }
+            
+            .form-title i {
+                padding: 8px;
+                font-size: 1.3rem;
+            }
+            
+            .form-content {
+                padding: 1.25rem;
+            }
+            
+            .form-grid {
+                gap: 1.25rem;
+            }
+        }
+        
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Background overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('/images/bgimage.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04;
+            z-index: -1;
+        }
+    </style>
 </head>
+<body class="bg-gray-50">
+    <!-- ✅ Background Image -->
+    <div class="bg-overlay"></div>
+    
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div class="top-nav-wrapper" th:replace="fragments/price-top-navbar :: top-navbar"></div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-card">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h1 class="form-title">
+                        <i class="fas fa-tags"></i>
+                        <span th:text="${drillingPriceChart.priceId != null ? 'Edit Drilling Price' : 'Add New Drilling Price'}"></span>
+                    </h1>
+                </div>
+                
+                <!-- Form Content -->
+                <div class="form-content">
+                    <form th:action="@{/drillingPrice/savePriceDtls}" th:object="${drillingPriceChart}" method="post" id="priceForm">
+                        <input type="hidden" th:field="*{priceId}" />
+                        
+                        <!-- Grid container for form fields -->
+                        <div class="form-grid">
+                            <!-- City -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-city"></i> City
+                                </label>
+                                <select id="city" th:field="*{city.cityId}" class="form-select" required>
+                                    <option value="">-- Select City --</option>
+                                    <option th:each="city : ${cities}" 
+                                            th:value="${city.cityId}" 
+                                            th:text="${city.cityName}"></option>
+                                </select>
+                                <span class="form-help">
+                                    Select the city for drilling service
+                                </span>
+                            </div>
+                            
+                            <!-- Area -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-map-marker-alt"></i> Area
+                                </label>
+                                <select id="area" th:field="*{workLocationArea.locationAreaId}" class="form-select" required>
+                                    <option value="">-- Select Area --</option>
+                                    <option th:each="area : ${areas}" 
+                                            th:value="${area.locationAreaId}" 
+                                            th:text="${area.locationAreaName}"></option>
+                                </select>
+                                <span class="form-help">
+                                    Select the work area within the city
+                                </span>
+                            </div>
+                            
+                            <!-- Borewell Type -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-tools"></i> Borewell Type
+                                </label>
+                                <select id="borewellType" th:field="*{borewellType.borewelTypeid}" class="form-select" required>
+                                    <option value="">-- Select Borewell Type --</option>
+                                    <option th:each="borewellType : ${borewellTypes}" 
+                                            th:value="${borewellType.borewelTypeid}" 
+                                            th:text="${borewellType.name}"></option>
+                                </select>
+                                <span class="form-help">
+                                    Select the type of borewell
+                                </span>
+                            </div>
+                            
+                            <!-- Borewell Size -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-expand-alt"></i> Borewell Size
+                                </label>
+                                <select id="drillingSizeSelect" th:field="*{drillingSize}" class="form-select" required>
+                                    <option value="">-- Select Boring Size --</option>
+                                    <option value="5">5 inch/127mm</option>
+                                    <option value="6">6 inch/152.4mm</option>
+                                    <option value="8">8 inch/203.2mm</option>
+                                    <option value="oth">Other</option>
+                                </select>
+                                <div class="mt-2" th:classappend="${drillingPriceChart.drillingSize == 'oth'} ? '' : 'hidden'">
+                                    <input type="text" 
+                                           id="otherDrillingSize" 
+                                           th:field="*{otherSize}" 
+                                           class="form-input" 
+                                           placeholder="Enter custom drilling size"
+                                           th:required="${drillingPriceChart.drillingSize == 'oth'}">
+                                    <span class="form-help">
+                                        Enter custom drilling size (e.g., 10 inch, 250mm)
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Price -->
+                            <div class="form-group full-width">
+                                <label class="form-label required">
+                                    <i class="fas fa-rupee-sign"></i> Price
+                                </label>
+                                <input type="number" 
+                                       step="0.01" 
+                                       min="0"
+                                       th:field="*{price}" 
+                                       class="form-input" 
+                                       placeholder="Enter drilling price"
+                                       required />
+                                <span class="form-help">
+                                    Price should be in INR (Indian Rupees)
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Section -->
+                        <div class="info-section">
+                            <h3 class="info-title">
+                                <i class="fas fa-info-circle"></i>
+                                Quick Tips
+                            </h3>
+                            <p class="info-text">
+                                • Ensure all fields are filled accurately before saving<br>
+                                • Double-check price information for accuracy<br>
+                                • Select "Other" size option for custom drilling sizes<br>
+                                • Prices can be updated later if market conditions change<br>
+                                • Contact admin if you need to add new cities or areas
+                            </p>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a th:href="@{/drillingPrice/getAllPrices}" class="btn btn-cancel">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-save" id="submitBtn">
+                                <i class="fas fa-save"></i>
+                                <span th:text="${drillingPriceChart.priceId != null ? 'Update Price' : 'Save Price'}"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<body class="bg-gray-100 p-6">
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Drilling Price form page loaded');
+            
+            // Initialize main content based on sidebar state
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebar && mainContent) {
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    mainContent.classList.add('main-content-expanded');
+                    mainContent.classList.remove('main-content-full');
+                } else {
+                    mainContent.classList.remove('main-content-expanded');
+                    mainContent.classList.add('main-content-full');
+                }
+            }
+            
+            // Handle drilling size selection
+            const drillingSelect = document.getElementById("drillingSizeSelect");
+            const otherInputContainer = document.querySelector('[th\\:classappend]');
+            
+            if (drillingSelect) {
+                drillingSelect.addEventListener("change", function () {
+                    if (this.value === "oth") {
+                        otherInputContainer.classList.remove('hidden');
+                        const otherInput = document.getElementById("otherDrillingSize");
+                        if (otherInput) {
+                            otherInput.required = true;
+                        }
+                    } else {
+                        otherInputContainer.classList.add('hidden');
+                        const otherInput = document.getElementById("otherDrillingSize");
+                        if (otherInput) {
+                            otherInput.required = false;
+                            otherInput.value = "";
+                        }
+                    }
+                });
+            }
+            
+            // Form validation and submission
+            const form = document.getElementById('priceForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const allInputs = form.querySelectorAll('input, select, textarea');
+            
+            // Add validation feedback
+            allInputs.forEach(input => {
+                // Skip hidden inputs
+                if (input.type === 'hidden') return;
+                
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+                
+                input.addEventListener('input', function() {
+                    // Clear error when user starts typing
+                    if (this.classList.contains('error')) {
+                        clearFieldError(this);
+                    }
+                });
+            });
+            
+            // Form submission handler
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all fields
+                let isValid = true;
+                allInputs.forEach(input => {
+                    if (input.type !== 'hidden' && !validateField(input)) {
+                        isValid = false;
+                    }
+                });
+                
+                // Special validation for drilling size
+                if (drillingSelect && drillingSelect.value === 'oth') {
+                    const otherInput = document.getElementById("otherDrillingSize");
+                    if (!otherInput || !otherInput.value.trim()) {
+                        isValid = false;
+                        showFieldError(otherInput, 'Custom drilling size is required when "Other" is selected');
+                    }
+                }
+                
+                if (!isValid) {
+                    // Scroll to first error
+                    const firstError = form.querySelector('.error');
+                    if (firstError) {
+                        firstError.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                        firstError.focus();
+                    }
+                    
+                    showToast('Please fill all required fields correctly.', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                
+                // Show success message
+                showToast('Saving price information...', 'success');
+                
+                // Submit form after a short delay to show loading state
+                setTimeout(() => {
+                    form.submit();
+                }, 1000);
+            });
+            
+            // Field validation function
+            function validateField(field) {
+                // Remove existing error message
+                clearFieldError(field);
+                
+                // Check if required field is empty
+                if (field.hasAttribute('required') && !field.value.trim()) {
+                    showFieldError(field, 'This field is required');
+                    return false;
+                }
+                
+                // Validate number fields
+                if (field.type === 'number') {
+                    const value = parseFloat(field.value);
+                    if (field.hasAttribute('min') && value < parseFloat(field.getAttribute('min'))) {
+                        showFieldError(field, `Value must be at least ${field.getAttribute('min')}`);
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            function showFieldError(field, message) {
+                field.classList.add('error');
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                
+                field.parentNode.appendChild(errorDiv);
+            }
+            
+            function clearFieldError(field) {
+                field.classList.remove('error');
+                
+                const errorDiv = field.parentNode.querySelector('.error-message');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+            
+            // Toast notification function
+            function showToast(message, type) {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+                
+                const toast = document.createElement('div');
+                toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
+                    type === 'error' ? 'bg-red-500 text-white' : 
+                    type === 'success' ? 'bg-green-500 text-white' : 
+                    'bg-blue-500 text-white'
+                }`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                                      type === 'success' ? 'fa-check-circle' : 
+                                      'fa-info-circle'}"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + S to save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    submitBtn.click();
+                }
+                
+                // Escape to cancel
+                if (e.key === 'Escape') {
+                    window.location.href = '/drillingPrice/getAllPrices';
+                }
+            });
+            
+            // Add hover effects to form groups
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                group.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                group.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Area dropdown population based on city selection
+            document.getElementById("city").addEventListener("change", function () {
+                var cityId = this.value;
+                var areaDropdown = document.getElementById("area");
+                areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
 
-	<!-- ✅ Background Image -->
-	<div class="bg-overlay"></div>
-
-	<!-- ✅ Navbar -->
-	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
-
-	<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
-		<h2 class="text-2xl font-bold mb-4">Add / Edit Drilling Price Details</h2>
-
-		<form th:action="@{/drillingPrice/savePriceDtls}" th:object="${drillingPriceChart}" method="post"
-			class="space-y-4">
-
-			<input type="hidden" th:field="*{priceId}" />
-
-			<div>
-				<label class="block text-sm font-medium text-gray-700">City</label>
-				<!--<select id="city" th:field="*{city.cityId}" class="w-full border rounded px-3 py-2">
-					<option value="">-- Select City --</option>
-					<option th:each="city : ${cities}" th:value="${city.cityId}" th:text="${city.cityName}"></option>
-				</select>-->
-				<select id="city" th:field="*{city.cityId}" class="w-full border rounded px-3 py-2">
-					<option value="">-- Select City --</option>
-					<option th:each="city : ${cities}" th:value="${city.cityId}" th:text="${city.cityName}"></option>
-				</select>
-			</div>
-			<div>
-				<label class="block text-sm font-medium text-gray-700">Area</label>
-				<!--<select id="area" th:field="*{workLocationArea.locationAreaId}" class="w-full border rounded px-3 py-2">
-					<option value="">-- Select Area --</option>
-				</select>-->
-				<select id="area" th:field="*{workLocationArea.locationAreaId}" class="w-full border rounded px-3 py-2">
-					<option value="">-- Select Area --</option>
-					<option th:each="area : ${areas}" th:value="${area.locationAreaId}"
-						th:text="${area.locationAreaName}"></option>
-				</select>
-			</div>
-			<div>
-				<label class="block text-sm font-medium text-gray-700">Borewell Type</label>
-				<select id="borewellType" th:field="*{borewellType.borewelTypeid}" class="w-full border rounded px-3 py-2">
-					<option value="">-- Select Borewell Type --</option>
-					<option th:each="borewellType : ${borewellTypes}" th:value="${borewellType.borewelTypeid}" th:text="${borewellType.name}"></option>
-				</select>
-			</div>
-
-			<div>
-				<label class="block text-sm font-medium text-gray-700">Borewell Size</label>
-				<select id="drillingSizeSelect" th:field="*{drillingSize}" class="w-full border rounded px-3 py-2">
-					<option value=""> -- Select Boring Size -- </option>
-					<option value="5 inch.">5 inch/127mm</option>
-					<option value="6 inch.">6 inch/152.4mm</option>
-					<option value="8 inch.">8 inch/203.2mm</option>
-					<option value="oth">Other</option>
-				</select>
-
-				<input type="text" id="otherDrillingSize" th:field="*{otherSize}" placeholder="Enter drilling size"
-					class="w-full border rounded px-3 py-2 mt-2" style="display:none;">
-			</div>
-
-			<div>
-				<label class="block text-sm font-medium text-gray-700">Price</label>
-				<input type="number" step="0.01" th:field="*{price}" class="w-full border rounded px-3 py-2" required />
-			</div>
-
-			<div class="flex justify-end space-x-2">
-				<a th:href="@{/drillingPrice/getAllPrices}"
-					class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">Cancel</a>
-				<button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Save</button>
-			</div>
-		</form>
-	</div>
-	<script>
-		const drillingSelect = document.getElementById("drillingSizeSelect");
-		const otherInput = document.getElementById("otherDrillingSize");
-
-		drillingSelect.addEventListener("change", function () {
-			if (this.value === "oth") {
-				otherInput.style.display = "block"; // Show input
-			} else {
-				otherInput.style.display = "none";  // Hide input
-				otherInput.value = "";               // Clear value
-			}
-		});
-	</script>
-	<script>
-		document.getElementById("city").addEventListener("change", function () {
-			var cityId = this.value;
-			var areaDropdown = document.getElementById("area");
-			areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
-
-			if (cityId) {
-				fetch("/api/areas/byCity/" + cityId)
-					.then(response => response.json())
-					.then(data => {
-						data.forEach(area => {
-							var option = document.createElement("option");
-							option.value = area.locationAreaId;
-							option.text = area.locationAreaName;
-							areaDropdown.appendChild(option);
-						});
-					});
-			}
-		});
-
-	</script>
+                if (cityId) {
+                    fetch("/api/areas/byCity/" + cityId)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(area => {
+                                var option = document.createElement("option");
+                                option.value = area.locationAreaId;
+                                option.text = area.locationAreaName;
+                                areaDropdown.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching areas:', error);
+                        });
+                }
+            });
+        });
+        
+        // Fallback: Also try initializing when window loads
+        window.addEventListener('load', function() {
+            console.log('Window fully loaded');
+        });
+    </script>
 </body>
-
 </html>

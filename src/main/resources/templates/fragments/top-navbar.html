@@ -1,0 +1,89 @@
+<!-- fragments/top-navbar.html -->
+<div class="top-navbar" th:fragment="top-navbar">
+    <!-- Inline CSS for this fragment only -->
+    <style>
+        .top-navbar .page-header {
+            background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .top-navbar .page-header h1 {
+            font-size: 1.875rem; /* text-3xl equivalent */
+            font-weight: bold;
+            margin-bottom: 0.5rem; /* mb-2 equivalent */
+        }
+        
+        .top-navbar .page-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+        
+        .top-navbar .page-header a {
+            background: white;
+            color: #2563eb;
+            padding: 0.75rem 1.5rem; /* px-6 py-3 equivalent */
+            border-radius: 0.5rem;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .top-navbar .page-header a:hover {
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .top-navbar .page-header {
+                padding: 1.5rem 0;
+            }
+            
+            .top-navbar .page-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .top-navbar .page-header a {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+
+    <!-- Page Header - Exact same as your code -->
+    <div class="page-header relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Quotations Management</h1>
+                    <p class="text-blue-100 opacity-90">
+                        Create, manage, and track all your quotations in one place
+                    </p>
+                </div>
+            </div>
+
+            <!-- Button positioned to the far right - Exact same as your code -->
+			<a href="/quotations/addNewQuotation"
+			   class="absolute right-10 top-10 bg-white text-blue-600 hover:bg-blue-50 
+			          px-6 py-3 rounded-lg font-semibold shadow-lg transition duration-300 flex items-center gap-2">
+			    <i class="fas fa-plus"></i>
+			    <span>New Quotation</span>
+			</a>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript for this fragment -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Top navbar loaded');
+        });
+        /*]]>*/
+    </script>
+</div>

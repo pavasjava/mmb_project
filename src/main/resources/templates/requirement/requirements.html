@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Area-wise Item Requirements | MMB Borewell Services</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- Include common head -->
+    <div th:replace="fragments/head :: head"></div>
+    
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+    
+	<style>
+	    /* Main content alignment for sidebar */
+	    .main-content {
+	        margin-left: 280px;
+	        transition: all 0.3s ease;
+	        min-height: 100vh;
+	        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+	    }
+	    
+	    .main-content-expanded {
+	        margin-left: 80px;
+	    }
+	    
+	    .main-content-full {
+	        margin-left: 0;
+	    }
+	    
+	    /* Adjusted page container - REMOVED conflicting margin-left */
+	    .page-container {
+	        padding: 1rem 2rem;
+	        width: 100%;
+	        max-width: 1400px;
+	        margin: 0 auto;
+	        margin-top: 1rem; /* Added margin for top navbar */
+	    }
+	    
+	    /* REMOVED: .custom-top-navbar styles as they conflict with top-navbar fragment */
+	    /* REMOVED: .top-navbar-fixed styles as they conflict with top-navbar fragment */
+	    
+	    .action-btn {
+	        padding: 0.5rem 1.5rem;
+	        border-radius: 8px;
+	        font-weight: 500;
+	        font-size: 0.875rem;
+	        transition: all 0.2s ease;
+	        display: inline-flex;
+	        align-items: center;
+	        gap: 0.5rem;
+	        cursor: pointer;
+	        border: none;
+	        text-decoration: none;
+	    }
+	    
+	    .action-btn.primary { 
+	        background: #3b82f6; 
+	        color: white; 
+	    }
+	    
+	    .action-btn.primary:hover { 
+	        background: #2563eb; 
+	        transform: translateY(-1px); 
+	    }
+	    
+	    .action-btn.secondary { 
+	        background: #64748b; 
+	        color: white; 
+	    }
+	    
+	    .action-btn.secondary:hover { 
+	        background: #475569; 
+	        transform: translateY(-1px); 
+	    }
+	    
+	    .table-container {
+	        overflow-x: auto;
+	        border-radius: 12px;
+	        background: white;
+	        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	        margin-top: 2rem;
+	    }
+	    
+	    .data-table {
+	        width: 100%;
+	        border-collapse: collapse;
+	    }
+	    
+	    .data-table thead {
+	        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+	    }
+	    
+	    .data-table th {
+	        padding: 1rem 1.5rem;
+	        text-align: left;
+	        font-weight: 600;
+	        color: #475569;
+	        font-size: 0.875rem;
+	        text-transform: uppercase;
+	        letter-spacing: 0.05em;
+	        border-bottom: 2px solid #e2e8f0;
+	    }
+	    
+	    .data-table td {
+	        padding: 1rem 1.5rem;
+	        border-bottom: 1px solid #f1f5f9;
+	        color: #475569;
+	        font-size: 0.95rem;
+	    }
+	    
+	    .data-table tbody tr {
+	        transition: all 0.2s ease;
+	    }
+	    
+	    .data-table tbody tr:hover {
+	        background: #f8fafc;
+	    }
+	    
+	    .table-link {
+	        color: #3b82f6;
+	        text-decoration: none;
+	        font-weight: 500;
+	        transition: all 0.2s ease;
+	    }
+	    
+	    .table-link:hover {
+	        color: #2563eb;
+	        text-decoration: underline;
+	    }
+	    
+	    .table-link.delete {
+	        color: #ef4444;
+	    }
+	    
+	    .table-link.delete:hover {
+	        color: #dc2626;
+	    }
+	    
+	    .search-box {
+	        border: 1px solid #e2e8f0;
+	        border-radius: 8px;
+	        padding: 0.75rem 1rem 0.75rem 2.5rem;
+	        width: 100%;
+	        transition: all 0.2s ease;
+	        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' viewBox='0 0 20 20' fill='%239ca3af'%3E%3Cpath fill-rule='evenodd' d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z' clip-rule='evenodd' /%3E%3C/svg%3E");
+	        background-repeat: no-repeat;
+	        background-position: 0.75rem center;
+	        background-size: 1.25rem;
+	    }
+	    
+	    .search-box:focus {
+	        outline: none;
+	        border-color: #3b82f6;
+	        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+	    }
+	    
+	    .filter-bar {
+	        background: white;
+	        border-radius: 12px;
+	        padding: 1.5rem;
+	        margin-bottom: 1.5rem;
+	        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	    }
+	    
+	    .stats-card {
+	        display: flex;
+	        align-items: center;
+	        gap: 1rem;
+	        padding: 1rem;
+	        background: white;
+	        border-radius: 10px;
+	        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	        margin-bottom: 1rem;
+	    }
+	    
+	    .stats-icon {
+	        width: 48px;
+	        height: 48px;
+	        border-radius: 10px;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        font-size: 1.5rem;
+	    }
+	    
+	    .stats-icon.area {
+	        background: rgba(139, 92, 246, 0.1);
+	        color: #8b5cf6;
+	    }
+	    
+	    /* UPDATED: Simplified page header for content area only */
+	    .content-header {
+	        display: flex;
+	        justify-content: space-between;
+	        align-items: center;
+	        margin-bottom: 2rem;
+	        margin-top: 1.5rem;
+	    }
+	    
+	    @media (max-width: 768px) {
+	        .main-content {
+	            margin-left: 0 !important;
+	        }
+	        
+	        .page-container {
+	            width: 100%;
+	            padding: 1rem;
+	            margin-top: 0;
+	        }
+	        
+	        .content-header {
+	            flex-direction: column;
+	            align-items: flex-start;
+	            gap: 1rem;
+	        }
+	        
+	        .data-table th,
+	        .data-table td {
+	            padding: 0.75rem 1rem;
+	            font-size: 0.875rem;
+	        }
+	    }
+	</style>
+</head>
+
+<body>
+    
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Custom Top Navbar Container -->
+        <div class="custom-top-navbar">
+            <!-- Top Navbar -->
+            <div th:replace="fragments/requirement-top-navbar :: top-navbar"></div>
+        </div>
+        
+        <!-- Main Content Container -->
+        <div class="page-container" style="margin-left: 370px;">
+            <!-- Page Header 
+            <div class="page-header">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Area-wise Item Requirements</h1>
+                    <p class="text-gray-600 mt-2">Manage area-specific requirements for borewell services</p>
+                </div>
+                <a th:href="@{/requirements/addNewAreaWiseReq}" class="action-btn primary">
+                    <i class="fas fa-plus"></i>
+                    Add New Requirement
+                </a>
+            </div>-->
+            
+            <!-- Stats Card -->
+            <div class="stats-card">
+                <div class="stats-icon area">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        <span th:text="${requirements != null ? #lists.size(requirements) : 0}">0</span> Area Requirements
+                    </h3>
+                    <p class="text-gray-600 text-sm">Total requirements across different areas</p>
+                </div>
+            </div>
+            
+            <!-- Requirements Table -->
+            <div class="table-container">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-800">All Requirements</h2>
+                        <div class="text-sm text-gray-500">
+                            Total: <span class="font-semibold" th:text="${requirements != null ? #lists.size(requirements) : 0}">0</span> records
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Search Box for Area -->
+                <div class="filter-bar">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-2">Search by Area</label>
+                        <div class="relative">
+                            <input type="text" 
+                                   id="areaSearch" 
+                                   placeholder="Search requirements by area name..." 
+                                   class="search-box">
+                        </div>
+                        <div class="mt-2 text-sm text-gray-500">
+                            Type to filter requirements by area. Matching rows will be highlighted.
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-600">
+                            Showing <span id="visibleCount" th:text="${requirements != null ? #lists.size(requirements) : 0}">0</span> of 
+                            <span th:text="${requirements != null ? #lists.size(requirements) : 0}">0</span> records
+                        </div>
+                        <button id="clearSearch" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                            <i class="fas fa-times mr-1"></i> Clear Search
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>City</th>
+                            <th>Area</th>
+							<th>Borewell Type</th>
+							<th>Borewell Size(inch.)</th>
+                            <th>Drilling Depth (ft)</th>
+                            <th>Casing Pipe (Peice)</th>
+                            <th>Master Casing (ft)</th>
+                            <th>Slotting (Peice)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requirementsTableBody">
+                        <tr th:each="item, iterStat : ${requirements}" class="requirement-row">
+                            <td class="font-mono font-semibold text-blue-600" th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${item.city != null ? item.city.cityName : 'N/A'}"></td>
+                            <td class="area-cell" th:text="${item.area != null ? item.area.locationAreaName : 'N/A'}"></td>
+							<td class="font-medium" th:text="${item.borewellType.name}"></td>
+							<td class="font-medium" th:text="${item.reqDrillingDia}"></td>
+                            <td class="font-medium" th:text="${item.reqDrillingDepth}"></td>
+                            <td class="font-medium" th:text="${item.reqCasingPipe}"></td>
+                            <td class="font-medium" th:text="${item.reqMasterCasingPipe}"></td>
+                            <td class="font-medium" th:text="${item.noOfSloting}"></td>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <a th:href="@{/requirements/edit/{id}(id=${item.requirementId})}" 
+                                       class="table-link">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </a>
+                                    <span class="text-gray-300">|</span>
+                                    <a th:href="@{/requirements/delete/{id}(id=${item.requirementId})}" 
+                                       class="table-link delete"
+                                       onclick="return confirm('Are you sure you want to delete this requirement?')">
+                                        <i class="fas fa-trash mr-1"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Empty State -->
+                        <tr th:if="${#lists.isEmpty(requirements)}" id="noDataRow">
+                            <td colspan="8">
+                                <div class="text-center py-12">
+                                    <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-4"></i>
+                                    <h3 class="text-lg font-medium text-gray-700 mb-2">No requirements found</h3>
+                                    <p class="text-gray-500">Start by adding your first requirement.</p>
+                                    <a th:href="@{/requirements/add}" class="action-btn primary mt-4">
+                                        <i class="fas fa-plus"></i>
+                                        Add First Requirement
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- No Search Results State -->
+                        <tr id="noResultsRow" style="display: none;">
+                            <td colspan="8">
+                                <div class="text-center py-12">
+                                    <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                                    <h3 class="text-lg font-medium text-gray-700 mb-2">No matching requirements found</h3>
+                                    <p class="text-gray-500">Try a different area name or clear the search.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Requirements List page loaded');
+            
+            // Initialize main content based on sidebar state
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebar && mainContent) {
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    mainContent.classList.add('main-content-expanded');
+                    mainContent.classList.remove('main-content-full');
+                } else {
+                    mainContent.classList.remove('main-content-expanded');
+                    mainContent.classList.add('main-content-full');
+                }
+            }
+            
+            // Area Search Functionality
+            const areaSearchInput = document.getElementById('areaSearch');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const noResultsRow = document.getElementById('noResultsRow');
+            const noDataRow = document.getElementById('noDataRow');
+            const visibleCountSpan = document.getElementById('visibleCount');
+            
+            if (areaSearchInput) {
+                areaSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    filterRequirementsByArea(searchTerm);
+                });
+            }
+            
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function() {
+                    areaSearchInput.value = '';
+                    filterRequirementsByArea('');
+                });
+            }
+            
+            function filterRequirementsByArea(searchTerm) {
+                const rows = document.querySelectorAll('.requirement-row');
+                let visibleCount = 0;
+                
+                // Hide the no search results row initially
+                if (noResultsRow) {
+                    noResultsRow.style.display = 'none';
+                }
+                
+                // Hide the no data row if it exists
+                if (noDataRow) {
+                    noDataRow.style.display = 'none';
+                }
+                
+                if (searchTerm === '') {
+                    // Show all rows
+                    rows.forEach(row => {
+                        row.style.display = '';
+                        row.classList.remove('bg-yellow-50', 'border-l-4', 'border-yellow-400');
+                        visibleCount++;
+                    });
+                } else {
+                    // Filter rows based on area name
+                    rows.forEach(row => {
+                        const areaCell = row.querySelector('.area-cell');
+                        if (areaCell) {
+                            const areaName = areaCell.textContent.toLowerCase();
+                            if (areaName.includes(searchTerm)) {
+                                row.style.display = '';
+                                // Highlight matching rows
+                                row.classList.add('bg-yellow-50', 'border-l-4', 'border-yellow-400');
+                                visibleCount++;
+                            } else {
+                                row.style.display = 'none';
+                                row.classList.remove('bg-yellow-50', 'border-l-4', 'border-yellow-400');
+                            }
+                        }
+                    });
+                    
+                    // Show no results message if no matches found
+                    if (visibleCount === 0 && rows.length > 0) {
+                        if (noResultsRow) {
+                            noResultsRow.style.display = '';
+                        }
+                    }
+                }
+                
+                // Update visible count
+                if (visibleCountSpan) {
+                    visibleCountSpan.textContent = visibleCount;
+                }
+                
+                // Update clear search button visibility
+                if (clearSearchBtn) {
+                    if (searchTerm === '') {
+                        clearSearchBtn.style.display = 'none';
+                    } else {
+                        clearSearchBtn.style.display = 'inline-flex';
+                    }
+                }
+            }
+            
+            // Initialize search state
+            filterRequirementsByArea('');
+            
+            // Confirm delete with custom alert
+            const deleteLinks = document.querySelectorAll('.table-link.delete');
+            deleteLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to delete this requirement? This action cannot be undone.')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+            
+            // Add keyboard shortcut for search (Ctrl+F)
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    if (areaSearchInput) {
+                        areaSearchInput.focus();
+                        areaSearchInput.select();
+                    }
+                }
+                
+                // Escape key clears search
+                if (e.key === 'Escape' && areaSearchInput && areaSearchInput.value) {
+                    areaSearchInput.value = '';
+                    filterRequirementsByArea('');
+                }
+            });
+        });
+        
+        // Prevent back button
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function() {
+            window.history.pushState(null, "", window.location.href);
+        };
+    </script>
+</body>
+</html>

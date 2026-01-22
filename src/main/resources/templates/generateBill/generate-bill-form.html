@@ -2,539 +2,798 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Add/Edit Quotation</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-	<style>
-		.bg-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 100%;
-			background-image: url('/images/bgimage.png');
-			background-size: cover;
-			background-position: center;
-			opacity: 0.08;
-			/* More light/faded */
-			z-index: -1;
-		}
+    <title>Generate Bill</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.03;
+            z-index: -1;
+        }
 
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #f4f8fb;
-			color: #333;
-		}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+        }
 
-		.navbar {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			/*background-color: rgb(73, 146, 180);*/
-			background-color: #d64026;
-			padding: 10px 20px;
-		}
+        .container-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-		.navbar-left {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+        .container-card:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+        }
 
-		.navbar-left img {
-			height: 40px;
-			width: 65px;
-			border-radius: 60%;
-			object-fit: cover;
-		}
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
 
-		.navbar-left a {
-			text-decoration: none;
-			color: white;
-			font-weight: bold;
-			padding: 8px 12px;
-			border-radius: 8px;
-			transition: background-color 0.3s;
-		}
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background-color: #fcfdfe;
+        }
 
-		.navbar-left a.active,
-		.navbar-left a:hover {
-			/*background-color: #17418138;*/
-			background-color: #c23c22;
-		}
+        .form-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+            background-color: white;
+        }
 
-		.navbar-right {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background-color: #fcfdfe;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 40px;
+        }
 
-		.search-box {
-			background-color: white;
-			border-radius: 10px;
-			padding: 8px 12px;
-			display: flex;
-			align-items: center;
-		}
+        .form-select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+            background-color: white;
+        }
 
-		.search-box input {
-			border: none;
-			outline: none;
-			font-size: 14px;
-			margin-left: 5px;
-		}
+        .btn-cancel {
+            background-color: #f1f5f9;
+            color: #64748b;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1.5px solid #e2e8f0;
+        }
 
-		.search-icon {
-			color: #d64026;
-			font-size: 16px;
-		}
+        .btn-cancel:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-1px);
+        }
 
-		.social-icons i {
-			font-size: 18px;
-			color: white;
-			transition: transform 0.2s;
-		}
+        .btn-save {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
 
-		.social-icons i:hover {
-			transform: scale(1.2);
-			color: #ffc107;
-		}
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
 
-		.container {
-			max-width: 1200px;
-			margin: 50px auto;
-			padding: 40px;
-			background-color: white;
-			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-			border-radius: 12px;
-		}
+        .btn-add {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-		h1 {
-			text-align: left;
-			color: #2c3e50;
-			margin-bottom: 20px;
-		}
+        .btn-add:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
 
-		p {
-			font-size: 17px;
-			line-height: 1.7;
-			text-align: justify;
-		}
+        .btn-remove {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-		.footer {
-			margin-top: 30px;
-			text-align: center;
-			font-size: 14px;
-			color: #777;
-		}
+        .btn-remove:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
 
-		.modal {
-			display: none;
-			position: fixed;
-			z-index: 999;
-			padding-top: 60px;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgba(0, 0, 0, 0.8);
-		}
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            position: relative;
+        }
 
-		.modal-content {
-			margin: auto;
-			display: block;
-			max-width: 90%;
-			max-height: 80%;
-			border-radius: 10px;
-		}
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #4299e1 0%, #667eea 100%);
+        }
 
-		.close {
-			position: absolute;
-			top: 30px;
-			right: 50px;
-			color: #fff;
-			font-size: 35px;
-			font-weight: bold;
-			cursor: pointer;
-		}
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
 
-		.close:hover {
-			color: #ccc;
-		}
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
 
-		h2.bullet::before {
-			content: "•";
-			font-size: 36px;
-			color: #2c3e50;
-			margin-right: 12px;
-			vertical-align: middle;
-		}
-	</style>
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .radio-label:hover {
+            background: #f1f5f9;
+        }
+
+        .radio-label input[type="radio"]:checked + span {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .work-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .work-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        /* Smooth animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .main-content-expanded {
+            margin-left: 80px;
+        }
+
+        .main-content-full {
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-input::before {
+            content: "₹";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .currency-input .form-input {
+            padding-left: 30px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #10b981;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .hidden-fields {
+            display: none;
+        }
+
+        .show-fields {
+            display: grid;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-50">
+    <!-- Background Overlay -->
+    <div class="bg-overlay"></div>
+    
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
 
-	<!-- ✅ Background Image -->
-	<div class="bg-overlay" style="background-image: url('/images/bgimage.png');"></div>
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div th:replace="fragments/bill-top-navbar :: top-navbar"></div>
 
-	<div th:replace="~{fragments/navbar :: navbar}"></div><br>
+        <!-- Main Form Content -->
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <div class="container-card p-8">
+                <!-- Header -->
+                <div class="mb-10">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-2">Generate Bill</h2>
+                            <p class="text-gray-600">Fill in all the required details to create a bill</p>
+                        </div>
+                        <div class="status-badge">
+                            <i class="fas fa-circle text-xs mr-2"></i>
+                            <span>Draft</span>
+                        </div>
+                    </div>
+                </div>
 
-	<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
-		<h2 class="text-2xl font-bold mb-4">Generate / Edit Bill</h2>
+                <!-- Form -->
+                <form th:action="@{/generateBills/saveGenerateBill}" th:object="${generateBill}" method="post" 
+                      class="space-y-8 animate-fadeIn">
 
-		<form th:action="@{/generateBills/saveGenerateBill}" th:object="${generateBill}" method="post"
-			class="space-y-4">
+                    <input type="hidden" th:field="*{billId}" />
 
-			<!-- Hidden field for edit -->
-			<input type="hidden" th:field="*{billId}" />
+                    <!-- Section 1: Customer Information -->
+                    <div>
+                        <h3 class="section-title">Customer Information</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Customer Name</label>
+                                <input type="text" th:field="*{customerName}" 
+                                       class="form-input" 
+                                       placeholder="Enter customer name" />
+                            </div>
+                            <div>
+                                <label class="form-label">Mobile Number</label>
+                                <input type="text" th:field="*{mobileNo}" 
+                                       class="form-input" 
+                                       placeholder="Enter mobile number" />
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="form-label">Work Address</label>
+                                <input type="text" th:field="*{workAddress}" 
+                                       class="form-input" 
+                                       placeholder="Enter work address" />
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<label>Customer Name</label>
-				<input type="text" th:field="*{customerName}" class="w-full border rounded px-3 py-2" />
-			</div>
-			<div>
-				<label>Customer Mobile No.</label>
-				<input type="text" th:field="*{mobileNo}" class="w-full border rounded px-3 py-2" />
-			</div>
+                    <!-- Section 2: Boring Details -->
+                    <div>
+                        <h3 class="section-title">Boring Specifications</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Work Date</label>
+                                <input type="date" th:field="*{workDate}" 
+                                       class="form-input" />
+                            </div>
+                            <div>
+                                <label class="form-label">Boring Type</label>
+                                <select th:field="*{boringType}" class="form-select">
+                                    <option value="">-- Select Boring Type --</option>
+                                    <option value="DTH">DTH</option>
+                                    <option value="In-Well">In-Well</option>
+                                    <option value="Rotary">Rotary</option>
+                                    <option value="Callis">Callis</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Boring Diameter</label>
+                                <select th:field="*{boringDia}" class="form-select">
+                                    <option value="">-- Select Boring Diameter --</option>
+                                    <option value="5">5 inch</option>
+                                    <option value="6">6 inch</option>
+                                    <option value="8">8 inch</option>
+                                    <option value="10">10 inch</option>
+                                    <option value="12">12 inch</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Price Quantity Details</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" th:field="*{priceQntDtls}" value="1 Feet" />
+                                        <span>1 Feet</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" th:field="*{priceQntDtls}" value="1 Mtr." />
+                                        <span>1 Meter</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<label>Work Address</label>
-				<input type="text" th:field="*{workAddress}" class="w-full border rounded px-3 py-2" />
-			</div>
+                    <!-- Section 3: Drilling Details -->
+                    <div>
+                        <h3 class="section-title">Drilling Details</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Drilling Price</label>
+                                <div class="currency-input">
+                                    <input type="number" th:field="*{drillingPrice}" 
+                                           class="form-input" 
+                                           placeholder="0.00" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label">Total Drilling</label>
+                                <input type="number" th:field="*{totalDrilling}" 
+                                       class="form-input" 
+                                       placeholder="Enter total drilling" />
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<div>
-					<label style="width: 250px;">Work Date</label>
+                    <!-- Section 4: Materials -->
+                    <div>
+                        <h3 class="section-title">Required Materials</h3>
+                        <div class="relative mb-4">
+                            <div>
+                                <label class="form-label">Select Material</label>
+                                <select id="material" class="form-select">
+                                    <option value="">-- Select Material --</option>
+                                    <option th:each="mat : ${materials}" th:value="${mat.materialId}"
+                                            th:text="${mat.materialWithCmpName}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Quantity input -->
+                            <div id="material-details" class="hidden mt-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex-1">
+                                        <label class="form-label">Quantity</label>
+                                        <input type="number" id="quantity" class="form-input" placeholder="Enter quantity" />
+                                    </div>
+                                    <div class="pt-6">
+                                        <button type="button" id="addMaterialBtn" class="btn-add">
+                                            <i class="fas fa-plus"></i> Add Material
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-					<label style="width: 250px; margin-left: 70px;">Boring Type</label>
-				</div>
+                        <!-- Added materials list -->
+                        <div class="mt-6 hidden" id="selectedSection">
+                            <label class="form-label">Selected Materials</label>
+                            <div id="materialsList" class="space-y-2 mt-2"></div>
+                        </div>
+                    </div>
 
-				<input type="date" id="workDate" th:field="*{workDate}"
-					class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-					style="width: 250px;" />
+                    <!-- Section 5: Transport Details -->
+                    <div>
+                        <h3 class="section-title">Transportation Details</h3>
+                        <div class="toggle-container">
+                            <span class="form-label">Transport Required?</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="transportToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="toggleLabel">No</span>
+                        </div>
 
-				<select th:field="*{boringType}" class="w-full border rounded px-3 py-2"
-					style="width: 250px; margin-left: 70px;">
-					<option value="">--Select Boring Type--</option>
-					<option value="DTH">DTH</option>
-					<option value="In-Well">In-Well</option>
-					<option value="Rotary">Rotary</option>
-					<option value="Callis">Callis</option>
-				</select>
-			</div>
+                        <!-- Transport fields -->
+                        <div id="transportFields" class="hidden-fields">
+                            <div class="grid-2">
+                                <div>
+                                    <label class="form-label">Vehicle Type</label>
+                                    <select th:field="*{transportingVehicleType}" class="form-select">
+                                        <option value="">-- Select Vehicle Type --</option>
+                                        <option value="small">Small</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="large">Large</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Transport Price</label>
+                                    <div class="currency-input">
+                                        <input type="number" th:field="*{transportingPrice}" 
+                                               class="form-input" 
+                                               placeholder="0.00" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-			<div>
-				<div>
-					<label style="width: 250px;">Boring Dia</label>
+                    <!-- Section 6: Other Works -->
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="section-title mb-0">Other Works</h3>
+                            <button type="button" id="addWorkBtn" class="btn-add">
+                                <i class="fas fa-plus"></i> Add Work
+                            </button>
+                        </div>
+                        
+                        <!-- Container where new work fields will appear -->
+                        <div id="otherWorkContainer" class="space-y-3"></div>
+                    </div>
 
-					<label style="width: 250px; margin-left: 70px;">Price Quantity Details</label>
-				</div>
-				<select th:field="*{boringDia}" class="w-full border rounded px-3 py-2" style="width: 250px;">
-					<option value="">--Select Boring dia--</option>
-					<option value="5">5 inch.</option>
-					<option value="6">6 inch.</option>
-					<option value="8">8 inch.</option>
-					<option value="10">10 inch.</option>
-					<option value="12">12 inch.</option>
-				</select>
+                    <!-- Section 7: Payment Details -->
+                    <div>
+                        <h3 class="section-title">Payment Details</h3>
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Total Advance Payment</label>
+                                <div class="currency-input">
+                                    <input type="number" th:field="*{totalAdvance}" 
+                                           class="form-input" 
+                                           placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-				<label class="inline-flex items-center" style="margin-left: 70px;">
-					<input type="radio" th:field="*{priceQntDtls}" value="1 Feet"
-						class="form-radio h-4 w-4 text-blue-600 border-gray-300" />
-					<span class="ml-2">1 Feet</span>
-				</label>
+                    <!-- Form Actions -->
+                    <div class="pt-8 border-t border-gray-200 flex justify-end space-x-4">
+                        <a href="/quotations/getAllQuotation" class="btn-cancel">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save mr-2"></i>Save Bill
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-				<label class="inline-flex items-center">
-					<input type="radio" th:field="*{priceQntDtls}" value="1 Mtr."
-						class="form-radio h-4 w-4 text-blue-600 border-gray-300" />
-					<span class="ml-2">1 Mtr.</span>
-				</label>
-			</div>
-			<div>
-				<label>Drilling Price</label>
-				<input type="number" th:field="*{drillingPrice}" class="w-full border rounded px-3 py-2" />
-			</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize main content based on sidebar state
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebar && mainContent) {
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    mainContent.classList.add('main-content-expanded');
+                    mainContent.classList.remove('main-content-full');
+                } else {
+                    mainContent.classList.remove('main-content-expanded');
+                    mainContent.classList.add('main-content-full');
+                }
+            }
 
-			<div>
-				<label>Total Drilling</label>
-				<input type="number" th:field="*{totalDrilling}" class="w-full border rounded px-3 py-2" />
-			</div>
+            // Material selection functionality
+            const materialSelect = document.getElementById("material");
+            const materialDetails = document.getElementById("material-details");
+            const quantityInput = document.getElementById("quantity");
+            const addMaterialBtn = document.getElementById("addMaterialBtn");
+            const materialsList = document.getElementById("materialsList");
+            const selectedSection = document.getElementById("selectedSection");
 
-			<div>
-				<div class="relative inline-block w-full">
-					<div class="mb-4">
-						<label for="material">Select
-							Material</label>
-						<select id="material" class="border rounded px-3 py-2 w-full bg-white">
-							<option value="">-- Select Material --</option>
-							<option th:each="mat : ${materials}" th:value="${mat.materialId}"
-								th:text="${mat.materialWithCmpName}">
-							</option>
-						</select>
-					</div>
-				</div>
-				<!-- Quantity input (hidden until a material is selected) -->
-				<div id="material-details" class="hidden mb-4">
-					<label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-					<input type="number" id="quantity" class="border rounded px-3 py-2 w-40"
-						placeholder="Enter quantity" />
+            // Show/hide quantity input when material is selected
+            materialSelect.addEventListener("change", () => {
+                if (materialSelect.value) {
+                    materialDetails.classList.remove("hidden");
+                    materialDetails.classList.add("animate-fadeIn");
+                } else {
+                    materialDetails.classList.add("hidden");
+                }
+            });
 
-					<button type="button" id="addMaterialBtn"
-						class="ml-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-						+ Add
-					</button>
-				</div>
+            // Add material to list
+            addMaterialBtn.addEventListener("click", () => {
+                const selectedText = materialSelect.options[materialSelect.selectedIndex]?.text || "";
+                const selectedValue = materialSelect.value;
+                const quantity = quantityInput.value.trim();
 
-				<!-- Added materials list -->
-				<div class="mt-4 hidden" id="selectedSection">
-					<lebel class="font-semibold mb-2">Selected Materials</lebel>
-					<ul id="materialsList" class="list-disc pl-5 text-gray-700"></ul>
-				</div>
-				<input type="hidden" th:field="*{billId}" />
-			</div>
+                if (!selectedValue || !quantity) {
+                    alert("Please select a material and enter quantity.");
+                    return;
+                }
 
-			<label>Transporting</label>
-			<!-- Transport Yes/No -->
-			<div class="flex items-center gap-6 mb-4">
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "material-item animate-fadeIn";
+                
+                // Left side content
+                const leftDiv = document.createElement("div");
+                leftDiv.className = "flex items-center gap-3";
+                
+                const serialSpan = document.createElement("span");
+                serialSpan.className = "text-gray-500 font-medium";
+                serialSpan.textContent = (materialsList.children.length + 1) + ".";
+                
+                const textSpan = document.createElement("span");
+                textSpan.textContent = `${selectedText} - Quantity: ${quantity}`;
+                
+                leftDiv.appendChild(serialSpan);
+                leftDiv.appendChild(textSpan);
+                
+                // Hidden inputs for form submission
+                const hiddenId = document.createElement("input");
+                hiddenId.type = "hidden";
+                hiddenId.name = "requiredMaterialIds";
+                hiddenId.value = selectedValue;
+                
+                const hiddenQty = document.createElement("input");
+                hiddenQty.type = "hidden";
+                hiddenQty.name = "requiredMaterialQuantities";
+                hiddenQty.value = quantity;
+                
+                // Remove button
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "btn-remove";
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.addEventListener("click", () => {
+                    itemDiv.remove();
+                    updateMaterialSerialNumbers();
+                    if (materialsList.children.length === 0) {
+                        selectedSection.classList.add("hidden");
+                    }
+                });
+                
+                itemDiv.appendChild(leftDiv);
+                itemDiv.appendChild(hiddenId);
+                itemDiv.appendChild(hiddenQty);
+                itemDiv.appendChild(removeBtn);
+                
+                materialsList.appendChild(itemDiv);
+                selectedSection.classList.remove("hidden");
+                
+                // Reset fields
+                materialSelect.value = "";
+                quantityInput.value = "";
+                materialDetails.classList.add("hidden");
+                
+                updateMaterialSerialNumbers();
+            });
 
-				<div class="flex items-center gap-4">
-					<label class="flex items-center gap-2">
-						<input type="radio" name="transportRequired" value="yes" class="transport-radio">
-						<span>Yes</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="radio" name="transportRequired" value="no" class="transport-radio" checked>
-						<span>No</span>
-					</label>
-				</div>
+            function updateMaterialSerialNumbers() {
+                const items = materialsList.querySelectorAll(".material-item");
+                items.forEach((item, index) => {
+                    item.querySelector("span.text-gray-500").textContent = (index + 1) + ".";
+                });
+            }
 
-				<!-- Hidden transport fields (inline row) -->
-				<div id="transportFields" class="hidden flex items-center gap-4">
-					<div>
-						<label class="block text-sm font-medium">Vehicle Type</label>
-						<select th:field="*{transportingVehicleType}" class="border rounded px-3 py-2">
-							<option value="">--Select--</option>
-							<option value="small">Small</option>
-							<option value="medium">Medium</option>
-							<option value="large">Large</option>
-						</select>
-					</div>
+            // Transport toggle functionality
+            const transportToggle = document.getElementById("transportToggle");
+            const transportFields = document.getElementById("transportFields");
+            const toggleLabel = document.getElementById("toggleLabel");
 
-					<div>
-						<label class="block text-sm font-medium">Transport Price</label>
-						<input type="number" th:field="*{transportingPrice}" class="border rounded px-3 py-2" />
-					</div>
-				</div>
-			</div>
+            transportToggle.addEventListener("change", function() {
+                if (this.checked) {
+                    transportFields.classList.remove("hidden-fields");
+                    transportFields.classList.add("show-fields");
+                    toggleLabel.textContent = "Yes";
+                } else {
+                    transportFields.classList.remove("show-fields");
+                    transportFields.classList.add("hidden-fields");
+                    toggleLabel.textContent = "No";
+                }
+            });
 
-			<div class="mb-4">
-				<button type="button" id="addWorkBtn"
-					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-					+ Add Other Work
-				</button>
-			</div>
+            // Other works functionality
+            const container = document.getElementById("otherWorkContainer");
 
-			<!-- Container where new work fields will appear -->
-			<div id="otherWorkContainer" class="space-y-4"></div>
-			
+            function updateWorkSerialNumbers() {
+                const rows = container.querySelectorAll(".work-row");
+                rows.forEach((row, index) => {
+                    row.querySelector(".serial").textContent = (index + 1) + ".";
+                });
+            }
 
-			<div>
-				<label class="block text-sm font-medium">Total Advance Payment</label>
-				<input type="number" th:field="*{totalAdvance}" class="border rounded px-3 py-2" />
-			</div>
+            function updateWorkFieldNames() {
+                const rows = container.querySelectorAll(".work-row");
+                rows.forEach((row, index) => {
+                    row.querySelector(".desc").name = `otherWorks[${index}].othWorkName`;
+                    row.querySelector(".unit").name = `otherWorks[${index}].totalUnit`;
+                    row.querySelector(".price").name = `otherWorks[${index}].price`;
+                });
+            }
 
-			<div class="flex justify-end space-x-2">
-				<a href="/quotations/getAllQuotation" class="bg-gray-400 px-4 py-2 rounded">Cancel</a>
-				<button type="submit" class="bg-green-500 px-4 py-2 rounded text-white">Save</button>
-			</div>
-		</form>
-	</div>
-	<script>
-		// elements (matching your HTML IDs)
-		const materialSelect = document.getElementById("material");
-		const materialDetails = document.getElementById("material-details");
-		const quantityInput = document.getElementById("quantity");
-		const addMaterialBtn = document.getElementById("addMaterialBtn");
-		const materialsList = document.getElementById("materialsList");
-		const selectedSection = document.getElementById("selectedSection");
+            document.getElementById("addWorkBtn").addEventListener("click", function () {
+                const workDiv = document.createElement("div");
+                workDiv.className = "work-row animate-fadeIn";
 
-		// show/hide quantity area when a material is selected
-		materialSelect.addEventListener("change", () => {
-			if (materialSelect.value) materialDetails.classList.remove("hidden");
-			else materialDetails.classList.add("hidden");
-		});
+                const serial = document.createElement("span");
+                serial.className = "serial font-bold text-gray-600";
 
-		// update serial numbers in the list
-		function refreshSerialNumbers() {
-			const items = materialsList.querySelectorAll("li");
-			items.forEach((item, index) => {
-				const numberSpan = item.querySelector(".serial-number");
-				if (numberSpan) numberSpan.textContent = (index + 1) + ". ";
-			});
-		}
+                const descInput = document.createElement("input");
+                descInput.type = "text";
+                descInput.placeholder = "Description";
+                descInput.className = "form-input desc";
 
-		// set correct indexed names for hidden inputs so Spring binds to materialsBill[..]
-		function updateMaterialFieldNames() {
-			const items = materialsList.querySelectorAll("li");
-			items.forEach((item, index) => {
-				const hidId = item.querySelector(".hidden-id");
-				const hidQty = item.querySelector(".hidden-qty");
+                const unitInput = document.createElement("input");
+                unitInput.type = "text";
+                unitInput.placeholder = "Total Unit";
+                unitInput.className = "form-input unit";
 
-				if (hidId) hidId.name = `materialsBill[${index}].materialId`;
-				if (hidQty) hidQty.name = `materialsBill[${index}].totalUnit`;
-			});
+                const priceInput = document.createElement("input");
+                priceInput.type = "number";
+                priceInput.placeholder = "Price";
+                priceInput.className = "form-input price";
 
-			// Update serial numbers
-			const numberSpans = materialsList.querySelectorAll(".serial-number");
-			numberSpans.forEach((span, index) => {
-				span.textContent = (index + 1) + ". ";
-			});
-		}
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "btn-remove";
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.addEventListener("click", () => {
+                    workDiv.remove();
+                    updateWorkSerialNumbers();
+                    updateWorkFieldNames();
+                });
 
-		// Add material handler
-		addMaterialBtn.addEventListener("click", () => {
-			const selectedText = materialSelect.options[materialSelect.selectedIndex]?.text || "";
-			const selectedValue = materialSelect.value;
-			const quantity = quantityInput.value && quantityInput.value.trim();
+                workDiv.appendChild(serial);
+                workDiv.appendChild(descInput);
+                workDiv.appendChild(unitInput);
+                workDiv.appendChild(priceInput);
+                workDiv.appendChild(removeBtn);
 
-			if (!selectedValue || !quantity) {
-				alert("Please select a material and enter quantity.");
-				return;
-			}
+                container.appendChild(workDiv);
 
-			const li = document.createElement("li");
-			li.className = "flex items-center justify-between bg-gray-100 px-3 py-2 rounded";
-
-			// Left side: serial + text
-			const leftDiv = document.createElement("div");
-			leftDiv.className = "flex items-center";
-			const numberSpan = document.createElement("span");
-			numberSpan.className = "serial-number font-bold mr-2";
-			const textSpan = document.createElement("span");
-			textSpan.textContent = `${selectedText} - Quantity: ${quantity}`;
-			leftDiv.appendChild(numberSpan);
-			leftDiv.appendChild(textSpan);
-
-			// ✅ Hidden inputs for Spring binding
-			const hiddenId = document.createElement("input");
-			hiddenId.type = "hidden";
-			hiddenId.name = "requiredMaterialIds";  // must match DTO
-			hiddenId.value = selectedValue;
-
-			const hiddenQty = document.createElement("input");
-			hiddenQty.type = "hidden";
-			hiddenQty.name = "requiredMaterialQuantities";  // must match DTO
-			hiddenQty.value = quantity;
-
-			// Remove button
-			const removeBtn = document.createElement("button");
-			removeBtn.type = "button";
-			removeBtn.innerHTML = "&#10006;"; // ✖
-			removeBtn.className = "text-red-600 hover:text-red-800 font-bold ml-3";
-			removeBtn.addEventListener("click", () => {
-				li.remove();
-				refreshSerialNumbers();
-			});
-
-			li.appendChild(leftDiv);
-			li.appendChild(hiddenId);
-			li.appendChild(hiddenQty);
-			li.appendChild(removeBtn);
-
-			materialsList.appendChild(li);
-			selectedSection.classList.remove("hidden");
-
-			refreshSerialNumbers();
-
-			// Reset fields
-			materialSelect.value = "";
-			quantityInput.value = "";
-			materialDetails.classList.add("hidden");
-		});
-
-	</script>
-
-
-	<script>
-		document.querySelectorAll('.transport-radio').forEach(radio => {
-			radio.addEventListener('change', function () {
-				const transportFields = document.getElementById('transportFields');
-				if (this.value === 'yes') {
-					transportFields.classList.remove('hidden');
-				} else {
-					transportFields.classList.add('hidden');
-				}
-			});
-		});
-	</script>
-
-	<script>
-		const container = document.getElementById("otherWorkContainer");
-
-		function updateSerialNumbers() {
-			const rows = container.querySelectorAll(".work-row");
-			rows.forEach((row, index) => {
-				row.querySelector(".serial").textContent = index + 1;
-			});
-		}
-
-		function updateFieldNames() {
-			const rows = container.querySelectorAll(".work-row");
-			rows.forEach((row, index) => {
-				row.querySelector(".desc").name = `otherWorks[${index}].othWorkName`;
-				row.querySelector(".unit").name = `otherWorks[${index}].totalUnit`;
-				row.querySelector(".price").name = `otherWorks[${index}].price`;
-			});
-		}
-
-		document.getElementById("addWorkBtn").addEventListener("click", function () {
-			const workDiv = document.createElement("div");
-			workDiv.className = "work-row flex items-center gap-4 bg-gray-50 p-2 rounded";
-
-			const serial = document.createElement("span");
-			serial.className = "serial font-bold w-6 text-center";
-
-			const descInput = document.createElement("input");
-			descInput.type = "text";
-			descInput.placeholder = "Description";
-			descInput.classList.add("border", "rounded", "px-3", "py-2", "w-1/3", "desc");
-
-			const unitInput = document.createElement("input");
-			unitInput.type = "text";
-			unitInput.placeholder = "Total Unit";
-			unitInput.classList.add("border", "rounded", "px-3", "py-2", "w-1/6", "unit");
-
-			const priceInput = document.createElement("input");
-			priceInput.type = "number";
-			priceInput.placeholder = "Price";
-			priceInput.classList.add("border", "rounded", "px-3", "py-2", "w-1/6", "price");
-
-			const removeBtn = document.createElement("button");
-			removeBtn.type = "button";
-			removeBtn.innerText = "✖";
-			removeBtn.classList.add("text-red-500", "font-bold");
-			removeBtn.addEventListener("click", () => {
-				workDiv.remove();
-				updateSerialNumbers();
-				updateFieldNames();
-			});
-
-			workDiv.appendChild(serial);
-			workDiv.appendChild(descInput);
-			workDiv.appendChild(unitInput);
-			workDiv.appendChild(priceInput);
-			workDiv.appendChild(removeBtn);
-
-			container.appendChild(workDiv);
-
-			updateSerialNumbers();
-			updateFieldNames();
-		});
-	</script>
+                updateWorkSerialNumbers();
+                updateWorkFieldNames();
+            });
+        });
+    </script>
 </body>
-
 </html>

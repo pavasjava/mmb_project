@@ -11,5 +11,6 @@ public interface BorewellTypeService {
 	public List<BorewellTypeDTO> getAllTypes();
 	BorewellTypeDTO getById(Long id);
     void deleteById(Long id);
+    public List<BorewellType> getBorewellTypeByAreaWise(String cityId, String locationAreaId, String drillingSize);
 
 }
