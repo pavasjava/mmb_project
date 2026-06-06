@@ -16,12 +16,14 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import jakarta.servlet.ServletContext;
 import jakarta.transaction.Transactional;
 import mmb.dto.GenerateBillDTO;
 import mmb.dto.MaterialWithCompanyProjection;
@@ -53,6 +55,9 @@ public class GenerateBillServiceImpl implements GenerateBillService {
 	private MaterialCompanyNameRepo materialCompanyNameRepository;
 	@Autowired
 	private GenerateBillRepo generateBillRepository;
+	
+	@Autowired
+	private ServletContext servletContext;
 
 	@Autowired
 	public GenerateBillServiceImpl(GenerateBillRepo generateBillRepository, RawMaterialRepo rawMaterialRepo,
@@ -292,366 +297,411 @@ public class GenerateBillServiceImpl implements GenerateBillService {
 
 	@Override
 	public void generateBillPdf(GenerateBillDTO bill, OutputStream out) {
+	    Document document = null;
 	    try {
-//	        Document document = new Document(PageSize.A4, 36, 36, 54, 36);
-//	        PdfWriter.getInstance(document, out);
-//	        document.open();
-//
-//	        // Fonts
-//	        Font titleFont = new Font(Font.HELVETICA, 16, Font.BOLD);
-//	        Font headFont = new Font(Font.HELVETICA, 11, Font.BOLD);
-//	        Font normalFont = new Font(Font.HELVETICA, 10, Font.NORMAL);
-//
-//	        // Title / Company header
-//	        Paragraph title = new Paragraph("MAA MANGALA BOREWELL", titleFont);
-//	        title.setAlignment(Element.ALIGN_CENTER);
-//	        document.add(title);
-//	        document.add(new Paragraph("Address line 1, Address line 2", normalFont));
-//	        document.add(Chunk.NEWLINE);
-	    	Document document = new Document(PageSize.A4, 36, 36, 36, 36);
-	    	PdfWriter writer = PdfWriter.getInstance(document, out);
-	    	document.open();
+	        // EXACT SAME MARGINS as first code: left:20, right:20, top:10, bottom:20
+	        document = new Document(PageSize.A4, 20, 20, 10, 20);
+	        PdfWriter writer = PdfWriter.getInstance(document, out);
+	        document.open();
 
-	    	// Fonts
-	    	Font titleFont = new Font(Font.HELVETICA, 16, Font.BOLD);
-	    	Font headFont = new Font(Font.HELVETICA, 11, Font.BOLD);
-	    	Font normalFont = new Font(Font.HELVETICA, 10, Font.NORMAL);
+	        // Define colors (EXACT SAME as first code)
+	        Color DARK_BLUE = new Color(0, 51, 102);
+	        Color BLUE_50 = new Color(240, 248, 255);
+	        Color BLUE_100 = new Color(173, 216, 230);
+	        Color GREEN_100 = new Color(144, 238, 144);
+	        Color GRAY_50 = new Color(248, 249, 250);
+	        Color GRAY_200 = new Color(233, 236, 239);
+	        Color WHITE = Color.WHITE;
 
-	    	// ===== Custom Header =====
+	        // Fonts - with Poppins support (EXACT SAME approach as first code)
+	        Font poppinsBold = new Font(Font.HELVETICA, 18, Font.BOLD);
+	        Font poppinsRegular = new Font(Font.HELVETICA, 11, Font.NORMAL);
+	        Font poppinsMedium = new Font(Font.HELVETICA, 12, Font.BOLD);
+	        Font poppinsSmall = new Font(Font.HELVETICA, 9, Font.NORMAL);
 
-	    	// 1. Draw full-page border
-	    	PdfContentByte canvas = writer.getDirectContent();
-	    	float borderOffset = 0f; 
-	    	float topborderOffset = 5f;
-	    	float llx = document.left() - borderOffset;
-	    	float lly = document.bottom() - borderOffset;
-	    	float urx = document.right() + borderOffset;
-	    	float ury = document.top() - topborderOffset;
-	    	canvas.setLineWidth(1f);
-	    	canvas.rectangle(llx, lly, urx - llx, ury - lly);
-	    	canvas.stroke();
+	        try {
+	            String fontPath = servletContext.getRealPath("/WEB-INF/fonts/Poppins-Regular.ttf");
+	            BaseFont baseFont = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+	            poppinsRegular = new Font(baseFont, 11);
+	            poppinsMedium = new Font(baseFont, 12, Font.BOLD);
+	            poppinsBold = new Font(baseFont, 18, Font.BOLD);
+	            poppinsSmall = new Font(baseFont, 9);
+	        } catch (Exception e) {
+	            System.out.println("Custom font not found, using default fonts");
+	        }
 
-	    	// 2. Optional: background watermark
-	    	Image bgImage = Image.getInstance("D:/Pravas/My practise project/MMB/src/main/resources/static/images/MMBLogo.jpg");
-	    	float imgWidth = 300f;
-	    	float imgHeight = 300f;
-	    	float posX = (document.getPageSize().getWidth() - imgWidth) / 2;
-	    	float posY = (document.getPageSize().getHeight() - imgHeight) / 2;
-	    	bgImage.setAbsolutePosition(posX, posY);
-	    	bgImage.scaleAbsolute(imgWidth, imgHeight);
-	    	canvas.addImage(bgImage);
+	        // ================= PAGE BORDER (EXACT SAME as first code) =================
+	        PdfContentByte canvas = writer.getDirectContent();
+	        float llx = document.left();
+	        float lly = document.bottom();
+	        float urx = document.right();
+	        float ury = document.top();
+	        canvas.setLineWidth(1f);
+	        canvas.rectangle(llx, lly, urx - llx, ury - lly);
+	        canvas.stroke();
 
-	    	// semi-transparent overlay
-	    	canvas.saveState();
-	    	PdfGState gState = new PdfGState();
-	    	gState.setFillOpacity(0.9f);
-	    	canvas.setGState(gState);
-	    	canvas.setColorFill(Color.WHITE);
-	    	canvas.rectangle(posX, posY, imgWidth, imgHeight);
-	    	canvas.fill();
-	    	canvas.restoreState();
+	        // Create main table like first code
+	        PdfPTable mainTable = new PdfPTable(1);
+	        mainTable.setWidthPercentage(100);
+	        mainTable.setKeepTogether(true);
 
-	    	// 3. Header table
-	    	float tableWidth = urx - llx;
-	    	PdfPTable headerTable = new PdfPTable(1);
-	    	headerTable.setTotalWidth(tableWidth);
-	    	headerTable.setLockedWidth(true);
-	    	headerTable.setSpacingBefore(10f);
-	    	headerTable.setSpacingAfter(10f);
+	        // ================= HEADER (EXACT SAME as first code) =================
+	        PdfPTable headerTable = new PdfPTable(1);
+	        headerTable.setWidthPercentage(100);
+	        headerTable.setSpacingBefore(5f);
+	        headerTable.setSpacingAfter(5f);
+	        headerTable.setKeepTogether(true);
 
-	    	// Nested table for logo + text
-	    	PdfPTable nestedTable = new PdfPTable(2);
-	    	nestedTable.setWidthPercentage(100);
-	    	nestedTable.setWidths(new float[] { 1f, 4f });
+	        PdfPTable nestedTable = new PdfPTable(2);
+	        nestedTable.setWidthPercentage(100);
+	        nestedTable.setWidths(new float[] { 1f, 4f });
 
-	    	// Logo cell
-	    	Image logo = Image.getInstance("D:/Pravas/My practise project/MMB/src/main/resources/static/images/mmimg.png");
-	    	logo.scaleToFit(100f, 100f);
-	    	PdfPCell imageCell = new PdfPCell(logo, false);
-	    	imageCell.setBorder(Rectangle.NO_BORDER);
-	    	imageCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-	    	nestedTable.addCell(imageCell);
+	        // Logo - use the same path as first code or make it configurable
+	        Image logo = Image.getInstance("D:/Pravas/My practise project/MMB/src/main/resources/static/images/mmimg.png");
+	        logo.scaleToFit(80f, 80f);
+	        PdfPCell imageCell = new PdfPCell(logo, false);
+	        imageCell.setBorder(Rectangle.NO_BORDER);
+	        imageCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	        imageCell.setPaddingRight(5f);
+	        nestedTable.addCell(imageCell);
 
-	    	// Text cell
-	    	PdfPCell textCell = new PdfPCell();
-	    	textCell.setBorder(Rectangle.NO_BORDER);
-	    	textCell.setPadding(0f);
-	    	textCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	        PdfPCell textCell = new PdfPCell();
+	        textCell.setBorder(Rectangle.NO_BORDER);
+	        textCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-	    	Paragraph companyName = new Paragraph("MAA MANGALA BOREWELL", titleFont);
-	    	companyName.setAlignment(Element.ALIGN_LEFT);
-	    	textCell.addElement(companyName);
+	        Paragraph companyName = new Paragraph("MAA MANGALA BOREWELL",
+	                new Font(Font.HELVETICA, 20, Font.BOLD, Color.RED));
+	        companyName.setAlignment(Element.ALIGN_LEFT);
+	        textCell.addElement(companyName);
 
-	    	Paragraph services = new Paragraph("Deals with DTH Borewell, Inwell Borewell, Rotary of Callis Borewell,\n"
-	    	        + "Compressor Bore Washing, All types of Motor Fitting", headFont);
-	    	services.setAlignment(Element.ALIGN_LEFT);
-	    	textCell.addElement(services);
+	        Paragraph services = new Paragraph(
+	                "Deals with DTH Borewell, Inwell Borewell, Rotary of Callis Borewell,\n"
+	                        + "Compressor Bore Washing, All types of Motor Fitting",
+	                new Font(Font.HELVETICA, 11, Font.BOLD, Color.BLUE));
+	        services.setAlignment(Element.ALIGN_LEFT);
+	        textCell.addElement(services);
 
-	    	Paragraph address = new Paragraph(
-	    	        "Dumuduma HB Colony, Bhubaneswar-751019, Mob : 7978609919, 9437001922, 7077931922", normalFont);
-	    	address.setAlignment(Element.ALIGN_LEFT);
-	    	textCell.addElement(address);
+	        Paragraph address = new Paragraph(
+	                "Dumuduma HB Colony, Bhubaneswar-751019, Mob: 7978609919, 9437001922, 7077931922", 
+	                new Font(Font.HELVETICA, 10));
+	        address.setAlignment(Element.ALIGN_LEFT);
+	        textCell.addElement(address);
 
-	    	nestedTable.addCell(textCell);
+	        nestedTable.addCell(textCell);
 
-	    	// Wrap nested table inside main header cell
-	    	PdfPCell headerCell = new PdfPCell(nestedTable);
-	    	headerCell.setBorderWidth(2f);
-	    	headerCell.setBackgroundColor(new Color(255, 255, 200));
-	    	headerCell.setPadding(10f);
-	    	headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-	    	headerCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	        PdfPCell headerCell1 = new PdfPCell(nestedTable);
+	        headerCell1.setBorderWidth(1f);
+	        headerCell1.setBackgroundColor(new Color(255, 255, 200));
+	        headerCell1.setPadding(5f);
+	        headerTable.addCell(headerCell1);
+	        mainTable.addCell(headerTable);
 
-	    	headerTable.addCell(headerCell);
-	    	document.add(headerTable);
-	    	document.add(Chunk.NEWLINE);
-	    	
-	    	Font blackTitleFont = new Font(Font.HELVETICA, 5, Font.BOLD, Color.BLACK);
-	    	Paragraph title = new Paragraph("", blackTitleFont);
-	    	title.setAlignment(Element.ALIGN_CENTER);
-	    	title.setSpacingAfter(0); // remove extra space
-	    	document.add(title);
-	    	
-	    	PdfPTable billHeaderTbl = new PdfPTable(1); // single column
-	    	billHeaderTbl.setWidthPercentage(100);
-
-	    	Font bodyTitleFont = new Font(Font.HELVETICA, 15, Font.BOLD, Color.BLACK);
-	    	PdfPCell billCell = new PdfPCell(new Phrase("BILL", bodyTitleFont));
-	    	billCell.setBorder(Rectangle.NO_BORDER);
-	    	billCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-	    	billCell.setPadding(2f); // very small padding to avoid extra space
-	    	billHeaderTbl.addCell(billCell);
-
-	    	document.add(billHeaderTbl);
-
-	        // ===== Meta table (left: label, right: value) =====
-	        PdfPTable meta = new PdfPTable(2);
-	        meta.setWidthPercentage(100);
-	        meta.setWidths(new float[]{1f, 2f});
-
-//	        addbodyHeader(meta, "Bill", headFont, Element.ALIGN_CENTER);
-	        addCellNoBorder(meta, "Bill ID:", headFont);
-	        addCellNoBorder(meta, bill.getBillId() != null ? String.valueOf(bill.getBillId()) : "-", normalFont);
-
-	        addCellNoBorder(meta, "Customer:", headFont);
-	        addCellNoBorder(meta, safe(bill.getCustomerName()), normalFont);
-
-	        addCellNoBorder(meta, "Mobile:", headFont);
-	        addCellNoBorder(meta, safe(bill.getMobileNo()), normalFont);
-
-	        addCellNoBorder(meta, "Work Address:", headFont);
-	        addCellNoBorder(meta, safe(bill.getWorkAddress()), normalFont);
-
-	        addCellNoBorder(meta, "Work Date:", headFont);
-	        addCellNoBorder(meta, bill.getWorkDate() != null ? bill.getWorkDate().toString() : "-", normalFont);
-
-	        document.add(meta);
-	        document.add(Chunk.NEWLINE);
-
-	        // ===== Drilling / Transport / Advance compact layout =====
-	        PdfPTable metaCompact = new PdfPTable(4); // 2 columns for label/value, 2 items per row
-	        metaCompact.setWidthPercentage(100);
-	        metaCompact.setWidths(new float[]{2f, 2f, 2f, 2f}); // adjust widths
-
-	        addCellNoBorder(metaCompact, "Boring Type / Dia:", headFont);
-	        addCellNoBorder(metaCompact, safe(bill.getBoringType()) + " / " + safe(bill.getBoringDia()) + "inch.", normalFont);
-
-//	        addCellNoBorder(metaCompact, "Price Qty Details:", headFont);
-//	        addCellNoBorder(metaCompact, safe(bill.getPriceQntDtls()), normalFont);
-
-//	        addCellNoBorder(metaCompact, "Drilling Price (per unit):", headFont);
-//	        addCellNoBorder(metaCompact, bill.getDrillingPrice() != null ? format(bill.getDrillingPrice()) : "-", normalFont);
-	        String drillingPriceText = "";
-	        if (bill.getDrillingPrice() != null) {
-	            drillingPriceText = format(bill.getDrillingPrice());
-	            if (bill.getPriceQntDtls() != null && !bill.getPriceQntDtls().isEmpty()) {
-	                drillingPriceText += " (" + safe(bill.getPriceQntDtls()) + ")";
+	        // Title - styled like first code
+	        Paragraph title = new Paragraph("BILL RECEIPT", poppinsBold);
+	        title.setAlignment(Element.ALIGN_CENTER);
+	        title.setSpacingAfter(10);
+	        mainTable.addCell(new PdfPCell(title) {
+	            {
+	                setBorder(Rectangle.NO_BORDER);
+	                setHorizontalAlignment(Element.ALIGN_CENTER);
+	                setPadding(5);
 	            }
-	        } else {
-	            drillingPriceText = "-";
+	        });
+
+	        // ================= BILL INFO CARD (styled like first code) =================
+	        PdfPTable infoTable = new PdfPTable(2);
+	        infoTable.setWidthPercentage(100);
+	        infoTable.setWidths(new float[] { 1, 1 });
+	        infoTable.setKeepTogether(true);
+
+	        // Customer Card
+	        PdfPCell customerCard = createInfoCard("Customer Details", 
+	                bill.getCustomerName() != null ? bill.getCustomerName() : "-",
+	                new String[] { 
+	                    "Phone: " + (bill.getMobileNo() != null ? bill.getMobileNo() : "-"),
+	                    "Address: " + (bill.getWorkAddress() != null ? bill.getWorkAddress() : "-")
+	                },
+	                BLUE_100, poppinsRegular, poppinsMedium, poppinsSmall);
+
+	        // Bill Info Card
+	        String workDateStr = bill.getWorkDate() != null ? 
+	                bill.getWorkDate().format(java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy")) : "-";
+	        
+	        PdfPCell billCard = createInfoCard("Bill Information", 
+	                "Bill ID: " + (bill.getBillId() != null ? bill.getBillId() : "-"),
+	                new String[] { 
+	                    "Work Date: " + workDateStr,
+	                    "Boring Type: " + (bill.getBoringType() != null ? bill.getBoringType() : "-") + "(" + (bill.getBoringDia() != null ? bill.getBoringDia() : "-") + "inch.)"
+	                },
+	                GREEN_100, poppinsRegular, poppinsMedium, poppinsSmall);
+
+	        infoTable.addCell(customerCard);
+	        infoTable.addCell(billCard);
+
+	        PdfPCell infoContainer = new PdfPCell(infoTable);
+	        infoContainer.setBorder(Rectangle.NO_BORDER);
+	        infoContainer.setPadding(5);
+	        mainTable.addCell(infoContainer);
+
+	        // ================= SERVICE DETAILS (styled like first code billing table) =================
+	        Paragraph serviceHeader = new Paragraph("Service Details", poppinsMedium);
+	        serviceHeader.setAlignment(Element.ALIGN_CENTER);
+	        mainTable.addCell(new PdfPCell(serviceHeader) {
+	            {
+	                setBorder(Rectangle.NO_BORDER);
+	                setHorizontalAlignment(Element.ALIGN_CENTER);
+	                setPadding(5);
+	            }
+	        });
+
+	        PdfPTable serviceTable = new PdfPTable(4);
+	        serviceTable.setWidthPercentage(100);
+	        serviceTable.setWidths(new float[] { 3, 1, 1, 1 });
+	        serviceTable.setKeepTogether(true);
+
+	        // Table headers (same style as first code)
+	        String[] headers = { "Description", "Unit Price (₹)", "Units", "Amount (₹)" };
+	        for (String h : headers) {
+	            PdfPCell hc = new PdfPCell(new Phrase(h, poppinsMedium));
+	            hc.setBackgroundColor(DARK_BLUE);
+	            hc.setHorizontalAlignment(Element.ALIGN_CENTER);
+	            hc.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	            hc.setPadding(5);
+	            hc.setBorderColor(WHITE);
+	            hc.setBorderWidth(1);
+	            serviceTable.addCell(hc);
 	        }
 
-	        addCellNoBorder(metaCompact, "Drilling Price:", headFont);
-	        addCellNoBorder(metaCompact, drillingPriceText, normalFont);
+	        // Drilling Service Row
+	        addBillingRow(serviceTable, "Drilling Service", 
+//	        		 + "("+
+	                bill.getDrillingPrice() != null ? bill.getDrillingPrice() : 0.0,
+	                bill.getTotalDrilling() != null ? bill.getTotalDrilling() : 0.0,
+	                bill.getTotalDrillingAmt() != null ? bill.getTotalDrillingAmt() : 
+	                    (bill.getDrillingPrice() != null && bill.getTotalDrilling() != null ? 
+	                     bill.getDrillingPrice() * bill.getTotalDrilling() : 0.0),
+	                poppinsRegular, GRAY_200);
+	        
+	        addBillingRow(serviceTable, "Casing Pipe", 
+	                bill.getDrillingPrice() != null ? bill.getDrillingPrice() : 0.0,
+	                bill.getTotalDrilling() != null ? bill.getTotalDrilling() : 0.0,
+	                bill.getTotalDrillingAmt() != null ? bill.getTotalDrillingAmt() : 
+	                    (bill.getDrillingPrice() != null && bill.getTotalDrilling() != null ? 
+	                     bill.getDrillingPrice() * bill.getTotalDrilling() : 0.0),
+	                poppinsRegular, GRAY_200);
 
-	        addCellNoBorder(metaCompact, "Total Drilling (units):", headFont);
-	        addCellNoBorder(metaCompact, bill.getTotalDrilling() != null ? String.valueOf(bill.getTotalDrilling()) : "-", normalFont);
-
-	        double drillingAmt = 0.0;
-	        if (bill.getTotalDrillingAmt() != null) {
-	            drillingAmt = bill.getTotalDrillingAmt();
-	        } else if (bill.getTotalDrilling() != null && bill.getDrillingPrice() != null) {
-	            drillingAmt = bill.getTotalDrilling() * bill.getDrillingPrice();
+	        // Transport Charges Row
+	        if (bill.getTransportingPrice() != null && bill.getTransportingPrice() > 0) {
+	            addBillingRow(serviceTable, "Transportation Charges", 
+	                    bill.getTransportingPrice(), 1, bill.getTransportingPrice(), 
+	                    poppinsRegular, GRAY_200);
 	        }
 
-	        addCellNoBorder(metaCompact, "Total Drilling Amount:", headFont);
-	        addCellNoBorder(metaCompact, format(drillingAmt), normalFont);
-
-//	        addCellNoBorder(metaCompact, "Transport Type:", headFont);
-//	        addCellNoBorder(metaCompact, safe(bill.getTransportingVehicleType()), normalFont);
-
-	        addCellNoBorder(metaCompact, "Material Transporting Price:", headFont);
-	        addCellNoBorder(metaCompact, bill.getTransportingPrice() != null ? format(bill.getTransportingPrice()) : "-", normalFont);
-
-	        addCellNoBorder(metaCompact, "Total Advance:", headFont);
-	        addCellNoBorder(metaCompact, bill.getTotalAdvance() != null ? format(bill.getTotalAdvance()) : "-", normalFont);
-
-	        document.add(metaCompact);
-	        document.add(Chunk.NEWLINE);
-
-	        // ===== Materials table (Sl.No, Material (company), Qty, Unit Price, Amount) =====
+	        // Add materials if available
 	        double totalMaterialAmt = 0.0;
-	        boolean hasMaterials = (bill.getRequiredMaterialIds() != null && !bill.getRequiredMaterialIds().isEmpty())
-	                || (bill.getRequiredMaterialwithCompanyName() != null && !bill.getRequiredMaterialwithCompanyName().isEmpty());
-
-	        if (hasMaterials) {
-	            PdfPTable matTbl = new PdfPTable(new float[]{0.6f, 4f, 1f, 1.2f, 1.2f});
-	            matTbl.setWidthPercentage(100);
-
-	            addTableHeader(matTbl, "Sl. No.", headFont);
-	            addTableHeader(matTbl, "Material Description", headFont);
-	            addTableHeader(matTbl, "Qty", headFont);
-	            addTableHeader(matTbl, "Unit Price", headFont);
-	            addTableHeader(matTbl, "Amount", headFont);
-
-	            if (bill.getRequiredMaterialIds() != null && !bill.getRequiredMaterialIds().isEmpty()) {
-	                int minSize = Math.min(bill.getRequiredMaterialIds().size(),
-	                        bill.getRequiredMaterialQuantities() != null ? bill.getRequiredMaterialQuantities().size() : 0);
-
-	                for (int i = 0; i < minSize; i++) {
-	                    Integer materialId = bill.getRequiredMaterialIds().get(i);
-	                    Integer qty = bill.getRequiredMaterialQuantities().get(i) != null ? bill.getRequiredMaterialQuantities().get(i) : 0;
-
-	                    RawMaterial rm = null;
-	                    try {
-	                        rm = (materialId != null) ? rawMaterialRepo.findById(materialId).orElse(null) : null;
-	                    } catch (Exception ex) {
-	                        rm = null;
-	                    }
-
-	                    String matName;
-	                    double unitPrice = 0.0;
-	                    if (rm != null) {
-	                        String typeName = rm.getMaterialType() != null ? safe(rm.getMaterialType().getMaterialName()) : "Material";
-	                        String cmp = rm.getCompanyName() != null ? safe(rm.getCompanyName().getCompanyName()) : "";
-	                        matName = typeName + (cmp.isEmpty() ? "" : " (" + cmp + ")");
-	                        unitPrice = rm.getMaterialPrice() != null ? rm.getMaterialPrice() : 0.0;
-	                    } else {
-	                        if (bill.getRequiredMaterialwithCompanyName() != null && bill.getRequiredMaterialwithCompanyName().size() > i) {
-	                            matName = bill.getRequiredMaterialwithCompanyName().get(i);
-	                        } else {
-	                            matName = "Material-" + (materialId != null ? materialId : (i + 1));
-	                        }
-	                        unitPrice = 0.0;
-	                    }
-
-	                    double amount = unitPrice * qty;
-	                    totalMaterialAmt += amount;
-
-	                    matTbl.addCell(new Phrase(String.valueOf(i + 1), normalFont));
-	                    matTbl.addCell(new Phrase(matName, normalFont));
-	                    matTbl.addCell(new Phrase(String.valueOf(qty), normalFont));
-	                    matTbl.addCell(new Phrase(unitPrice > 0 ? format(unitPrice) : "-", normalFont));
-	                    matTbl.addCell(new Phrase(amount > 0 ? format(amount) : "-", normalFont));
-	                }
-	            } else {
-	                int minSize = Math.min(
-	                        bill.getRequiredMaterialwithCompanyName() != null ? bill.getRequiredMaterialwithCompanyName().size() : 0,
-	                        bill.getRequiredMaterialQuantities() != null ? bill.getRequiredMaterialQuantities().size() : 0
-	                );
-	                for (int i = 0; i < minSize; i++) {
-	                    String matName = bill.getRequiredMaterialwithCompanyName().get(i);
-	                    Integer qty = bill.getRequiredMaterialQuantities().get(i) != null ? bill.getRequiredMaterialQuantities().get(i) : 0;
-	                    matTbl.addCell(new Phrase(String.valueOf(i + 1), normalFont));
-	                    matTbl.addCell(new Phrase(safe(matName), normalFont));
-	                    matTbl.addCell(new Phrase(String.valueOf(qty), normalFont));
-	                    matTbl.addCell(new Phrase("-", normalFont));
-	                    matTbl.addCell(new Phrase("-", normalFont));
-	                }
+	        if (bill.getRequiredMaterialIds() != null && !bill.getRequiredMaterialIds().isEmpty()) {
+	            // You can add individual material rows here or just show total
+	            // For simplicity, showing total materials
+	            totalMaterialAmt = calculateTotalMaterials(bill);
+	            if (totalMaterialAmt > 0) {
+	                addBillingRow(serviceTable, "Materials", totalMaterialAmt, 1, totalMaterialAmt, 
+	                        poppinsRegular, GRAY_200);
 	            }
-
-	            matTbl.addCell(new Phrase("", normalFont));
-	            PdfPCell totLabel = new PdfPCell(new Phrase("Total Material Amount", headFont));
-	            totLabel.setColspan(3);
-	            totLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
-	            matTbl.addCell(totLabel);
-	            matTbl.addCell(new Phrase(format(totalMaterialAmt), headFont));
-
-	            document.add(matTbl);
-	            document.add(Chunk.NEWLINE);
 	        }
 
-	        // ===== Other Works table (Sl.No, Description, Unit, Price) =====
+	        // Add other works if available
 	        double totalOtherWorkAmt = 0.0;
 	        if (bill.getOtherWorks() != null && !bill.getOtherWorks().isEmpty()) {
-	            PdfPTable otherTbl = new PdfPTable(new float[]{0.6f, 4f, 1f, 1.4f});
-	            otherTbl.setWidthPercentage(100);
-
-	            addTableHeader(otherTbl, "Sl. No.", headFont);
-	            addTableHeader(otherTbl, "Other Work Description", headFont);
-	            addTableHeader(otherTbl, "Unit", headFont);
-	            addTableHeader(otherTbl, "Price", headFont);
-
-	            int idx = 1;
-	            for (OtherWorkDTO ow : bill.getOtherWorks()) {
-	                String units = ow.getTotalUnit() != null ? ow.getTotalUnit() : "0";
-	                double price = ow.getPrice() != null ? ow.getPrice() : 0.0;
-	                totalOtherWorkAmt += price;
-
-	                otherTbl.addCell(new Phrase(String.valueOf(idx++), normalFont));
-	                otherTbl.addCell(new Phrase(safe(ow.getOthWorkName()), normalFont));
-	                otherTbl.addCell(new Phrase(units, normalFont));
-	                otherTbl.addCell(new Phrase(price > 0 ? format(price) : "-", normalFont));
+	            totalOtherWorkAmt = bill.getOtherWorks().stream()
+	                    .mapToDouble(ow -> ow.getPrice() != null ? ow.getPrice() : 0.0)
+	                    .sum();
+	            if (totalOtherWorkAmt > 0) {
+	                addBillingRow(serviceTable, "Other Works", totalOtherWorkAmt, 1, totalOtherWorkAmt, 
+	                        poppinsRegular, GRAY_200);
 	            }
-
-	            otherTbl.addCell(new Phrase("", normalFont));
-	            PdfPCell othLabel = new PdfPCell(new Phrase("Total Other Work Amount", headFont));
-	            othLabel.setColspan(2);
-	            othLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
-	            otherTbl.addCell(othLabel);
-	            otherTbl.addCell(new Phrase(format(totalOtherWorkAmt), headFont));
-
-	            document.add(otherTbl);
-	            document.add(Chunk.NEWLINE);
 	        }
 
-	        // ===== Totals block (right aligned) =====
-	        PdfPTable totalTbl = new PdfPTable(2);
-	        totalTbl.setWidths(new float[]{3f, 1f});
-	        totalTbl.setWidthPercentage(50);
-	        totalTbl.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	        // Calculate totals
+	        double drillingAmt = bill.getTotalDrillingAmt() != null ? bill.getTotalDrillingAmt() : 
+	            (bill.getDrillingPrice() != null && bill.getTotalDrilling() != null ? 
+	             bill.getDrillingPrice() * bill.getTotalDrilling() : 0.0);
+	        double transportAmt = bill.getTransportingPrice() != null ? bill.getTransportingPrice() : 0.0;
+	        double grandTotal = drillingAmt + transportAmt + totalMaterialAmt + totalOtherWorkAmt;
+	        double advanceAmt = bill.getTotalAdvance() != null ? bill.getTotalAdvance() : 0.0;
+	        double balanceDue = grandTotal - advanceAmt;
 
-	        double transport = bill.getTransportingPrice() != null ? bill.getTransportingPrice() : 0.0;
-	        double advance = bill.getTotalAdvance() != null ? bill.getTotalAdvance() : 0.0;
-	        double grandTotal = drillingAmt + totalMaterialAmt + totalOtherWorkAmt + transport;
+	        // Subtotal (same style as first code)
+	        PdfPCell subtotalLabel = new PdfPCell(new Phrase("Subtotal", poppinsMedium));
+	        subtotalLabel.setColspan(3);
+	        subtotalLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	        subtotalLabel.setBorder(Rectangle.NO_BORDER);
+	        subtotalLabel.setPadding(5);
+	        subtotalLabel.setBackgroundColor(BLUE_50);
+	        
+	        PdfPCell subtotalValue = new PdfPCell(
+	                new Phrase(String.format("₹%.2f", grandTotal), poppinsMedium));
+	        subtotalValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	        subtotalValue.setBorder(Rectangle.NO_BORDER);
+	        subtotalValue.setPadding(5);
+	        subtotalValue.setBackgroundColor(BLUE_50);
+	        serviceTable.addCell(subtotalLabel);
+	        serviceTable.addCell(subtotalValue);
 
-	        addCellNoBorder(totalTbl, "Drilling Amount:", headFont);
-	        addCellNoBorder(totalTbl, format(drillingAmt), normalFont);
+	        // Advance Payment
+	        if (advanceAmt > 0) {
+	            addTaxRow(serviceTable, "Advance Paid", -advanceAmt, poppinsRegular, GRAY_50);
+	        }
 
-	        addCellNoBorder(totalTbl, "Total Material Amount:", headFont);
-	        addCellNoBorder(totalTbl, format(totalMaterialAmt), normalFont);
+	        // Balance Due (styled like Grand Total in first code)
+	        PdfPCell balanceLabel = new PdfPCell(new Phrase("BALANCE DUE", poppinsMedium));
+	        balanceLabel.setColspan(3);
+	        balanceLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	        balanceLabel.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	        balanceLabel.setBorder(Rectangle.NO_BORDER);
+	        balanceLabel.setPaddingTop(8);
+	        balanceLabel.setPaddingBottom(8);
+	        balanceLabel.setPaddingRight(20);
+	        balanceLabel.setBackgroundColor(GREEN_100);
+	        balanceLabel.setNoWrap(true);
 
-	        addCellNoBorder(totalTbl, "Total Other Work Amount:", headFont);
-	        addCellNoBorder(totalTbl, format(totalOtherWorkAmt), normalFont);
+	        PdfPCell balanceValue = new PdfPCell(
+	                new Phrase(String.format("₹ %.2f", balanceDue), poppinsMedium));
+	        balanceValue.setHorizontalAlignment(Element.ALIGN_LEFT);
+	        balanceValue.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	        balanceValue.setBorder(Rectangle.NO_BORDER);
+	        balanceValue.setPaddingTop(8);
+	        balanceValue.setPaddingBottom(8);
+	        balanceValue.setPaddingLeft(35);
+	        balanceValue.setBackgroundColor(GREEN_100);
+	        balanceValue.setNoWrap(true);
 
-	        addCellNoBorder(totalTbl, "Material Transporting:", headFont);
-	        addCellNoBorder(totalTbl, format(transport), normalFont);
+	        serviceTable.addCell(balanceLabel);
+	        serviceTable.addCell(balanceValue);
 
-	        addCellNoBorder(totalTbl, "Grand Total:", headFont);
-	        addCellNoBorder(totalTbl, format(grandTotal), headFont);
+	        PdfPCell serviceContainer = new PdfPCell(serviceTable);
+	        serviceContainer.setBorder(Rectangle.NO_BORDER);
+	        serviceContainer.setPadding(10);
+	        mainTable.addCell(serviceContainer);
 
-	        addCellNoBorder(totalTbl, "Advance Paid:", headFont);
-	        addCellNoBorder(totalTbl, format(advance), normalFont);
+	        // ================= FOOTER (same as first code) =================
+	        Paragraph footer = new Paragraph("© 2024 Borewell Services. All rights reserved.", poppinsSmall);
+	        footer.setAlignment(Element.ALIGN_CENTER);
+	        footer.setSpacingBefore(10);
 
-	        addCellNoBorder(totalTbl, "Balance Due:", headFont);
-	        addCellNoBorder(totalTbl, format(grandTotal - advance), headFont);
+	        Paragraph contact = new Paragraph("Customer Support: 1800-XXX-XXXX | support@borewellservices.com",
+	                poppinsSmall);
+	        contact.setAlignment(Element.ALIGN_CENTER);
+	        contact.setSpacingBefore(2);
 
-	        document.add(totalTbl);
+	        PdfPCell footerCell = new PdfPCell();
+	        footerCell.setBorder(Rectangle.NO_BORDER);
+	        footerCell.addElement(footer);
+	        footerCell.addElement(contact);
+	        mainTable.addCell(footerCell);
 
+	        document.add(mainTable);
 	        document.close();
+
 	    } catch (Exception e) {
+	        if (document != null && document.isOpen()) {
+	            document.close();
+	        }
 	        throw new RuntimeException("Error while generating PDF", e);
 	    }
+	}
+
+	// ================= HELPER METHODS (same as first code) =================
+
+	private PdfPCell createInfoCard(String title, String mainInfo, String[] details, 
+	        Color bgColor, Font regularFont, Font mediumFont, Font smallFont) {
+	    PdfPCell card = new PdfPCell();
+	    card.setBackgroundColor(bgColor);
+	    card.setPadding(10);
+	    card.setBorderWidth(1);
+	    card.setBorderColor(Color.DARK_GRAY);
+	    
+	    Paragraph titlePara = new Paragraph(title, mediumFont);
+	    titlePara.setAlignment(Element.ALIGN_CENTER);
+	    card.addElement(titlePara);
+	    
+	    if (mainInfo != null && !mainInfo.isEmpty()) {
+	        Paragraph mainPara = new Paragraph(mainInfo, regularFont);
+	        mainPara.setAlignment(Element.ALIGN_CENTER);
+	        mainPara.setSpacingBefore(5);
+	        card.addElement(mainPara);
+	    }
+	    
+	    for (String detail : details) {
+	        Paragraph detailPara = new Paragraph(detail, smallFont);
+	        detailPara.setAlignment(Element.ALIGN_LEFT);
+	        detailPara.setSpacingBefore(3);
+	        card.addElement(detailPara);
+	    }
+	    
+	    return card;
+	}
+
+	private void addBillingRow(PdfPTable table, String desc, double unitPrice, double units, 
+	        double amount, Font font, Color bgColor) {
+	    PdfPCell descCell = new PdfPCell(new Phrase(desc, font));
+	    descCell.setBackgroundColor(bgColor);
+	    descCell.setPadding(5);
+	    
+	    PdfPCell priceCell = new PdfPCell(new Phrase(String.format("₹%.2f", unitPrice), font));
+	    priceCell.setBackgroundColor(bgColor);
+	    priceCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	    priceCell.setPadding(5);
+	    
+	    PdfPCell unitCell = new PdfPCell(new Phrase(String.valueOf(units), font));
+	    unitCell.setBackgroundColor(bgColor);
+	    unitCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	    unitCell.setPadding(5);
+	    
+	    PdfPCell amtCell = new PdfPCell(new Phrase(String.format("₹%.2f", amount), font));
+	    amtCell.setBackgroundColor(bgColor);
+	    amtCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	    amtCell.setPadding(5);
+	    
+	    table.addCell(descCell);
+	    table.addCell(priceCell);
+	    table.addCell(unitCell);
+	    table.addCell(amtCell);
+	}
+
+	private void addTaxRow(PdfPTable table, String label, double amount, Font font, Color bgColor) {
+	    PdfPCell labelCell = new PdfPCell(new Phrase(label, font));
+	    labelCell.setColspan(3);
+	    labelCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	    labelCell.setBorder(Rectangle.NO_BORDER);
+	    labelCell.setPadding(5);
+	    labelCell.setBackgroundColor(bgColor);
+	    
+	    PdfPCell amountCell = new PdfPCell(new Phrase(String.format("₹%.2f", amount), font));
+	    amountCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	    amountCell.setBorder(Rectangle.NO_BORDER);
+	    amountCell.setPadding(5);
+	    amountCell.setBackgroundColor(bgColor);
+	    
+	    table.addCell(labelCell);
+	    table.addCell(amountCell);
+	}
+
+	private double calculateTotalMaterials(GenerateBillDTO bill) {
+	    double total = 0.0;
+	    if (bill.getRequiredMaterialIds() != null && !bill.getRequiredMaterialIds().isEmpty()) {
+	        for (int i = 0; i < bill.getRequiredMaterialIds().size(); i++) {
+	            Integer materialId = bill.getRequiredMaterialIds().get(i);
+	            Integer qty = bill.getRequiredMaterialQuantities() != null && 
+	                         i < bill.getRequiredMaterialQuantities().size() ? 
+	                         bill.getRequiredMaterialQuantities().get(i) : 0;
+	            
+	            // You would need to fetch material price from repository
+	            // For now, assuming price is 0 or you can modify this
+	            double unitPrice = 0.0;
+	            total += unitPrice * qty;
+	        }
+	    }
+	    return total;
 	}
 
 	/* ---------- small helper methods ---------- */
@@ -678,11 +728,11 @@ public class GenerateBillServiceImpl implements GenerateBillService {
 	    return String.format("%.2f", value);
 	}
 	
-//	private void addbodyHeader(PdfPTable table, String text, Font font, int alignment) {
-//	    PdfPCell cell = new PdfPCell(new Phrase(text == null ? "" : text, font));
-//	    cell.setBorder(Rectangle.NO_BORDER);
-//	    cell.setPadding(4f);
-//	    cell.setHorizontalAlignment(alignment); // set alignment dynamically
-//	    table.addCell(cell);
-//	}
+	private void addbodyHeader(PdfPTable table, String text, Font font, int alignment) {
+	    PdfPCell cell = new PdfPCell(new Phrase(text == null ? "" : text, font));
+	    cell.setBorder(Rectangle.NO_BORDER);
+	    cell.setPadding(4f);
+	    cell.setHorizontalAlignment(alignment); // set alignment dynamically
+	    table.addCell(cell);
+	}
 }

@@ -1,14 +1,19 @@
 package mmb.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,11 +58,8 @@ public class Booking {
 	@Column(name = "casing_price")
 	private Double casingPrice;
 	
-//	@Column(name = "ms_pipe_quality")
-//    private String msPipeQuality;
-//	
-//	@Column(name = "ms_pipe_price")
-//    private String msPipePrice;
+	@Column(name = "last_updated_date")
+	private LocalDateTime lastUpdatedDate;
 
 	// ✅ Add relationship with City
     @ManyToOne
@@ -76,70 +78,70 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "casing_pipe_company_id", nullable = true)
     private MaterialCompanyName companyName;
+
+    @ManyToOne
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
     
-//    @Column(name = "tot_Drilling_unit")    
-//    private Integer totalDrillingUnit;
-//    @Column(name = "tot_Drilling_price")
-//    private Double totalDrillingPrice;
-//    private Integer totalUnitCasing;
-//    @Column(name = "tot_casing_price")
-//    private Double totalCasingPrice;
-//    @Column(name = "tot_mc_unit")
-//    private Integer totalUnitMasterCasing;
-//    @Column(name = "tot_mc_unit_price")
-//    private Double masterCasingPricePerUnit;
-//    @Column(name = "tot_mc_price")
-//    private Double totalMasterCasingPrice;
-//    @Column(name = "casing_transporting")
-//    private Double casingTransporting;
-//    @Column(name = "tot_sloting_unit")
-//    private Integer totalUnitSloting;
-//    @Column(name = "sloting_price_unit")
-//    private Double casingSlotingPerUnit;
-//    @Column(name = "tot_sloting_price")
-//    private Double totalSlotingPrice;
-//    @Column(name = "tot_unit_mod_powder")
-//    private Integer totalUnitModPowder;
-//    @Column(name = "mp_price_unit")
-//    private Double modPowderPerUnit;
-//    @Column(name = "tot_mp_price_unit")
-//    private Double totalModPowderPrice;
-//    @Column(name = "tot_gravel_unit")
-//    private Integer totalUnitGravel;
-////    @Column(name = "tot_gravel_price")
-////    private Double totalGravelPrice;
-//    @Column(name = "tot_washing_unit")
-//    private Integer totalWashingUnit;
-//    @Column(name = "washing_price_unit")
-//    private Double washingPricePerUnit;
-//    @Column(name = "tot_washing_price")
-//    private Double totalWashingPrice;
-//    @Column(name = "other_item_dtls")
-//    private String otherItemDetails;
-//    @Column(name = "other_item_price")
-//    private Double otherItemPrice;
-////    @Column(name = "gravel_price")
-////    private String gravelPrice;
-//    @Column(name = "gravel_unit_price")
-//    private Double totalUnitGravelPrice;
-//    
-//    @Column(name = "tot_unit_mc10")
-//    private Integer totalUnitMasterCasing10;
-//    @Column(name = "mc10_price_unit")
-//    private Double masterCasing10PricePerUnit;
-//    @Column(name = "tot_mc10_price")
-//    private Double totalMaster10CasingPrice;
-//    @Column(name = "tot_unit_mc12")
-//    private Integer totalUnitMasterCasing12;
-//    @Column(name = "mc12_price_unit")
-//    private Double masterCasing12PricePerUnit;
-//    @Column(name = "tot_mc12_price")
-//    private Double totalMaster12CasingPrice;
-//    @Column(name = "tot_mc14_unit")
-//    private Integer totalUnitMasterCasing14;
-//    @Column(name = "mc14_price_unit")
-//    private Double masterCasing14PricePerUnit;
-//    @Column(name = "tot_mc14_price")
-//    private Double totalMasterCasing14Price;
+    @Column(name = "Drilling_unit")    
+    private Integer totalDrillingUnit;
+    @Column(name = "casing_unit")  
+    private Integer totalUnitCasing;
+    @Column(name = "master_casing_unit")
+    private Integer totalUnitMasterCasing;
+    @Column(name = "mc_unit_price")
+    private Double masterCasingPricePerUnit;
+    @Column(name = "casing_transporting_price")
+    private Double casingTransportingPrice;
+    @Column(name = "casing_sloting_unit")
+    private Integer totalUnitSloting;
+    @Column(name = "sloting_price_unit")
+    private Double casingSlotingPricePerUnit;
+    @Column(name = "mod_powder_unit")
+    private Integer totalUnitModPowder;
+    @Column(name = "mp_price_unit")
+    private Double modPowderPricePerUnit;
+    @Column(name = "gravel_unit")
+    private Integer totalUnitGravel;
+    @Column(name = "gravel_unit_price")
+    private Double gravelPricePerUnit;
+    @Column(name = "tot_washing_unit")
+    private Integer totalWashingUnit;
+    @Column(name = "washing_price_unit")
+    private Double washingPricePerUnit;
+    @Column(name = "tot_unit_mc10")
+    private Integer totalUnitMC10;
+    @Column(name = "mc10_price_unit")
+    private Double mc10PricePerUnit;
+    @Column(name = "tot_unit_mc12")
+    private Integer totalUnitMC12;
+    @Column(name = "mc12_price_unit")
+    private Double mc12PricePerUnit;
+    @Column(name = "tot_mc14_unit")
+    private Integer totalUnitMC14;
+    @Column(name = "mc14_price_unit")
+    private Double mc14PricePerUnit;
+    @Column(name = "cgst_percent")
+    private Integer cgstPercent;
+    @Column(name = "sgst_percent")
+    private Integer sgstPercent;
     
+    @Column(name = "total_unit_2_5kg")
+    private Integer totalUnit2_5kg;
+    
+    @Column(name = "price_per_unit_2_5kg")
+    private Double pricePerUnit2_5kg;
+    
+    @Column(name = "total_2_5kg_price")
+    private Double total2_5kgPrice;
+    
+    @Column(name = "total_unit_6kg")
+    private Integer totalUnit6kg;
+    
+    @Column(name = "price_per_unit_6kg")
+    private Double pricePerUnit6kg;
+    
+    @Column(name = "total_6kg_price")
+    private Double total6kgPrice;
+   
 }

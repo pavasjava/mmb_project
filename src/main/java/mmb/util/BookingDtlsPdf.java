@@ -210,7 +210,28 @@ public class BookingDtlsPdf {
 		if (booking.getTotalMasterCasingPrice() != null && booking.getTotalMasterCasingPrice() > 0)
 			addBillingRow(billingTable, "Master Casing", booking.getMasterCasingPricePerUnit(),
 					booking.getTotalUnitMasterCasing(), booking.getTotalMasterCasingPrice(), poppinsRegular, GRAY_200);
-
+		
+		if (booking.getTotal2_5kgPrice() != null && booking.getTotal2_5kgPrice() > 0)
+			addBillingRow(billingTable, "2.5kg. Master Casing", booking.getPricePerUnit2_5kg(),
+					booking.getTotalUnit2_5kg(), booking.getTotal2_5kgPrice(), poppinsRegular, GRAY_200);
+		
+		if (booking.getTotal6kgPrice() != null && booking.getTotal6kgPrice() > 0)
+			addBillingRow(billingTable, "6kg. Master Casing", booking.getPricePerUnit6kg(),
+					booking.getTotalUnit6kg(), booking.getTotal6kgPrice(), poppinsRegular, GRAY_200);
+		
+		//====
+		if (booking.getTotalMaster10CasingPrice() != null && booking.getTotalMaster10CasingPrice() > 0)
+			addBillingRow(billingTable, "10 inch. Master Casing", booking.getMc10PricePerUnit(),
+					booking.getTotalUnitMC10(), booking.getTotalMaster10CasingPrice(), poppinsRegular, GRAY_200);
+		
+		if (booking.getTotalMaster12CasingPrice() != null && booking.getTotalMaster12CasingPrice() > 0)
+			addBillingRow(billingTable, "12 inch. Master Casing", booking.getMc12PricePerUnit(),
+					booking.getTotalUnitMC12(), booking.getTotalMaster12CasingPrice(), poppinsRegular, GRAY_200);
+		
+		if (booking.getTotalMasterCasing14Price() != null && booking.getTotalMasterCasing14Price() > 0)
+			addBillingRow(billingTable, "14 inch. Master Casing", booking.getMc14PricePerUnit(),
+					booking.getTotalUnitMC14(), booking.getTotalMasterCasing14Price(), poppinsRegular, GRAY_200);
+		
 		if (booking.getTotalSlotingPrice() != null && booking.getTotalSlotingPrice() > 0)
 			addBillingRow(billingTable, "Casing Pipe Slotting", booking.getCasingSlotingPerUnit(),
 					booking.getTotalUnitSloting(), booking.getTotalSlotingPrice(), poppinsRegular, GRAY_200);
@@ -248,7 +269,7 @@ public class BookingDtlsPdf {
 		billingTable.addCell(subtotalValue);
 
 		// Discount
-		addTaxRow(billingTable, "Discount (15%)", booking.getTotDiscountAmt(), poppinsRegular, GRAY_50);
+		addTaxRow(billingTable, "Discount ("+booking.getDiscountPer()+"%)", booking.getTotDiscountAmt(), poppinsRegular, GRAY_50);
 
 		// Taxable amount
 		addTaxRow(billingTable, "Taxable Amount", booking.getTotalAmtAfterDiscount(), poppinsMedium, BLUE_50);

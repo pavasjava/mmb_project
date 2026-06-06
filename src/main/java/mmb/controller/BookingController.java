@@ -1,6 +1,7 @@
 package mmb.controller;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import mmb.dto.AreaWiseItemRequirementDTO;
+import mmb.dto.BookingAuditDTO;
 import mmb.dto.BookingDTO;
 import mmb.dto.RawMaterialDTO;
 import mmb.model.Booking;
@@ -136,50 +138,100 @@ public class BookingController {
 	
 	@PostMapping("/confirmBooking")
 	public String confirmBooking(@ModelAttribute("booking") BookingDTO bookingDto, Model model) {
-
-//	    else if((bookingDto.getDrillingSize().equalsIgnoreCase("5") || bookingDto.getDrillingSize().equalsIgnoreCase("6") || bookingDto.getDrillingSize().equalsIgnoreCase("4")
-//	    		|| bookingDto.getDrillingSize().equalsIgnoreCase("3")) && (bw.getName().equalsIgnoreCase("ROTTARY") || bw.getName().equalsIgnoreCase("CALLIX") || bw.getName().equalsIgnoreCase("DTH-ROTTARY"))) {
-//	    	bookingDto.setTotalDrillingUnit(200);
-//	    	Double totDrillingPrice = bookingDto.getTotalDrillingUnit()*bookingDto.getPrice();
-//	    	bookingDto.setTotalDrillingPrice(totDrillingPrice);
-//	    	bookingDto.setTotalUnitCasing(12);
-//	    	Double totCasingPrice = bookingDto.getCasingPrice()*bookingDto.getTotalUnitCasing();
-//	    	bookingDto.setTotalCasingPrice(totCasingPrice);
-//	    	bookingDto.setTotalUnitMasterCasing(0);
-//	    	Double totMasterCasingPrice = 0.0;
-//	    	bookingDto.setTotalMasterCasingPrice(totMasterCasingPrice);
-//	    	bookingDto.setCasingTransporting(1000.00);
-//	    	bookingDto.setTotalUnitSloting(5);
-//	    	bookingDto.setTotalSlotingPrice(500.00*bookingDto.getTotalUnitSloting());
-//	    	bookingDto.setTotalUnitGravel(2);
-//	    	bookingDto.setTotalGravelPrice(2500.0*2);
-//	    	bookingDto.setTotalWashingUnit(2);
-//	    	bookingDto.setTotalWashingPrice(3000.00*2);
-//	    	bookingDto.setTotalUnitModPowder(10);
-//	    	bookingDto.setTotalModPowderPrice(400.00*10);
-//	    	bookingDto.setOtherItemDetails("NA");
-//	    	bookingDto.setOtherItemPrice(0.0);
-//	    }
-//	    else {
-//	    	bookingDto.setTotalDrillingUnit(350);
-//	    }
-
-	    // ---- SEND FINAL DTO TO THYMELEAF ----
 		
-		
-		
-//		model.addAttribute("totalAmount", totalAmount);
-//		model.addAttribute("lessDiscount", lessDiscount);
-//		model.addAttribute("totalAmtAfterDiscount", totalAmtAfterDiscount);
-//		model.addAttribute("cgst", cgst);
-//		model.addAttribute("sgst", sgst);
-//		model.addAttribute("grandTotal", grandTotal);
 		BookingDTO bookingDtls = bookingService.getConfirmBookingDetails(bookingDto);
 	    model.addAttribute("booking", bookingDtls);
 
 	    return "booking/confirm-booking-page";
 	}
+	
 
+
+//    else if((bookingDto.getDrillingSize().equalsIgnoreCase("5") || bookingDto.getDrillingSize().equalsIgnoreCase("6") || bookingDto.getDrillingSize().equalsIgnoreCase("4")
+//    		|| bookingDto.getDrillingSize().equalsIgnoreCase("3")) && (bw.getName().equalsIgnoreCase("ROTTARY") || bw.getName().equalsIgnoreCase("CALLIX") || bw.getName().equalsIgnoreCase("DTH-ROTTARY"))) {
+//    	bookingDto.setTotalDrillingUnit(200);
+//    	Double totDrillingPrice = bookingDto.getTotalDrillingUnit()*bookingDto.getPrice();
+//    	bookingDto.setTotalDrillingPrice(totDrillingPrice);
+//    	bookingDto.setTotalUnitCasing(12);
+//    	Double totCasingPrice = bookingDto.getCasingPrice()*bookingDto.getTotalUnitCasing();
+//    	bookingDto.setTotalCasingPrice(totCasingPrice);
+//    	bookingDto.setTotalUnitMasterCasing(0);
+//    	Double totMasterCasingPrice = 0.0;
+//    	bookingDto.setTotalMasterCasingPrice(totMasterCasingPrice);
+//    	bookingDto.setCasingTransporting(1000.00);
+//    	bookingDto.setTotalUnitSloting(5);
+//    	bookingDto.setTotalSlotingPrice(500.00*bookingDto.getTotalUnitSloting());
+//    	bookingDto.setTotalUnitGravel(2);
+//    	bookingDto.setTotalGravelPrice(2500.0*2);
+//    	bookingDto.setTotalWashingUnit(2);
+//    	bookingDto.setTotalWashingPrice(3000.00*2);
+//    	bookingDto.setTotalUnitModPowder(10);
+//    	bookingDto.setTotalModPowderPrice(400.00*10);
+//    	bookingDto.setOtherItemDetails("NA");
+//    	bookingDto.setOtherItemPrice(0.0);
+//    }
+//    else {
+//    	bookingDto.setTotalDrillingUnit(350);
+//    }
+
+    // ---- SEND FINAL DTO TO THYMELEAF ----
+	
+	
+	
+//	model.addAttribute("totalAmount", totalAmount);
+//	model.addAttribute("lessDiscount", lessDiscount);
+//	model.addAttribute("totalAmtAfterDiscount", totalAmtAfterDiscount);
+//	model.addAttribute("cgst", cgst);
+//	model.addAttribute("sgst", sgst);
+//	model.addAttribute("grandTotal", grandTotal);
+
+	// Add these methods to your BookingController
+
+	@GetMapping("/edit/{bookingId}")
+	public String showEditBookingForm(@PathVariable("bookingId") Long bookingId, Model model) {
+	    // Fetch the existing booking
+	    BookingDTO bookingDto = bookingService.getBookingById(bookingId);
+	    model.addAttribute("booking", bookingDto);
+	    
+	    // Load all required data for dropdowns
+	    List<City> cities = cityRepository.findAll();
+	    model.addAttribute("cities", cities);
+	    
+	    // Load areas for the booking's city
+	    if (bookingDto.getCity() != null) {
+	        List<WorkLocationArea> areas = workLocationAreaService.getAreasByCityId(bookingDto.getCity().getCityId());
+	        model.addAttribute("areas", areas);
+	    }
+	    
+	    List<MaterialCompanyName> companyNames = materialCompanyNameRepo.findAll();
+	    model.addAttribute("companyNames", companyNames);
+	    
+	    return "booking/edit-booking-page";
+	}
+
+	@PostMapping("/updateBookingDtls")
+	public String updateBooking(@ModelAttribute("booking") BookingDTO bookingDto, Model model) {
+	    try {
+	        BookingDTO updatedBooking = bookingService.updateBookingDtls(bookingDto);
+	        model.addAttribute("booking", updatedBooking);
+	        model.addAttribute("success", "Booking updated successfully!");
+	        return "booking/confirm-booking-page";
+	    } catch (Exception e) {
+	        model.addAttribute("error", "Failed to update booking: " + e.getMessage());
+	        return "booking/edit-booking-page";
+	    }
+	}
+
+	@GetMapping("/history/{bookingId}")
+	public String viewBookingHistory(@PathVariable("bookingId") Long bookingId, Model model) {
+	    BookingDTO bookingDto = bookingService.getBookingById(bookingId);
+	    List<BookingAuditDTO> auditHistory = bookingService.getBookingAuditHistory(bookingId);
+	    
+	    model.addAttribute("booking", bookingDto);
+	    model.addAttribute("auditHistory", auditHistory);
+	    
+	    return "booking/booking-history";
+	}
 	
 	@GetMapping("/getAllBookings")
     public String getAllBookingDetails(Model model) {
@@ -241,11 +293,12 @@ public class BookingController {
 //        return "booking/booking-form";
 //    }
 	
-	@GetMapping("/editBookingDetails/{id}")
-	public String editBookingDetails(@PathVariable("id") Long id, Model model) {
-	    BookingDTO bookingDTO = bookingService.getById(id);
+	@GetMapping("/editBookingDetails/{bookingId}")
+	public String editBookingDetails(@PathVariable("bookingId") Long bookingId, Model model) {
+		System.out.println("bookingId -> "+bookingId);
+	    BookingDTO bookingDTO = bookingService.getById(bookingId);
 	    System.out.println("booking date -> "+bookingDTO.getBookingDate());
-	    model.addAttribute("bookings", bookingDTO);
+	    model.addAttribute("booking", bookingDTO);
 	    List<City> cities = cityRepository.findAll();
 	    model.addAttribute("cities", cities);
 	    model.addAttribute("borewellTypes", borewellTypeService.getAllTypes());
@@ -257,7 +310,18 @@ public class BookingController {
 	    }
 //	    model.addAttribute("areas", workLocationAreaRepository.findByCity_CityId(cityId));
 	    
-	    return "booking/editBookingDetails";
+//	    return "booking/editBookingDetails";
+	    return "booking/edit-booking-page";
+	}
+	@GetMapping("/borewellType/image/{id}")
+	public ResponseEntity<byte[]> getBorewellImage(@PathVariable Long id) {
+
+	    BorewellType type = borewellTypeRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Not found"));
+
+	    return ResponseEntity.ok()
+	            .contentType(MediaType.IMAGE_JPEG) // or detect dynamically
+	            .body(type.getImageData());
 	}
 
 //    @PostMapping("/updateBooking")
@@ -266,11 +330,11 @@ public class BookingController {
 //        return "redirect:/bookings/getAllBookings";
 //    }
 	
-	@PostMapping("/updateBooking")
-	public String updateBooking(@ModelAttribute("booking") BookingDTO bookingDTO) {
-	    bookingService.updateBooking(bookingDTO);
-	    return "redirect:/bookings"; // Redirect back to booking list
-	}
+//	@PostMapping("/updateBooking")
+//	public String updateBooking(@ModelAttribute("booking") BookingDTO bookingDTO) {
+//	    bookingService.updateBooking(bookingDTO);
+//	    return "redirect:/bookings"; // Redirect back to booking list
+//	}
 
     @GetMapping("/deleteBookingDetails/{id}")
     public String deleteBookingDetails(@PathVariable Long id) {
@@ -323,6 +387,79 @@ public class BookingController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    private double safeMultiply(Number a, Number b) {
+        double val1 = (a == null) ? 0 : a.doubleValue();
+        double val2 = (b == null) ? 0 : b.doubleValue();
+        return val1 * val2;
+    }
+    
+    @GetMapping("/editBooking/{id}")
+    public String editBooking(@PathVariable Long id, Model model) {
+        // Fetch the booking by ID
+        BookingDTO bookingDTO = bookingService.getBookingById(id);
+        
+        System.out.println("Total drilling"+bookingDTO.getTotalDrillingUnit() );
+        System.out.println("Total drilling"+bookingDTO.getTotal2_5kgPrice() );
+        System.out.println("Total drilling"+bookingDTO.getTotal6kgPrice() );
+        bookingDTO.setTotalCasingPrice(safeMultiply(bookingDTO.getCasingPrice(), bookingDTO.getTotalUnitCasing()));
+        bookingDTO.setTotalMasterCasingPrice(safeMultiply(bookingDTO.getMasterCasingPricePerUnit(), bookingDTO.getTotalUnitMasterCasing()));
+        bookingDTO.setTotalSlotingPrice(safeMultiply(bookingDTO.getCasingSlotingPerUnit(), bookingDTO.getTotalUnitSloting()));
+        bookingDTO.setTotalDrillingPrice(safeMultiply(bookingDTO.getTotalDrillingUnit(), bookingDTO.getPrice()));
+        bookingDTO.setTotalWashingPrice(safeMultiply(bookingDTO.getTotalWashingUnit(), bookingDTO.getWashingPricePerUnit()));
+        bookingDTO.setTotalMaster10CasingPrice(safeMultiply(bookingDTO.getMc10PricePerUnit(), bookingDTO.getTotalUnitMC10()));
+        bookingDTO.setTotalMaster12CasingPrice(safeMultiply(bookingDTO.getMc12PricePerUnit(), bookingDTO.getTotalUnitMC12()));
+        bookingDTO.setTotalMasterCasing14Price(safeMultiply(bookingDTO.getMc14PricePerUnit(), bookingDTO.getTotalUnitMC14()));
+        
+        // Add booking to model
+        model.addAttribute("booking", bookingDTO);
+        
+        // Load all required dropdown data
+        List<City> cities = cityRepository.findAll();
+        model.addAttribute("cities", cities);
+        
+        // Load areas for the booking's city
+        if (bookingDTO.getCity() != null && bookingDTO.getCity().getCityId() != null) {
+            List<WorkLocationArea> areas = workLocationAreaRepository.findByCity_CityId(bookingDTO.getCity().getCityId());
+            model.addAttribute("areas", areas);
+        } else {
+            model.addAttribute("areas", new ArrayList<>());
+        }
+        
+        // Load company names for casing pipe
+        List<MaterialCompanyName> companyNames = materialCompanyNameRepo.findAll();
+        model.addAttribute("companyNames", companyNames);
+        
+        // Add page title
+        model.addAttribute("pageTitle", "Edit Booking");
+        
+        return "booking/edit-booking"; // You'll create this template
+    }
+
+    @PostMapping("/updateBooking")
+    public String updateBooking(@ModelAttribute("booking") BookingDTO bookingDTO) {
+        bookingService.updateBooking(bookingDTO);
+        
+        System.out.println("Updated Booking - City: " + bookingDTO.getCity().getCityId() + " " + bookingDTO.getCity().getCityName());
+        System.out.println("Updated Booking - Area: " + bookingDTO.getArea().getLocationAreaId() + " " + bookingDTO.getArea().getLocationAreaName());
+        System.out.println("Updated Booking - Borewell Type: " + bookingDTO.getBorewellType().getBorewelTypeid() + " " + bookingDTO.getBorewellType().getName());
+        
+     // Print 2.5 kg Casing Details
+        System.out.println("\n--- 2.5 kg Master Casing Details ---");
+        System.out.println("Total Unit 2.5 kg Master Casing: " + bookingDTO.getTotalUnit2_5kg());
+        System.out.println("2.5 kg Master Casing Price/Unit: " + bookingDTO.getPricePerUnit2_5kg());
+        System.out.println("Total 2.5 kg Master Casing Price: " + bookingDTO.getTotal2_5kgPrice());
+        
+        // Print 6 kg Casing Details
+        System.out.println("\n--- 6 kg Master Casing Details ---");
+        System.out.println("Total Unit 6 kg Master Casing: " + bookingDTO.getTotalUnit6kg());
+        System.out.println("6 kg Master Casing Price/Unit: " + bookingDTO.getPricePerUnit6kg());
+        System.out.println("Total 6 kg Master Casing Price: " + bookingDTO.getTotal6kgPrice());
+        
+        System.out.println("=====================================\n");
+        
+        return "redirect:/bookings/getAllBookings?editSuccess=true";
     }
 
 }

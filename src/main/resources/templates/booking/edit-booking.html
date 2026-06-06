@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Edit Booking | MMB Borewell Services</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- Include common head -->
+    <div th:replace="fragments/head :: head"></div>
+    
+    <style>
+        /* Copy all your existing styles from new-booking.html */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding-bottom: 2rem;
+        }
+        
+        .main-content-expanded {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        .main-content-full {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .top-nav-wrapper {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            width: 100%;
+        }
+        
+        .form-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-left: 310px;
+        }
+        
+        .form-card {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .form-card:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 80px;
+        }
+        
+        .form-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        .form-title i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+        }
+        
+        .edit-badge {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .form-content {
+            padding: 2.5rem;
+            position: relative;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group.half-width {
+            grid-column: span 1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-label i {
+            color: #2a5298;
+            width: 20px;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .form-input:read-only {
+            background: #f7fafc;
+            color: #4a5568;
+            cursor: not-allowed;
+        }
+        
+        .price-display .form-input {
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border-color: #9ae6b4;
+            color: #22543d;
+            font-weight: 600;
+        }
+        
+        .borewell-type-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .borewell-type-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            text-align: center;
+            position: relative;
+            min-height: 160px;
+        }
+        
+        .borewell-type-option img {
+            width: 100px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            padding: 5px;
+        }
+        
+        .borewell-type-option.selected {
+            border-color: #2a5298;
+            background: linear-gradient(135deg, #e6f0ff 0%, #d4e4ff 100%);
+            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.2);
+        }
+        
+        .borewell-type-option.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: #2a5298;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f7fafc;
+            flex: 1;
+        }
+        
+        .radio-label:hover {
+            border-color: #2a5298;
+            background: #edf2f7;
+        }
+        
+        .radio-input {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e3c72;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            grid-column: 1 / -1;
+        }
+        
+        .section-title i {
+            color: #2a5298;
+            font-size: 1.5rem;
+        }
+        
+        .info-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 5px solid #2a5298;
+            grid-column: 1 / -1;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f1f5f9;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            border: none;
+            min-width: 160px;
+            justify-content: center;
+        }
+        
+        .btn-cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.4);
+        }
+        
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('/images/bgimage.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04;
+            z-index: -1;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.booked { background: #dbeafe; color: #1e40af; }
+        .status-badge.completed { background: #dcfce7; color: #166534; }
+        .status-badge.cancelled { background: #fee2e2; color: #991b1b; }
+        
+        .booking-id-display {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Dynamic Casing Section Styles - Proper 3-column layout */
+        .casing-dynamic-section {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            background: #fefce8;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .casing-dynamic-section:hover {
+            border-color: #2196F3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .casing-section-header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+        
+        .casing-section-header h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .casing-section-header h4 i {
+            color: #2a5298;
+        }
+        
+        .remove-casing-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .remove-casing-btn:hover {
+            background-color: #d32f2f !important;
+            transform: scale(0.98);
+        }
+        
+        .casing-dynamic-section .form-group {
+            margin-bottom: 0;
+        }
+        
+        .btn-casing {
+            transition: 0.2s;
+        }
+        
+        .btn-casing:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .btn-casing:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .casing-dynamic-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-container {
+                margin-left: 0 !important;
+                padding: 1rem;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .casing-dynamic-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="bg-overlay"></div>
+    
+    <!-- Admin Sidebar -->
+    <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div class="top-nav-wrapper" th:replace="fragments/booking-top-navbar :: top-navbar"></div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-card">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h1 class="form-title">
+                        <i class="fas fa-edit"></i>
+                        Edit Booking
+                        <span class="edit-badge">
+                            <i class="fas fa-hashtag"></i> ID: <span th:text="${booking.bookingId}"></span>
+                        </span>
+                    </h1>
+                </div>
+                
+                <!-- Form Content -->
+                <div class="form-content">
+                    <!-- Status and Info Bar -->
+                    <div class="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-lg">
+                        <div class="status-badge" th:classappend="'status-badge.' + ${#strings.toLowerCase(booking.status)}">
+                            <i class="fas fa-circle mr-2 text-xs"></i>
+                            Status: <span class="font-bold ml-1" th:text="${booking.status}"></span>
+                        </div>
+                        <div class="booking-id-display">
+                            <i class="far fa-calendar-alt"></i>
+                            Booking Date: <span th:text="${#temporals.format(booking.bookingDate, 'dd MMM yyyy')}"></span>
+                        </div>
+                    </div>
+                    
+                    <form th:action="@{/bookings/updateBooking}" th:object="${booking}" method="post" id="editBookingForm">
+                        <!-- Hidden field for booking ID -->
+                        <input type="hidden" th:field="*{bookingId}" />
+                        
+                        <!-- Grid container for form fields -->
+                        <div class="form-grid">
+                            <!-- SECTION 1: Basic Information -->
+                            <h2 class="section-title">
+                                <i class="fas fa-user-circle"></i> Basic Information
+                            </h2>
+                            
+                            <!-- Customer Name -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-user"></i> Customer Name
+                                </label>
+                                <input type="text" th:field="*{customerName}" class="form-input" readonly="readonly">
+                            </div>
+                            
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-phone"></i> Phone Number
+                                </label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-input" readonly="readonly">
+                            </div>
+                            
+                            <!-- Booking Date -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-calendar-alt"></i> Booking Date
+                                </label>
+                                <input type="date" th:field="*{bookingDate}" class="form-input" required>
+                            </div>
+                            
+                            <!-- SECTION 2: Location Details -->
+                            <h2 class="section-title">
+                                <i class="fas fa-map-marker-alt"></i> Location Details
+                            </h2>
+                            
+                            <!-- City -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-city"></i> City
+                                </label>
+                                <select id="city" th:field="*{city.cityId}" class="form-select" required>
+                                    <option value="">-- Select City --</option>
+                                    <option th:each="city : ${cities}" 
+                                            th:value="${city.cityId}" 
+                                            th:text="${city.cityName}"
+                                            th:selected="${city.cityId == booking.city?.cityId}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Area -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-map-marker-alt"></i> Area
+                                </label>
+                                <select id="area" th:field="*{area.locationAreaId}" class="form-select" required>
+                                    <option value="">-- Select Area --</option>
+                                    <option th:each="area : ${areas}" 
+                                            th:value="${area.locationAreaId}" 
+                                            th:text="${area.locationAreaName}"
+                                            th:selected="${area.locationAreaId == booking.area?.locationAreaId}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- SECTION 3: Borewell Details -->
+                            <h2 class="section-title">
+                                <i class="fas fa-tools"></i> Borewell Details
+                            </h2>
+                            
+                            <!-- Borewell Size -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-expand-alt"></i> Borewell Size
+                                </label>
+                                <select id="drillingSizeSelect" th:field="*{drillingSize}" class="form-select" required>
+                                    <option value="">-- Select Size --</option>
+                                    <option value="5">5 inch/127mm</option>
+                                    <option value="6">6 inch/152.4mm</option>
+                                    <option value="8">8 inch/203.2mm</option>
+                                    <option value="oth">Other</option>
+                                </select>
+                                <div class="mt-2" th:classappend="${#strings.equals(booking.drillingSize, 'oth')} ? '' : 'hidden'" 
+                                     id="otherSizeContainer">
+                                    <input type="text" id="otherDrillingSize" th:field="*{otherSize}" class="form-input"
+                                           placeholder="Enter custom drilling size">
+                                </div>
+                            </div>
+                            
+                            <!-- Drilling Price -->
+                            <div class="form-group price-display">
+                                <label class="form-label required">
+                                    <i class="fas fa-rupee-sign"></i> Drilling Price
+                                </label>
+                                <input type="number" step="0.01" id="price" th:field="*{price}" class="form-input" readonly>
+                            </div>
+                            
+                            <!-- Borewell Type Selection (Full Width) -->
+                            <div class="form-group full-width">
+                                <label class="form-label required">
+                                    <i class="fas fa-tools"></i> Borewell Type
+                                </label>
+                                <div class="borewell-type-container" id="borewellTypeContainer">
+                                    <!-- AJAX will load data here -->
+                                </div>
+                                <input type="hidden" id="borewellTypeId" name="borewellType.borewelTypeid" 
+                                       th:value="${booking.borewellType?.borewelTypeid}">
+                                <p id="infoMessage" class="error-message hidden mt-2">
+                                    <i class="fas fa-info-circle"></i> Please select City, Area, and Borewell Size to view borewell types.
+                                </p>
+                            </div>
+							
+							<!-- SECTION 5: Drilling Units -->
+							<h2 class="section-title">
+								<i class="fas fa-chart-bar"></i> Drilling Units
+							</h2>
+							
+							<!-- Total Drilling Unit -->
+							<div class="form-group">
+								<label class="form-label">
+									<i class="fas fa-hashtag"></i> Total Drilling Unit
+								</label>
+								<input type="number" th:field="*{totalDrillingUnit}" class="form-input" step="1" min="0">
+							</div>
+							
+							<!-- Total Drilling Price -->
+							<div class="form-group">
+								<label class="form-label">
+									<i class="fas fa-rupee-sign"></i> Total Drilling Price
+								</label>
+								<input type="number" step="0.01" th:field="*{totalDrillingPrice}" class="form-input" readonly>
+							</div>
+                            
+                            <!-- SECTION 4: Casing Details -->
+                            <h2 class="section-title">
+                                <i class="fas fa-pipe"></i> Casing Details
+                            </h2>
+                            
+                            <!-- Company Name -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-building"></i> Company
+                                </label>
+                                <select id="companyName" th:field="*{companyName.companyId}" class="form-select">
+                                    <option value="">-- Select Company --</option>
+                                    <option th:each="company : ${companyNames}" 
+                                            th:value="${company.companyId}"
+                                            th:text="${company.companyName}"
+                                            th:selected="${company.companyId == booking.companyName?.companyId}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Pipe Quality -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-filter"></i> Pipe Quality
+                                </label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" th:field="*{pipeQuality}" value="80" class="radio-input"
+                                               th:checked="${booking.pipeQuality == '80'}">
+                                        <span>Schedule 80</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" th:field="*{pipeQuality}" value="40" class="radio-input"
+                                               th:checked="${booking.pipeQuality == '40'}">
+                                        <span>Schedule 40</span>
+                                    </label>
+                                </div>
+                            </div>
+							<div class="form-group"></div>
+
+							<div class="form-group">
+								<label class="form-label">Total Unit Casing</label>
+								<input type="number" th:field="*{totalUnitCasing}" class="form-input" step="1" min="0">
+							</div>
+							
+                            <!-- Casing Price -->
+                            <div class="form-group price-display">
+                                <label class="form-label">
+                                    <i class="fas fa-rupee-sign"></i> Casing Price
+                                </label>
+                                <input type="number" step="0.01" id="casingPrice" th:field="*{casingPrice}" class="form-input" readonly>
+                            </div>
+							<!-- Total Casing Price -->
+							<div class="form-group">
+								<label class="form-label">Total Casing Price</label>
+								<input type="number" step="0.01" th:field="*{totalCasingPrice}" class="form-input" readonly>
+							</div>
+                            
+                            <!-- SECTION 6: Casing Units -->
+                            <h2 class="section-title">
+                                <i class="fas fa-chart-line"></i> Master Casing Details
+                            </h2>
+							
+                            <!-- Total Unit Master Casing -->
+                            <div class="form-group">
+                                <label class="form-label">Total Unit Master Casing</label>
+                                <input type="number" th:field="*{totalUnitMasterCasing}" class="form-input" step="1" min="0">
+                            </div>
+                            
+                            <!-- Master Casing Price Per Unit -->
+                            <div class="form-group">
+                                <label class="form-label">Master Casing Price/Unit</label>
+                                <input type="number" step="0.01" th:field="*{masterCasingPricePerUnit}" class="form-input">
+                            </div>
+                            
+                            <!-- Total Master Casing Price -->
+                            <div class="form-group">
+                                <label class="form-label">Total Master Casing Price</label>
+                                <input type="number" step="0.01" th:field="*{totalMasterCasingPrice}" class="form-input" readonly>
+                            </div>
+							
+							
+							<!-- ===== HIDDEN FIELDS FOR 2.5kg AND 6kg CASING DATA (to persist values from database) ===== -->
+							<input type="hidden" th:field="*{totalUnit2_5kg}" />
+							<input type="hidden" th:field="*{pricePerUnit2_5kg}" />
+							<input type="hidden" th:field="*{total2_5kgPrice}" />
+
+							<input type="hidden" th:field="*{totalUnit6kg}" />
+							<input type="hidden" th:field="*{pricePerUnit6kg}" />
+							<input type="hidden" th:field="*{total6kgPrice}" />
+							<!-- ======================== -->
+							<!-- BUTTONS SECTION -->
+							<!-- ======================== -->
+							<div style="display: flex; gap: 15px; margin: 20px 0 25px 0; flex-wrap: wrap; grid-column: 1 / -1;">
+							    <button type="button" id="btn-add-2kg" class="btn-action btn-casing" 
+							            style="background-color: #2196F3; border: none; padding: 10px 24px; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: 0.2s;">
+							        <i class="fas fa-plus-circle"></i> Add 2.5 kg Master Casing
+							    </button>
+							    <button type="button" id="btn-add-6kg" class="btn-action btn-casing" 
+							            style="background-color: #4CAF50; border: none; padding: 10px 24px; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: 0.2s;">
+							        <i class="fas fa-plus-circle"></i> Add 6 kg Master Casing
+							    </button>
+							</div>
+
+							<!-- ======================== -->
+							<!-- DYNAMIC CONTAINER -->
+							<!-- ======================== -->
+							<div id="casing-dynamic-container" style="grid-column: 1 / -1;">
+							    <!-- 2.5 kg and 6 kg sections will be inserted here -->
+							</div>
+							
+							<!-- MC10 -->
+							<div class="form-group">
+								<label class="form-label">Total Unit MC10</label>
+								<input type="number" th:field="*{totalUnitMC10}" class="form-input" step="1" min="0">
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">MC10 Price/Unit</label>
+								<input type="number" step="0.01" th:field="*{mc10PricePerUnit}" class="form-input">
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">Total MC10 Price</label>
+								<input type="number" step="0.01" th:field="*{totalMaster10CasingPrice}" class="form-input" readonly>
+							</div>
+							
+							<!-- MC12 -->
+							<div class="form-group">
+								<label class="form-label">Total Unit MC12</label>
+								<input type="number" th:field="*{totalUnitMC12}" class="form-input" step="1" min="0">
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">MC12 Price/Unit</label>
+								<input type="number" step="0.01" th:field="*{mc12PricePerUnit}" class="form-input">
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">Total MC12 Price</label>
+								<input type="number" step="0.01" th:field="*{totalMaster12CasingPrice}" class="form-input" readonly>
+							</div>
+							
+							<!-- MC14 -->
+							<div class="form-group">
+								<label class="form-label">Total Unit MC14</label>
+								<input type="number" th:field="*{totalUnitMC14}" class="form-input" step="1" min="0">
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">MC14 Price/Unit</label>
+								<input type="number" step="0.01" th:field="*{mc14PricePerUnit}" class="form-input">
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">Total MC14 Price</label>
+								<input type="number" step="0.01" th:field="*{totalMasterCasing14Price}" class="form-input" readonly>
+							</div>
+                            
+                            <!-- SECTION 7: Sloting Details -->
+                            <h2 class="section-title">
+                                <i class="fas fa-sliders-h"></i> Sloting Details
+                            </h2>
+                            
+                            <!-- Total Unit Sloting -->
+                            <div class="form-group">
+                                <label class="form-label">Total Unit Sloting</label>
+                                <input type="number" th:field="*{totalUnitSloting}" class="form-input" step="1" min="0">
+                            </div>
+                            
+                            <!-- Casing Sloting Per Unit -->
+                            <div class="form-group">
+                                <label class="form-label">Sloting Price/Unit</label>
+                                <input type="number" step="0.01" th:field="*{casingSlotingPerUnit}" class="form-input">
+                            </div>
+                            
+							<!-- Total Sloting Price -->
+							<div class="form-group">
+								<label class="form-label">Total Sloting Price</label>
+								<input type="number" step="0.01" th:field="*{totalSlotingPrice}" class="form-input" readonly>
+							</div>
+							
+							<!-- SECTION 8: Mod Powder Details -->
+							<div th:if="${booking.borewellType != null && (booking.borewellType.name == 'ROTTARY' || booking.borewellType.name == 'CALLIS')}"
+							             class="form-grid" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+								<h2 class="section-title">
+									<i class="fas fa-cubes"></i> Mod Powder Details
+								</h2>
+							
+								<!-- Total Unit Mod Powder -->
+								<div class="form-group">
+									<label class="form-label">Total Unit Mod Powder</label>
+									<input type="number" th:field="*{totalUnitModPowder}" class="form-input" step="1" min="0">
+								</div>
+							
+								<!-- Mod Powder Per Unit -->
+								<div class="form-group">
+									<label class="form-label">Mod Powder Price/Unit</label>
+									<input type="number" step="0.01" th:field="*{modPowderPerUnit}" class="form-input">
+								</div>
+							
+								<!-- Total Mod Powder Price -->
+								<div class="form-group">
+									<label class="form-label">Total Mod Powder Price</label>
+									<input type="number" step="0.01" th:field="*{totalModPowderPrice}" class="form-input" readonly>
+								</div>
+							</div>
+                            
+							<!-- SECTION 9: Gravel Details -->
+							<div th:if="${booking.borewellType != null && (booking.borewellType.name == 'ROTTARY' || booking.borewellType.name == 'CALLIS')}"
+							             class="form-grid" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+								<h2 class="section-title">
+									<i class="fas fa-mountain"></i> Gravel Details
+								</h2>
+							
+								<!-- Total Unit Gravel -->
+								<div class="form-group">
+									<label class="form-label">Total Unit Gravel</label>
+									<input type="number" th:field="*{totalUnitGravel}" class="form-input" step="1" min="0">
+								</div>
+							
+								<!-- Gravel Price Per Unit -->
+								<div class="form-group">
+									<label class="form-label">Gravel Price/Unit</label>
+									<input type="number" step="0.01" th:field="*{gravelPricePerUnit}" class="form-input">
+								</div>
+							
+								<!-- Total Gravel Price -->
+								<div class="form-group">
+									<label class="form-label">Total Gravel Price</label>
+									<input type="number" step="0.01" th:field="*{totalGravelPrice}" class="form-input" readonly>
+								</div>
+							</div>
+                            
+                            <!-- SECTION 10: Washing Details -->
+                            <h2 class="section-title">
+                                <i class="fas fa-water"></i> Washing Details
+                            </h2>
+                            
+                            <!-- Total Washing Unit -->
+                            <div class="form-group">
+                                <label class="form-label">Total Washing Unit</label>
+                                <input type="number" th:field="*{totalWashingUnit}" class="form-input" step="1" min="0">
+                            </div>
+                            
+                            <!-- Washing Price Per Unit -->
+                            <div class="form-group">
+                                <label class="form-label">Washing Price/Unit</label>
+                                <input type="number" step="0.01" th:field="*{washingPricePerUnit}" class="form-input">
+                            </div>
+                            
+                            <!-- Total Washing Price -->
+                            <div class="form-group">
+                                <label class="form-label">Total Washing Price</label>
+                                <input type="number" step="0.01" th:field="*{totalWashingPrice}" class="form-input" readonly>
+                            </div>
+							
+							<!-- SECTION: Transporting Details -->
+							<h2 class="section-title">
+								<i class="fas fa-truck-moving me-2"></i> Transporting Details
+							</h2>
+							
+							<!-- Casing Transporting -->
+							<div class="form-group">
+								<label class="form-label">Casing Transporting</label>
+								<input type="number" step="0.01" th:field="*{casingTransporting}" class="form-input">
+							</div>
+                            
+                            <!-- SECTION 12: Other Items -->
+                            <h2 class="section-title">
+                                <i class="fas fa-plus-circle"></i> Other Items
+                            </h2>
+                            
+                            <!-- Other Item Details -->
+                            <div class="form-group full-width">
+                                <label class="form-label">Other Item Details</label>
+                                <textarea th:field="*{otherItemDetails}" class="form-input" rows="2"></textarea>
+                            </div>
+                            
+                            <!-- Other Item Price -->
+                            <div class="form-group">
+                                <label class="form-label">Other Item Price</label>
+                                <input type="number" step="0.01" th:field="*{otherItemPrice}" class="form-input">
+                            </div>
+                            
+                            <!-- SECTION 13: Financial Summary -->
+                            <h2 class="section-title">
+                                <i class="fas fa-calculator"></i> Financial Summary
+                            </h2>
+                            
+                            <!-- Total Before Discount -->
+                            <div class="form-group">
+                                <label class="form-label">Total Before Discount</label>
+                                <input type="number" step="0.01" th:field="*{totAmtBeforeDiscount}" class="form-input" readonly>
+                            </div>
+                            
+                            <!-- Discount Amount -->
+                            <div class="form-group">
+                                <label class="form-label">Discount Amount</label>
+                                <input type="number" step="0.01" th:field="*{totDiscountAmt}" class="form-input">
+                            </div>
+                            
+                            <!-- Total After Discount -->
+                            <div class="form-group">
+                                <label class="form-label">Total After Discount</label>
+                                <input type="number" step="0.01" th:field="*{totalAmtAfterDiscount}" class="form-input" readonly>
+                            </div>
+                            
+                            <!-- CGST -->
+                            <div class="form-group">
+                                <label class="form-label">CGST</label>
+                                <input type="number" step="0.01" th:field="*{cgst}" class="form-input" readonly>
+                            </div>
+                            
+                            <!-- SGST -->
+                            <div class="form-group">
+                                <label class="form-label">SGST</label>
+                                <input type="number" step="0.01" th:field="*{sgst}" class="form-input" readonly>
+                            </div>
+                            
+                            <!-- Grand Total -->
+                            <div class="form-group price-display">
+                                <label class="form-label">
+                                    <i class="fas fa-rupee-sign"></i> Grand Total
+                                </label>
+                                <input type="number" step="0.01" th:field="*{grandTotal}" class="form-input" readonly>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Section -->
+                        <div class="info-section">
+                            <h3 class="info-title flex items-center gap-2 text-lg font-semibold">
+                                <i class="fas fa-info-circle text-blue-600"></i>
+                                Edit Mode Information
+                            </h3>
+                            <p class="info-text text-gray-600">
+                                • You are editing booking #<span th:text="${booking.bookingId}"></span><br>
+                                • Changes will update all associated records<br>
+                                • Prices will be recalculated automatically when you change selections<br>
+                                • Make sure to verify all calculations before saving
+                            </p>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a th:href="@{/bookings/getAllBookings}" class="btn btn-cancel">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-save" id="updateBtn">
+                                <i class="fas fa-save"></i>
+                                Update Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+	<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        // Initialize main content based on sidebar state
+	        const mainContent = document.getElementById('mainContent');
+	        const savedState = localStorage.getItem('sidebarCollapsed');
+	        
+	        if (savedState === 'true') {
+	            mainContent.classList.add('main-content-expanded');
+	            mainContent.classList.remove('main-content-full');
+	        } else {
+	            mainContent.classList.remove('main-content-expanded');
+	            mainContent.classList.add('main-content-full');
+	        }
+
+	        // Get current values
+	        const currentBorewellTypeId = document.getElementById('borewellTypeId').value;
+	        const currentCityId = document.getElementById('city').value;
+	        const currentAreaId = document.getElementById('area').value;
+	        const currentDrillingSize = document.getElementById('drillingSizeSelect').value;
+
+	        // Load areas when city changes
+	        document.getElementById("city").addEventListener("change", loadAreas);
+
+	        // Handle other drilling size display
+	        handleOtherSizeDisplay();
+	        
+	        // Load initial borewell types if all fields are selected
+	        if (currentCityId && currentAreaId && currentDrillingSize) {
+	            loadBorewellTypes(currentCityId, currentAreaId, currentDrillingSize, currentBorewellTypeId);
+	        }
+
+	        // Handle drilling size change
+	        document.getElementById("drillingSizeSelect").addEventListener("change", function() {
+	            handleOtherSizeDisplay();
+	            
+	            const cityId = document.getElementById("city").value;
+	            const areaId = document.getElementById("area").value;
+	            const drillingSize = this.value;
+	            
+	            if (cityId && areaId && drillingSize) {
+	                loadBorewellTypes(cityId, areaId, drillingSize, null);
+	            }
+	        });
+
+	        // Price updates
+	        document.getElementById('city').addEventListener('change', fetchPrice);
+	        document.getElementById('area').addEventListener('change', fetchPrice);
+	        document.getElementById('borewellTypeId').addEventListener('change', fetchPrice);
+	        document.getElementById('drillingSizeSelect').addEventListener('change', fetchPrice);
+
+	        // Casing price updates
+	        document.getElementById("companyName").addEventListener("change", fetchCasingPrice);
+	        document.querySelectorAll('input[name="pipeQuality"]').forEach(el => {
+	            el.addEventListener("change", fetchCasingPrice);
+	        });
+	        
+	        // Set min date to today
+	        const today = new Date().toISOString().split('T')[0];
+	        document.querySelector('input[type="date"]').min = today;
+
+	        // Add calculation listeners for unit fields
+	        addCalculationListeners();
+	        
+	        // Initial calculation
+	        setTimeout(calculateTotals, 500);
+	        
+	        // ========== CALL THIS AFTER PAGE LOADS ==========
+	        setTimeout(loadExistingCasingData, 600);
+	    });
+
+	    function handleOtherSizeDisplay() {
+	        const select = document.getElementById("drillingSizeSelect");
+	        const otherContainer = document.getElementById("otherSizeContainer");
+	        
+	        if (select.value === "oth") {
+	            otherContainer.classList.remove('hidden');
+	        } else {
+	            otherContainer.classList.add('hidden');
+	        }
+	    }
+
+	    function loadAreas() {
+	        const cityId = document.getElementById("city").value;
+	        const areaDropdown = document.getElementById("area");
+	        const currentAreaId = areaDropdown.value;
+	        
+	        areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
+
+	        if (cityId) {
+	            fetch("/api/areas/byCity/" + cityId)
+	                .then(res => res.json())
+	                .then(data => {
+	                    data.forEach(area => {
+	                        const option = document.createElement("option");
+	                        option.value = area.locationAreaId;
+	                        option.text = area.locationAreaName;
+	                        if (area.locationAreaId == currentAreaId) {
+	                            option.selected = true;
+	                        }
+	                        areaDropdown.appendChild(option);
+	                    });
+	                    
+	                    // Reload borewell types
+	                    const drillingSize = document.getElementById("drillingSizeSelect").value;
+	                    if (cityId && areaDropdown.value && drillingSize) {
+	                        loadBorewellTypes(cityId, areaDropdown.value, drillingSize, 
+	                            document.getElementById('borewellTypeId').value);
+	                    }
+	                })
+	                .catch(err => console.error("Error fetching areas:", err));
+	        }
+	    }
+
+	    function selectBorewellType(element) {
+	        const alreadySelected = element.classList.contains('selected');
+	        const hiddenInput = document.getElementById('borewellTypeId');
+
+	        document.querySelectorAll('.borewell-type-option').forEach(el => {
+	            el.classList.remove('selected');
+	        });
+
+	        if (!alreadySelected) {
+	            element.classList.add('selected');
+	            const id = element.getAttribute('data-id');
+	            hiddenInput.value = id;
+	            setTimeout(() => {
+	                fetchPrice();
+	                fetchCasingPrice();
+	            }, 100);
+	        } else {
+	            hiddenInput.value = "";
+	            clearPrice();
+	        }
+	    }
+
+	    function clearPrice() {
+	        const priceInput = document.getElementById("price");
+	        priceInput.value = "";
+	    }
+
+	    function loadBorewellTypes(cityId, areaId, drillingSize, selectedBorewellTypeId) {
+	        const container = document.querySelector(".borewell-type-container");
+	        
+	        container.innerHTML = `
+	            <div class="col-span-full text-center py-8">
+	                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+	                <p class="text-gray-600">Loading borewell types...</p>
+	            </div>
+	        `;
+	        
+	        fetch(`/api/bookings/getBorewellTypeByAreaWise?cityId=${cityId}&locationAreaId=${areaId}&drillingSize=${drillingSize}`)
+	            .then(res => res.json())
+	            .then(data => {
+	                container.innerHTML = "";
+	                
+	                if (data && data.length > 0) {
+	                    data.forEach(b => {
+	                        const div = document.createElement("div");
+	                        div.classList.add("borewell-type-option");
+	                        div.setAttribute("data-id", b.borewelTypeid);
+	                        div.setAttribute("data-name", b.name);
+	                        
+	                        if (selectedBorewellTypeId && b.borewelTypeid == selectedBorewellTypeId) {
+	                            div.classList.add("selected");
+	                        }
+	                        
+	                        div.onclick = function () { selectBorewellType(this); };
+
+	                        div.innerHTML = `
+	                            <img src="/api/bookings/image/${b.borewelTypeid}" alt="${b.name}" 
+	                                 onerror="this.src='https://via.placeholder.com/100x70/2a5298/ffffff?text=Borewell'">
+	                            <span>${b.name}</span>
+	                        `;
+
+	                        container.appendChild(div);
+	                    });
+	                } else {
+	                    container.innerHTML = `
+	                        <div class="col-span-full text-center py-8">
+	                            <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mb-2"></i>
+	                            <p class="text-gray-600">No borewell types available</p>
+	                        </div>
+	                    `;
+	                }
+	            })
+	            .catch(err => {
+	                console.error("Error loading borewell types:", err);
+	                container.innerHTML = `
+	                    <div class="col-span-full text-center py-8">
+	                        <i class="fas fa-exclamation-circle text-red-500 text-2xl mb-2"></i>
+	                        <p class="text-gray-600">Failed to load borewell types</p>
+	                    </div>
+	                `;
+	            });
+	    }
+
+	    function fetchPrice() {
+	        const cityId = document.getElementById("city").value;
+	        const areaId = document.getElementById("area").value;
+	        const borewellTypeId = document.getElementById("borewellTypeId").value;
+	        const drillingSize = document.getElementById("drillingSizeSelect").value;
+
+	        if (cityId && areaId && borewellTypeId && drillingSize) {
+	            fetch(`/api/prices/findPrice?borewellTypeId=${borewellTypeId}&cityId=${cityId}&locationAreaId=${areaId}&drillingSize=${drillingSize}`)
+	                .then(response => response.json())
+	                .then(price => {
+	                    const priceInput = document.getElementById("price");
+	                    if (price && price > 0) {
+	                        priceInput.value = price;
+	                    } else {
+	                        priceInput.value = "0.00";
+	                    }
+	                    calculateTotals();
+	                })
+	                .catch(error => {
+	                    console.error("Error fetching price:", error);
+	                    document.getElementById("price").value = "0.00";
+	                    calculateTotals();
+	                });
+	        } else {
+	            clearPrice();
+	            calculateTotals();
+	        }
+	    }
+
+	    function fetchCasingPrice() {
+	        const companyId = document.getElementById("companyName").value;
+	        const borewellTypeId = document.getElementById("borewellTypeId").value;
+	        const drillingSize = document.getElementById("drillingSizeSelect").value;
+	        const casingQuality = document.querySelector('input[name="pipeQuality"]:checked')?.value;
+
+	        if (companyId && borewellTypeId && drillingSize && casingQuality) {
+	            fetch(`/api/bookings/findCasingPrice?companyId=${companyId}&borewellTypeId=${borewellTypeId}&borewellSize=${drillingSize}&quality=${casingQuality}`)
+	                .then(response => response.json())
+	                .then(materialPrice => {
+	                    const materialPriceInput = document.getElementById("casingPrice");
+	                    if (materialPrice && materialPrice > 0) {
+	                        materialPriceInput.value = materialPrice;
+	                    } else {
+	                        materialPriceInput.value = "0.00";
+	                    }
+	                    calculateTotals();
+	                })
+	                .catch(error => {
+	                    console.error("Error fetching casing price:", error);
+	                    document.getElementById("casingPrice").value = "0.00";
+	                    calculateTotals();
+	                });
+	        } else {
+	            document.getElementById("casingPrice").value = "0.00";
+	            calculateTotals();
+	        }
+	    }
+
+	    function addCalculationListeners() {
+	        const calculationFields = [
+	            'totalDrillingUnit', 'price',
+	            'totalUnitCasing', 'casingPrice',
+	            'totalUnitMasterCasing', 'masterCasingPricePerUnit',
+	            'totalUnitSloting', 'casingSlotingPerUnit',
+	            'totalUnitModPowder', 'modPowderPerUnit',
+	            'totalUnitGravel', 'gravelPricePerUnit',
+	            'totalWashingUnit', 'washingPricePerUnit',
+	            'totalUnitMC10', 'mc10PricePerUnit',
+	            'totalUnitMC12', 'mc12PricePerUnit',
+	            'totalUnitMC14', 'mc14PricePerUnit',
+	            'casingTransporting', 'otherItemPrice', 'totDiscountAmt',
+	            'totalUnit2_5kg', 'pricePerUnit2_5kg',
+	            'totalUnit6kg', 'pricePerUnit6kg'
+	        ];
+
+	        calculationFields.forEach(fieldId => {
+	            let element = document.querySelector(`[name="${fieldId}"]`);
+	            if (!element) {
+	                element = document.querySelector(`[id="${fieldId}"]`);
+	            }
+	            if (!element) {
+	                element = document.querySelector(`[th\\:field="*{${fieldId}}"]`);
+	            }
+	            
+	            if (element) {
+	                element.addEventListener('input', calculateTotals);
+	                element.addEventListener('change', calculateTotals);
+	            }
+	        });
+	        
+	        const discountField = document.querySelector('[name="totDiscountAmt"]');
+	        if (discountField) {
+	            discountField.addEventListener('input', calculateTotals);
+	            discountField.addEventListener('change', calculateTotals);
+	        }
+	    }
+
+	    function calculateTotals() {
+	        function getFieldValue(fieldName) {
+	            let field = document.querySelector(`[name="${fieldName}"]`);
+	            if (!field) field = document.querySelector(`[id="${fieldName}"]`);
+	            if (!field) return 0;
+	            return parseFloat(field.value) || 0;
+	        }
+	        
+	        const totalDrillingUnit = getFieldValue('totalDrillingUnit');
+	        const price = getFieldValue('price');
+	        const totalUnitCasing = getFieldValue('totalUnitCasing');
+	        const casingPrice = getFieldValue('casingPrice');
+	        const totalUnitMasterCasing = getFieldValue('totalUnitMasterCasing');
+	        const masterCasingPricePerUnit = getFieldValue('masterCasingPricePerUnit');
+	        const totalUnitSloting = getFieldValue('totalUnitSloting');
+	        const casingSlotingPerUnit = getFieldValue('casingSlotingPerUnit');
+	        const totalUnitModPowder = getFieldValue('totalUnitModPowder');
+	        const modPowderPerUnit = getFieldValue('modPowderPerUnit');
+	        const totalUnitGravel = getFieldValue('totalUnitGravel');
+	        const gravelPricePerUnit = getFieldValue('gravelPricePerUnit');
+	        const totalWashingUnit = getFieldValue('totalWashingUnit');
+	        const washingPricePerUnit = getFieldValue('washingPricePerUnit');
+	        const totalUnitMC10 = getFieldValue('totalUnitMC10');
+	        const mc10PricePerUnit = getFieldValue('mc10PricePerUnit');
+	        const totalUnitMC12 = getFieldValue('totalUnitMC12');
+	        const mc12PricePerUnit = getFieldValue('mc12PricePerUnit');
+	        const totalUnitMC14 = getFieldValue('totalUnitMC14');
+	        const mc14PricePerUnit = getFieldValue('mc14PricePerUnit');
+	        const casingTransporting = getFieldValue('casingTransporting');
+	        const otherItemPrice = getFieldValue('otherItemPrice');
+	        const discount = getFieldValue('totDiscountAmt');
+	        
+	        const totalUnit2_5kg = getFieldValue('totalUnit2_5kg');
+	        const pricePerUnit2_5kg = getFieldValue('pricePerUnit2_5kg');
+	        const totalUnit6kg = getFieldValue('totalUnit6kg');
+	        const pricePerUnit6kg = getFieldValue('pricePerUnit6kg');
+
+	        const totalDrillingPrice = totalDrillingUnit * price;
+	        const totalCasingPrice = totalUnitCasing * casingPrice;
+	        const totalMasterCasingPrice = totalUnitMasterCasing * masterCasingPricePerUnit;
+	        const totalSlotingPrice = totalUnitSloting * casingSlotingPerUnit;
+	        const totalModPowderPrice = totalUnitModPowder * modPowderPerUnit;
+	        const totalGravelPrice = totalUnitGravel * gravelPricePerUnit;
+	        const totalWashingPrice = totalWashingUnit * washingPricePerUnit;
+	        const totalMC10Price = totalUnitMC10 * mc10PricePerUnit;
+	        const totalMC12Price = totalUnitMC12 * mc12PricePerUnit;
+	        const totalMC14Price = totalUnitMC14 * mc14PricePerUnit;
+	        
+	        const total2_5kgPrice = totalUnit2_5kg * pricePerUnit2_5kg;
+	        const total6kgPrice = totalUnit6kg * pricePerUnit6kg;
+
+	        setFieldValue('totalDrillingPrice', totalDrillingPrice);
+	        setFieldValue('totalCasingPrice', totalCasingPrice);
+	        setFieldValue('totalMasterCasingPrice', totalMasterCasingPrice);
+	        setFieldValue('totalSlotingPrice', totalSlotingPrice);
+	        setFieldValue('totalModPowderPrice', totalModPowderPrice);
+	        setFieldValue('totalGravelPrice', totalGravelPrice);
+	        setFieldValue('totalWashingPrice', totalWashingPrice);
+	        setFieldValue('totalMaster10CasingPrice', totalMC10Price);
+	        setFieldValue('totalMaster12CasingPrice', totalMC12Price);
+	        setFieldValue('totalMasterCasing14Price', totalMC14Price);
+	        setFieldValue('total2_5kgPrice', total2_5kgPrice);
+	        setFieldValue('total6kgPrice', total6kgPrice);
+
+	        const totalBeforeDiscount = totalDrillingPrice + totalCasingPrice + totalMasterCasingPrice + 
+	                                  totalSlotingPrice + totalModPowderPrice + totalGravelPrice + 
+	                                  totalWashingPrice + totalMC10Price + totalMC12Price + 
+	                                  totalMC14Price + total2_5kgPrice + total6kgPrice + 
+	                                  casingTransporting + otherItemPrice;
+	        
+	        setFieldValue('totAmtBeforeDiscount', totalBeforeDiscount);
+
+	        const totalAfterDiscount = totalBeforeDiscount - discount;
+	        setFieldValue('totalAmtAfterDiscount', totalAfterDiscount);
+
+	        const cgst = totalAfterDiscount * 0.09;
+	        const sgst = totalAfterDiscount * 0.09;
+	        setFieldValue('cgst', cgst);
+	        setFieldValue('sgst', sgst);
+
+	        const grandTotal = totalAfterDiscount + cgst + sgst;
+	        setFieldValue('grandTotal', grandTotal);
+	    }
+
+	    function setFieldValue(fieldName, value) {
+	        let field = document.querySelector(`[name="${fieldName}"]`);
+	        if (!field) field = document.querySelector(`[id="${fieldName}"]`);
+	        if (!field) field = document.querySelector(`[th\\:field="*{${fieldName}}"]`);
+	        
+	        if (field) {
+	            field.value = value.toFixed(2);
+	        }
+	    }
+
+	    // Form submission
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const form = document.getElementById('editBookingForm');
+	        const updateBtn = document.getElementById('updateBtn');
+	        
+	        if (form) {
+	            form.addEventListener('submit', function(e) {
+	                e.preventDefault();
+	                
+	                let isValid = true;
+	                const requiredFields = form.querySelectorAll('[required]');
+	                
+	                requiredFields.forEach(field => {
+	                    if (!field.value.trim()) {
+	                        isValid = false;
+	                        field.classList.add('error');
+	                    } else {
+	                        field.classList.remove('error');
+	                    }
+	                });
+	                
+	                if (!document.getElementById('borewellTypeId').value) {
+	                    isValid = false;
+	                    showToast('Please select a borewell type', 'error');
+	                    return;
+	                }
+	                
+	                if (!isValid) {
+	                    showToast('Please fill all required fields', 'error');
+	                    return;
+	                }
+	                
+	                updateBtn.classList.add('loading');
+	                updateBtn.disabled = true;
+	                
+	                showToast('Updating booking...', 'success');
+	                
+	                setTimeout(() => {
+	                    form.submit();
+	                }, 1000);
+	            });
+	        }
+	        
+	        function showToast(message, type) {
+	            const existingToasts = document.querySelectorAll('.toast-notification');
+	            existingToasts.forEach(toast => toast.remove());
+	            
+	            const toast = document.createElement('div');
+	            toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
+	                type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+	            }`;
+	            toast.innerHTML = `
+	                <div class="flex items-center gap-3">
+	                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+	                    <span class="font-medium">${message}</span>
+	                </div>
+	            `;
+	            
+	            document.body.appendChild(toast);
+	            
+	            setTimeout(() => {
+	                toast.style.animation = 'slideOutRight 0.3s ease';
+	                setTimeout(() => toast.remove(), 300);
+	            }, 3000);
+	        }
+	    });
+	    
+	    // ==============================================
+	    // DYNAMIC CASING SECTION - Global functions
+	    // ==============================================
+	    
+	    // Track if each button has been clicked already
+	    let is2kgAdded = false;
+	    let is6kgAdded = false;
+	    
+	    // Helper: Auto-calculate Total = Units * Price
+	    function setupAutoCalculation(unitsInput, priceInput, totalInput) {
+	        if (!unitsInput || !priceInput || !totalInput) return;
+	        
+	        const updateTotal = function() {
+	            const units = parseFloat(unitsInput.value) || 0;
+	            const price = parseFloat(priceInput.value) || 0;
+	            const total = units * price;
+	            totalInput.value = total.toFixed(2);
+	            const event = new Event('change', { bubbles: true });
+	            totalInput.dispatchEvent(event);
+	            if (typeof calculateTotals === 'function') {
+	                calculateTotals();
+	            }
+	        };
+	        
+	        unitsInput.addEventListener('input', updateTotal);
+	        priceInput.addEventListener('input', updateTotal);
+	        updateTotal();
+	    }
+	    
+	    // Create new casing section with existing values support
+	    function createCasingSection(kgType, existingUnit = '0', existingPrice = '0', existingTotal = '0') {
+	        const kgLabel = kgType === '2.5' ? '2.5 kg' : '6 kg';
+	        const uniqueId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+	        
+	        const sectionDiv = document.createElement('div');
+	        sectionDiv.className = 'casing-dynamic-section';
+	        sectionDiv.setAttribute('data-kg', kgType);
+	        sectionDiv.setAttribute('data-id', uniqueId);
+	        
+	        // Header with remove button
+	        const headerDiv = document.createElement('div');
+	        headerDiv.className = 'casing-section-header';
+	        headerDiv.innerHTML = `
+	            <h4><i class="fas fa-weight-hanging"></i> ${kgLabel} Master Casing</h4>
+	            <button type="button" class="remove-casing-btn"><i class="fas fa-trash-alt"></i> Remove</button>
+	        `;
+	        headerDiv.querySelector('.remove-casing-btn').addEventListener('click', function() {
+	            sectionDiv.remove();
+	            if (kgType === '2.5') {
+	                clearCasingValues('2.5');
+	                is2kgAdded = false;
+	                const btn2kg = document.getElementById('btn-add-2kg');
+	                if (btn2kg) {
+	                    btn2kg.disabled = false;
+	                    btn2kg.style.opacity = '1';
+	                    btn2kg.style.cursor = 'pointer';
+	                }
+	            } else if (kgType === '6') {
+	                clearCasingValues('6');
+	                is6kgAdded = false;
+	                const btn6kg = document.getElementById('btn-add-6kg');
+	                if (btn6kg) {
+	                    btn6kg.disabled = false;
+	                    btn6kg.style.opacity = '1';
+	                    btn6kg.style.cursor = 'pointer';
+	                }
+	            }
+	            if (typeof calculateTotals === 'function') {
+	                calculateTotals();
+	            }
+	        });
+	        
+	        // Units field
+	        const unitsGroup = document.createElement('div');
+	        unitsGroup.className = 'form-group';
+	        const unitsLabel = document.createElement('label');
+	        unitsLabel.className = 'form-label';
+	        unitsLabel.textContent = `Total Unit ${kgLabel} Master Casing`;
+	        const unitsInput = document.createElement('input');
+	        unitsInput.type = 'number';
+	        unitsInput.className = 'form-input';
+	        unitsInput.step = '1';
+	        unitsInput.min = '0';
+	        unitsInput.value = existingUnit;
+	        unitsInput.name = kgType === '2.5' ? 'totalUnit2_5kg' : 'totalUnit6kg';
+	        unitsGroup.appendChild(unitsLabel);
+	        unitsGroup.appendChild(unitsInput);
+	        
+	        // Price field
+	        const priceGroup = document.createElement('div');
+	        priceGroup.className = 'form-group';
+	        const priceLabel = document.createElement('label');
+	        priceLabel.className = 'form-label';
+	        priceLabel.textContent = `${kgLabel} Master Casing Price/Unit`;
+	        const priceInput = document.createElement('input');
+	        priceInput.type = 'number';
+	        priceInput.className = 'form-input';
+	        priceInput.step = '0.01';
+	        priceInput.value = existingPrice;
+	        priceInput.name = kgType === '2.5' ? 'pricePerUnit2_5kg' : 'pricePerUnit6kg';
+	        priceGroup.appendChild(priceLabel);
+	        priceGroup.appendChild(priceInput);
+	        
+	        // Total field
+	        const totalGroup = document.createElement('div');
+	        totalGroup.className = 'form-group';
+	        const totalLabel = document.createElement('label');
+	        totalLabel.className = 'form-label';
+	        totalLabel.textContent = `Total ${kgLabel} Master Casing Price`;
+	        const totalInput = document.createElement('input');
+	        totalInput.type = 'number';
+	        totalInput.className = 'form-input';
+	        totalInput.step = '0.01';
+	        totalInput.readOnly = true;
+	        totalInput.value = existingTotal;
+	        totalInput.name = kgType === '2.5' ? 'total2_5kgPrice' : 'total6kgPrice';
+	        totalGroup.appendChild(totalLabel);
+	        totalGroup.appendChild(totalInput);
+	        
+	        sectionDiv.appendChild(headerDiv);
+	        sectionDiv.appendChild(unitsGroup);
+	        sectionDiv.appendChild(priceGroup);
+	        sectionDiv.appendChild(totalGroup);
+	        
+	        setupAutoCalculation(unitsInput, priceInput, totalInput);
+	        
+	        return sectionDiv;
+	    }
+	    
+	    // Helper function to clear casing values when removed
+	    function clearCasingValues(kgType) {
+	        if (kgType === '2.5') {
+	            const unitField = document.querySelector('[name="totalUnit2_5kg"]');
+	            const priceField = document.querySelector('[name="pricePerUnit2_5kg"]');
+	            const totalField = document.querySelector('[name="total2_5kgPrice"]');
+	            
+	            if (unitField) unitField.value = '0';
+	            if (priceField) priceField.value = '0';
+	            if (totalField) totalField.value = '0';
+	        } else if (kgType === '6') {
+	            const unitField = document.querySelector('[name="totalUnit6kg"]');
+	            const priceField = document.querySelector('[name="pricePerUnit6kg"]');
+	            const totalField = document.querySelector('[name="total6kgPrice"]');
+	            
+	            if (unitField) unitField.value = '0';
+	            if (priceField) priceField.value = '0';
+	            if (totalField) totalField.value = '0';
+	        }
+	        calculateTotals();
+	    }
+	    
+	    // Function to create and populate casing section with existing data
+	    function createAndPopulateCasingSection(kgType, existingUnit, existingPrice, existingTotal) {
+	        const container = document.getElementById('casing-dynamic-container');
+	        if (!container) return;
+	        
+	        const newSection = createCasingSection(kgType, existingUnit, existingPrice, existingTotal);
+	        container.appendChild(newSection);
+	        
+	        if (kgType === '2.5') {
+	            is2kgAdded = true;
+	            const btn2kg = document.getElementById('btn-add-2kg');
+	            if (btn2kg) {
+	                btn2kg.disabled = true;
+	                btn2kg.style.opacity = '0.5';
+	                btn2kg.style.cursor = 'not-allowed';
+	            }
+	        } else if (kgType === '6') {
+	            is6kgAdded = true;
+	            const btn6kg = document.getElementById('btn-add-6kg');
+	            if (btn6kg) {
+	                btn6kg.disabled = true;
+	                btn6kg.style.opacity = '0.5';
+	                btn6kg.style.cursor = 'not-allowed';
+	            }
+	        }
+	    }
+	    
+	    // Function to check and load existing 2.5kg and 6kg casing data
+	    function loadExistingCasingData() {
+	        console.log("Checking for existing casing data...");
+	        
+	        // Get existing values from DTO (these come from the server via hidden or regular inputs)
+	        const totalUnit2_5kg = document.querySelector('[name="totalUnit2_5kg"]')?.value;
+	        const pricePerUnit2_5kg = document.querySelector('[name="pricePerUnit2_5kg"]')?.value;
+	        const total2_5kgPrice = document.querySelector('[name="total2_5kgPrice"]')?.value;
+	        
+	        const totalUnit6kg = document.querySelector('[name="totalUnit6kg"]')?.value;
+	        const pricePerUnit6kg = document.querySelector('[name="pricePerUnit6kg"]')?.value;
+	        const total6kgPrice = document.querySelector('[name="total6kgPrice"]')?.value;
+	        
+	        console.log("2.5kg values:", totalUnit2_5kg, pricePerUnit2_5kg, total2_5kgPrice);
+	        console.log("6kg values:", totalUnit6kg, pricePerUnit6kg, total6kgPrice);
+	        
+	        // Check if 2.5kg data exists and has values
+	        if (totalUnit2_5kg && (parseFloat(totalUnit2_5kg) !== 0 || parseFloat(pricePerUnit2_5kg) !== 0)) {
+	            console.log("Loading existing 2.5kg casing data...");
+	            createAndPopulateCasingSection('2.5', totalUnit2_5kg, pricePerUnit2_5kg, total2_5kgPrice);
+	        }
+	        
+	        // Check if 6kg data exists and has values
+	        if (totalUnit6kg && (parseFloat(totalUnit6kg) !== 0 || parseFloat(pricePerUnit6kg) !== 0)) {
+	            console.log("Loading existing 6kg casing data...");
+	            createAndPopulateCasingSection('6', totalUnit6kg, pricePerUnit6kg, total6kgPrice);
+	        }
+	    }
+	    
+	    // Initialize buttons after DOM is ready
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const container = document.getElementById('casing-dynamic-container');
+	        if (!container) {
+	            console.warn("Container 'casing-dynamic-container' not found.");
+	            return;
+	        }
+	        
+	        // Button: Add 2.5 kg
+	        const btn2kg = document.getElementById('btn-add-2kg');
+	        if (btn2kg) {
+	            btn2kg.addEventListener('click', function(e) {
+	                e.preventDefault();
+	                if (is2kgAdded) {
+	                    showToast('2.5 kg casing block already added!', 'error');
+	                    return;
+	                }
+	                
+	                const newSection = createCasingSection('2.5');
+	                container.appendChild(newSection);
+	                newSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	                
+	                is2kgAdded = true;
+	                btn2kg.disabled = true;
+	                btn2kg.style.opacity = '0.5';
+	                btn2kg.style.cursor = 'not-allowed';
+	            });
+	        }
+	        
+	        // Button: Add 6 kg
+	        const btn6kg = document.getElementById('btn-add-6kg');
+	        if (btn6kg) {
+	            btn6kg.addEventListener('click', function(e) {
+	                e.preventDefault();
+	                if (is6kgAdded) {
+	                    showToast('6 kg casing block already added!', 'error');
+	                    return;
+	                }
+	                
+	                const newSection = createCasingSection('6');
+	                container.appendChild(newSection);
+	                newSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	                
+	                is6kgAdded = true;
+	                btn6kg.disabled = true;
+	                btn6kg.style.opacity = '0.5';
+	                btn6kg.style.cursor = 'not-allowed';
+	            });
+	        }
+	        
+	        function showToast(message, type) {
+	            const existingToasts = document.querySelectorAll('.toast-notification');
+	            existingToasts.forEach(toast => toast.remove());
+	            
+	            const toast = document.createElement('div');
+	            toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
+	                type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+	            }`;
+	            toast.innerHTML = `
+	                <div class="flex items-center gap-3">
+	                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+	                    <span class="font-medium">${message}</span>
+	                </div>
+	            `;
+	            
+	            document.body.appendChild(toast);
+	            
+	            setTimeout(() => {
+	                toast.style.animation = 'slideOutRight 0.3s ease';
+	                setTimeout(() => toast.remove(), 300);
+	            }, 3000);
+	        }
+	        
+	        // Setup existing calculations
+	        const mc10Units = document.querySelector('input[name="totalUnitMC10"]');
+	        const mc10Price = document.querySelector('input[name="mc10PricePerUnit"]');
+	        const mc10Total = document.querySelector('input[name="totalMaster10CasingPrice"]');
+	        if (mc10Units && mc10Price && mc10Total) setupAutoCalculation(mc10Units, mc10Price, mc10Total);
+	        
+	        const mc12Units = document.querySelector('input[name="totalUnitMC12"]');
+	        const mc12Price = document.querySelector('input[name="mc12PricePerUnit"]');
+	        const mc12Total = document.querySelector('input[name="totalMaster12CasingPrice"]');
+	        if (mc12Units && mc12Price && mc12Total) setupAutoCalculation(mc12Units, mc12Price, mc12Total);
+	        
+	        const mc14Units = document.querySelector('input[name="totalUnitMC14"]');
+	        const mc14Price = document.querySelector('input[name="mc14PricePerUnit"]');
+	        const mc14Total = document.querySelector('input[name="totalMasterCasing14Price"]');
+	        if (mc14Units && mc14Price && mc14Total) setupAutoCalculation(mc14Units, mc14Price, mc14Total);
+	        
+	        const baseUnits = document.querySelector('input[name="totalUnitMasterCasing"]');
+	        const basePrice = document.querySelector('input[name="masterCasingPricePerUnit"]');
+	        const baseTotal = document.querySelector('input[name="totalMasterCasingPrice"]');
+	        if (baseUnits && basePrice && baseTotal) setupAutoCalculation(baseUnits, basePrice, baseTotal);
+	    });
+	</script>
+</body>
+</html>

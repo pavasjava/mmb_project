@@ -442,7 +442,7 @@
                             <td colspan="3" class="text-right">
                                 <div class="flex justify-end items-center">
                                     <i class="fas fa-tag text-green-600 mr-2"></i>
-                                    <span>Discount (15%)</span>
+									<span th:text="'Discount (' + ${booking.discount.discount} + '%)'"></span>
                                 </div>
                             </td>
                             <td class="text-right font-semibold text-green-600" th:text="${booking.totDiscountAmt}"></td>
@@ -457,7 +457,7 @@
                             <td colspan="3" class="text-right">
                                 <div class="flex justify-end items-center">
                                     <i class="fas fa-balance-scale text-blue-600 mr-2"></i>
-                                    <span>CGST (6%)</span>
+                                    <span th:text="'CGST (' + ${booking.cgstPercent} + '%)'"></span>
                                 </div>
                             </td>
                             <td class="text-right font-semibold" th:text="${booking.cgst}"></td>
@@ -467,7 +467,7 @@
                             <td colspan="3" class="text-right">
                                 <div class="flex justify-end items-center">
                                     <i class="fas fa-balance-scale-left text-blue-600 mr-2"></i>
-                                    <span>SGST (6%)</span>
+									<span th:text="'SGST (' + ${booking.sgstPercent} + '%)'"></span>
                                 </div>
                             </td>
                             <td class="text-right font-semibold" th:text="${booking.sgst}"></td>
@@ -586,7 +586,26 @@
 		<input type="hidden" th:field="*{price}" />
 		<input type="hidden" th:field="*{casingPrice}" />
 	    <input type="hidden" th:field="*{drillingSize}" />
-		<input type="hidden" th:field="*{pipeQuality}" />		
+		<input type="hidden" th:field="*{pipeQuality}" />
+		<input type="hidden" th:field="*{totalDrillingUnit}" />	
+		<input type="hidden" th:field="*{totalUnitCasing}" />	
+		<input type="hidden" th:field="*{totalUnitMasterCasing}" />	
+		<input type="hidden" th:field="*{masterCasingPricePerUnit}" />	
+		<input type="hidden" th:field="*{casingTransporting}" />	
+		<input type="hidden" th:field="*{totalUnitSloting}" />	
+		<input type="hidden" th:field="*{casingSlotingPerUnit}" />	
+		<input type="hidden" th:field="*{totalUnitModPowder}" />	
+		<input type="hidden" th:field="*{modPowderPerUnit}" />	
+		<input type="hidden" th:field="*{totalUnitGravel}" />	
+		<input type="hidden" th:field="*{gravelPricePerUnit}" />	
+		<input type="hidden" th:field="*{totalWashingUnit}" />
+		<input type="hidden" th:field="*{washingPricePerUnit}" />	
+		<input type="hidden" th:field="*{totalUnitMasterCasing10}" />	
+		<input type="hidden" th:field="*{masterCasing10PricePerUnit}" />	
+		<input type="hidden" th:field="*{totalUnitMasterCasing12}" />	
+		<input type="hidden" th:field="*{masterCasing12PricePerUnit}" />	
+		<input type="hidden" th:field="*{totalUnitMasterCasing14}" />	
+		<input type="hidden" th:field="*{masterCasing14PricePerUnit}" />		
 		<!-- Service Details -->
 		<input type="hidden" th:field="*{borewellType.borewelTypeid}" />
 		<!-- Location Details -->
@@ -594,6 +613,10 @@
 		<!-- Company Details -->
 		<input type="hidden" th:field="*{companyName.companyId}" />
 		<input type="hidden" th:field="*{area.locationAreaId}" />
+		
+		<input type="hidden" th:field="*{discount.discountId}" />
+		<input type="hidden" th:field="*{cgstPercent}" />
+		<input type="hidden" th:field="*{sgstPercent}" />
         
     </form>
 
