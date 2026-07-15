@@ -13,24 +13,35 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     
     <style>
-        /* Main content alignment for sidebar */
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            background: #f8fafc;
+        }
+        
+        /* MAIN CONTENT - No margin needed */
         .main-content {
-            margin-left: 280px;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
             background-color: #f8fafc;
             padding-bottom: 2rem;
+            width: 100%;
         }
         
         .main-content-expanded {
-            margin-left: 80px;
-            width: calc(100% - 80px);
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
         }
         
         .main-content-full {
-            margin-left: 0;
-            width: 100%;
+            margin-left: 0 !important;
         }
         
         /* Top navbar wrapper */
@@ -61,9 +72,8 @@
         /* Main container styling */
         .container {
             max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 2rem;
-			margin-left:310px;
+            margin: 0 auto;
+            padding: 20px 24px;
         }
         
         /* Content card */
@@ -286,15 +296,73 @@
             color: #a0aec0;
         }
         
-        /* Responsive adjustments */
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .toast-notification.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .toast-notification.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .toast-notification.info {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
+        }
+        
         @media (max-width: 1024px) {
-            .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
+            body {
+                padding-left: 220px;
             }
             
             .container {
-                padding: 0 1rem;
+                padding: 16px;
             }
             
             .content-card {
@@ -303,6 +371,30 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .main-content-expanded {
+                margin-left: 0 !important;
+            }
+            
+            .main-content-full {
+                margin-left: 0 !important;
+            }
+            
+            .container {
+                padding: 12px;
+            }
+            
+            .content-card {
+                padding: 1rem;
+            }
+            
             .table-controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -322,9 +414,30 @@
             .data-table td {
                 padding: 0.75rem;
             }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
         }
         
-        @media (max-width: 640px) {
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+            
+            .content-card {
+                padding: 0.75rem;
+            }
+            
             .action-cell {
                 display: flex;
                 flex-direction: column;
@@ -334,6 +447,25 @@
             .btn-action {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-info h3 {
+                font-size: 1.25rem;
+            }
+        }
+        
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            .main-content {
+                -webkit-font-smoothing: antialiased;
             }
         }
         
@@ -352,36 +484,11 @@
         .content-card {
             animation: fadeInUp 0.5s ease;
         }
-        
-        /* Toast notification styles */
-        .toast-notification {
-            background: #4f46e5;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            z-index: 9999;
-        }
-        
-        .toast-notification.success {
-            background: #10b981;
-        }
-        
-        .toast-notification.error {
-            background: #ef4444;
-        }
-        
-        .toast-notification.info {
-            background: #3b82f6;
-        }
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <!-- ✅ Background Image -->
+<body>
+    <!-- Background Image -->
     <div class="bg-overlay"></div>
     
     <!-- Admin Sidebar -->
@@ -515,13 +622,13 @@
                 </div>
                 
                 <!-- Export Options -->
-                <div class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
+                <div class="mt-6 pt-4 border-t border-gray-200 flex flex-wrap justify-between items-center gap-4">
                     <div class="text-sm text-gray-600">
                         <i class="fas fa-info-circle mr-2"></i>
                         Click on any row to view more details
                     </div>
                     
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2">
                         <button onclick="exportToExcel()" 
                                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
                             <i class="fas fa-file-excel"></i>
@@ -554,9 +661,11 @@
                     if (savedState === 'true') {
                         mainContent.classList.add('main-content-expanded');
                         mainContent.classList.remove('main-content-full');
+                        sidebar.classList.add('sidebar-collapsed');
                     } else {
                         mainContent.classList.remove('main-content-expanded');
                         mainContent.classList.add('main-content-full');
+                        sidebar.classList.remove('sidebar-collapsed');
                     }
                 } else {
                     if (mainContent) {
@@ -576,11 +685,6 @@
                         }
                     });
                 });
-                
-                // Show welcome toast
-                //setTimeout(() => {
-                   // showToast('Raw Materials Management Dashboard Loaded', 'info');
-               // }, 500);
                 
             } catch (error) {
                 console.error('Error during page initialization:', error);
@@ -770,7 +874,7 @@
                 });
                 
                 const toast = document.createElement('div');
-                toast.className = `toast-notification fixed top-4 right-4 ${type}`;
+                toast.className = `toast-notification ${type}`;
                 toast.innerHTML = `
                     <div class="flex items-center gap-3">
                         <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
@@ -784,9 +888,12 @@
                 
                 // Remove toast after 3 seconds
                 setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
                 }, 3000);
                 
             } catch (error) {

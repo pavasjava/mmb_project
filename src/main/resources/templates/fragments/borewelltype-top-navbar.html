@@ -1,4 +1,4 @@
-<!-- fragments/rawmaterial-top-navbar.html -->
+<!-- fragments/borewelltype-top-navbar.html -->
 <div class="top-navbar" th:fragment="top-navbar">
     <style>
         .top-navbar-wrapper {
@@ -7,29 +7,33 @@
         
         .top-navbar .page-header {
             background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%);
-            padding: 1.5rem 0;
+            padding: 2rem 0;
             color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
         }
         
         .top-navbar .header-content {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .top-navbar .header-left {
             flex: 1;
+            min-width: 200px;
         }
         
         .top-navbar .page-header h1 {
             font-size: 1.875rem;
             font-weight: bold;
             margin-bottom: 0.25rem;
+            margin-top: 0;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -55,6 +59,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border: none;
             cursor: pointer;
+            white-space: nowrap;
         }
         
         .top-navbar .btn-add:hover {
@@ -64,16 +69,22 @@
             text-decoration: none;
         }
         
-        @media (max-width: 768px) {
+        /* Responsive */
+        @media (max-width: 1024px) {
             .top-navbar .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-                padding: 0 1rem;
+                padding: 0 16px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-navbar .page-header {
+                padding: 1.5rem 0;
             }
             
-            .top-navbar .page-header {
-                padding: 1rem 0;
+            .top-navbar .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0 12px;
             }
             
             .top-navbar .page-header h1 {
@@ -81,8 +92,40 @@
             }
             
             .top-navbar .btn-add {
+                width: 100%;
+                justify-content: center;
                 padding: 0.5rem 1rem;
                 font-size: 0.875rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .top-navbar .page-header {
+                padding: 1rem 0;
+            }
+            
+            .top-navbar .page-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .top-navbar .page-header p {
+                font-size: 0.875rem;
+            }
+            
+            .top-navbar .header-content {
+                padding: 0 8px;
+            }
+            
+            .top-navbar .btn-add {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* MacOS specific fixes */
+        @supports (-webkit-appearance: none) {
+            .top-navbar .page-header {
+                -webkit-font-smoothing: antialiased;
             }
         }
     </style>
@@ -109,7 +152,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('Raw Material top navbar loaded');
+            console.log('Borewell Type top navbar loaded');
         });
         /*]]>*/
     </script>

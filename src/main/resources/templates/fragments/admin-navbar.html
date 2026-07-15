@@ -133,6 +133,7 @@
     </div>
 
     <style>
+        /* ONLY SIDEBAR STYLES */
         .sidebar {
             width: 280px;
             height: 100vh;
@@ -140,13 +141,32 @@
             position: fixed;
             left: 0;
             top: 0;
-            transition: all 0.3s ease;
+            transition: width 0.3s ease;
             z-index: 1000;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
         }
         
         .sidebar-collapsed {
-            width: 80px;
+            width: 80px !important;
         }
         
         .sidebar-menu-item {
@@ -160,6 +180,7 @@
             gap: 12px;
             text-decoration: none;
             position: relative;
+            white-space: nowrap;
         }
         
         .sidebar-menu-item:hover {
@@ -177,19 +198,20 @@
             width: 20px;
             text-align: center;
             font-size: 1.1rem;
+            flex-shrink: 0;
         }
         
         .sidebar-collapsed .menu-text,
         .sidebar-collapsed .dropdown-arrow {
-            display: none;
+            display: none !important;
         }
         
         .sidebar-collapsed .sidebar-menu-item {
             justify-content: center;
-            padding: 12px;
+            padding: 12px !important;
+            margin: 4px 8px !important;
         }
         
-        /* NEW DROPDOWN STYLES - Fixed positioning */
         .dropdown-container {
             position: relative;
         }
@@ -209,7 +231,6 @@
             margin-top: 5px;
         }
         
-        /* Show dropdown on hover */
         .dropdown-container:hover .dropdown-menu {
             display: block;
         }
@@ -234,7 +255,6 @@
             text-align: center;
         }
         
-        /* For collapsed sidebar - show dropdown to the right */
         .sidebar-collapsed .dropdown-menu {
             left: 100%;
             top: 0;
@@ -243,33 +263,45 @@
             margin-top: 0;
         }
         
-        /* Adjust main content when sidebar is collapsed */
-        .main-content {
-            margin-left: 280px;
-            transition: all 0.3s ease;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
-        
-        .main-content-expanded {
-            margin-left: 80px;
-        }
-        
-        .main-content-full {
-            margin-left: 0;
+        @media (max-width: 1024px) {
+            .sidebar-collapsed .dropdown-menu {
+                left: 0;
+                top: 100%;
+                width: 100%;
+                margin-left: 0;
+                margin-top: 5px;
+            }
         }
         
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
+                width: 300px !important;
+                transition: transform 0.3s ease;
             }
             
             .sidebar.active {
                 transform: translateX(0);
             }
             
-            .main-content {
-                margin-left: 0 !important;
+            .sidebar-collapsed {
+                width: 300px !important;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-collapsed.active {
+                transform: translateX(0);
+            }
+            
+            .sidebar-collapsed .menu-text,
+            .sidebar-collapsed .dropdown-arrow {
+                display: inline !important;
+            }
+            
+            .sidebar-collapsed .sidebar-menu-item {
+                justify-content: flex-start !important;
+                padding: 12px 20px !important;
+                margin: 4px 12px !important;
             }
             
             .dropdown-menu {
@@ -281,11 +313,38 @@
                 margin-top: 5px;
                 margin-left: 0;
             }
+            
+            .sidebar-collapsed .dropdown-menu {
+                position: static;
+                width: 100%;
+                margin-left: 0;
+            }
+            
+            .dropdown-item {
+                padding-left: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 280px !important;
+            }
+        }
+        
+        @supports (-webkit-appearance: none) {
+            .sidebar {
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            .sidebar-menu-item,
+            .dropdown-item {
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
         }
     </style>
 
     <script>
-        // Toggle sidebar function
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
@@ -294,142 +353,45 @@
             const userInfo = document.getElementById('userInfo');
             const menuHeading = document.getElementById('menuHeading');
             
-            // Toggle collapsed state
-            sidebar.classList.toggle('sidebar-collapsed');
+            if (!sidebar) return;
             
-            // Change icon direction
-            if (sidebar.classList.contains('sidebar-collapsed')) {
-                toggleIcon.classList.remove('fa-chevron-left');
-                toggleIcon.classList.add('fa-chevron-right');
-                
-                // Hide text elements
-                if (companyInfo) companyInfo.style.display = 'none';
-                if (userInfo) userInfo.style.display = 'none';
-                if (menuHeading) menuHeading.style.display = 'none';
-                
-                // Store state in localStorage
-                localStorage.setItem('sidebarCollapsed', 'true');
-                
-                // Adjust main content
-                if (mainContent) {
+            // Mobile: toggle active class
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('active');
+                document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+                return;
+            }
+            
+            // Desktop: toggle collapsed state
+            sidebar.classList.toggle('sidebar-collapsed');
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            
+            if (toggleIcon) {
+                if (isCollapsed) {
+                    toggleIcon.classList.remove('fa-chevron-left');
+                    toggleIcon.classList.add('fa-chevron-right');
+                } else {
+                    toggleIcon.classList.remove('fa-chevron-right');
+                    toggleIcon.classList.add('fa-chevron-left');
+                }
+            }
+            
+            if (companyInfo) companyInfo.style.display = isCollapsed ? 'none' : 'block';
+            if (userInfo) userInfo.style.display = isCollapsed ? 'none' : 'block';
+            if (menuHeading) menuHeading.style.display = isCollapsed ? 'none' : 'block';
+            
+            localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
+            
+            if (mainContent) {
+                if (isCollapsed) {
                     mainContent.classList.add('main-content-expanded');
                     mainContent.classList.remove('main-content-full');
-                }
-            } else {
-                toggleIcon.classList.remove('fa-chevron-right');
-                toggleIcon.classList.add('fa-chevron-left');
-                
-                // Show text elements
-                if (companyInfo) companyInfo.style.display = 'block';
-                if (userInfo) userInfo.style.display = 'block';
-                if (menuHeading) menuHeading.style.display = 'block';
-                
-                // Store state in localStorage
-                localStorage.setItem('sidebarCollapsed', 'false');
-                
-                // Adjust main content
-                if (mainContent) {
+                } else {
                     mainContent.classList.remove('main-content-expanded');
                     mainContent.classList.add('main-content-full');
                 }
             }
         }
-        
-        // Initialize sidebar state on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const companyInfo = document.getElementById('companyInfo');
-            const userInfo = document.getElementById('userInfo');
-            const menuHeading = document.getElementById('menuHeading');
-            
-            const savedState = localStorage.getItem('sidebarCollapsed');
-            
-            if (savedState === 'true') {
-                sidebar.classList.add('sidebar-collapsed');
-                toggleIcon.classList.remove('fa-chevron-left');
-                toggleIcon.classList.add('fa-chevron-right');
-                
-                // Hide text elements
-                if (companyInfo) companyInfo.style.display = 'none';
-                if (userInfo) userInfo.style.display = 'none';
-                if (menuHeading) menuHeading.style.display = 'none';
-                
-                // Adjust main content
-                if (mainContent) {
-                    mainContent.classList.add('main-content-expanded');
-                    mainContent.classList.remove('main-content-full');
-                }
-            }
-            
-            // Add click functionality for dropdowns
-            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-            dropdownToggles.forEach(toggle => {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const dropdown = this.parentElement;
-                    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-                    
-                    // Close all other dropdowns
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        if (menu !== dropdownMenu) {
-                            menu.style.display = 'none';
-                        }
-                    });
-                    
-                    // Toggle current dropdown
-                    if (dropdownMenu) {
-                        const isVisible = dropdownMenu.style.display === 'block';
-                        dropdownMenu.style.display = isVisible ? 'none' : 'block';
-                        
-                        // Position the dropdown for collapsed sidebar
-                        if (sidebar.classList.contains('sidebar-collapsed')) {
-                            dropdownMenu.style.left = '100%';
-                            dropdownMenu.style.top = '0';
-                            dropdownMenu.style.width = '220px';
-                        }
-                    }
-                });
-            });
-            
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.dropdown-container')) {
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        menu.style.display = 'none';
-                    });
-                }
-            });
-            
-            // Set active menu item based on current page
-            const currentPath = window.location.pathname;
-            const menuItems = document.querySelectorAll('.sidebar-menu-item');
-            
-            menuItems.forEach(item => {
-                const href = item.getAttribute('href');
-                if (href && href !== '#' && currentPath.includes(href)) {
-                    item.classList.add('active');
-                }
-            });
-            
-            // Add active state to parent dropdown when child is active
-            const dropdownItems = document.querySelectorAll('.dropdown-item');
-            dropdownItems.forEach(item => {
-                if (item.getAttribute('href') === currentPath) {
-                    item.classList.add('active');
-                    const parentDropdown = item.closest('.dropdown-container');
-                    if (parentDropdown) {
-                        const parentLink = parentDropdown.querySelector('.dropdown-toggle');
-                        if (parentLink) {
-                            parentLink.classList.add('active');
-                        }
-                    }
-                }
-            });
-        });
     </script>
 </div>
 </html>

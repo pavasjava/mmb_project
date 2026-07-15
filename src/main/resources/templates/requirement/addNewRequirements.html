@@ -15,36 +15,54 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
     
     <style>
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            background: #f8fafc;
+        }
+        
         /* Main content alignment for sidebar */
         .main-content {
-            margin-left: 280px;
-            transition: all 0.3s ease;
+            margin-left: 0; /* Changed from 280px to 0 */
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            width: 100%;
         }
         
         .main-content-expanded {
-            margin-left: 80px;
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
         }
         
         .main-content-full {
-            margin-left: 0;
+            margin-left: 0 !important;
         }
         
         /* Fixed: Wrap top navbar in a container with proper margin */
-        
+        .top-navbar-wrapper {
+            width: 100%;
+        }
         
         /* Fix for the top navbar's page-header */
-        
+        .top-navbar .page-header {
+            width: 100%;
+        }
         
         /* Adjust main content to account for navbar */
-		.page-container {
-		        padding: 1rem 2rem;
-		        width: 100%;
-		        max-width: 1400px;
-		        margin: 0 auto;
-		        margin-top: 1rem; /* Added margin for top navbar */
-		    }
+        .page-container {
+            padding: 1rem 24px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-top: 1rem; /* Added margin for top navbar */
+        }
         
         .form-container {
             background: white;
@@ -143,35 +161,168 @@
             padding-top: 1rem;
         }
         
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .toast-notification.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .toast-notification.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .toast-notification.info {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Read only value styling */
+        .read-only-value {
+            cursor: not-allowed;
+        }
+        
+        .read-only-value .form-input {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+        
         /* RESPONSIVE STYLES */
         @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
             .form-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
         
+        @media (max-width: 1024px) {
+            body {
+                padding-left: 220px;
+            }
+            .page-container {
+                padding: 1rem 16px;
+            }
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+        
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
             .main-content {
                 margin-left: 0 !important;
             }
             
+            .main-content-expanded {
+                margin-left: 0 !important;
+            }
             
+            .main-content-full {
+                margin-left: 0 !important;
+            }
             
             .page-container {
+                padding: 0 12px 12px 12px;
                 margin-left: 0 !important;
                 width: 100%;
-                padding: 0 1rem 1rem 1rem;
                 margin-top: 0;
+            }
+            
+            .form-container {
+                padding: 1rem;
+                margin-top: 1rem;
             }
             
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
             .page-inner-header {
                 flex-direction: column;
                 gap: 1rem;
                 padding-top: 0.5rem;
+            }
+            
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-container {
+                padding: 0 8px 8px 8px;
+            }
+            
+            .form-container {
+                padding: 0.75rem;
+            }
+            
+            .form-grid {
+                gap: 0.75rem;
+            }
+            
+            .action-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            .main-content {
+                -webkit-font-smoothing: antialiased;
             }
         }
     </style>
@@ -207,7 +358,7 @@
             </div>-->
             
             <!-- Form Section -->
-            <div class="form-container" style="margin-left: 130px;">
+            <div class="form-container">
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">
                     <span th:text="${requirement.requirementId} != null ? 'Update Requirement Details' : 'Enter Requirement Details'"></span>
                 </h2>
@@ -216,83 +367,83 @@
                 <form th:action="${requirement.requirementId} != null ? @{/requirements/update/{id}(id=${requirement.requirementId})} : @{/requirements/save}"
                       th:object="${requirement}" method="post">
                     
-					  <div class="form-grid">
-					      <!-- City Selection - Different for Add vs Edit -->
-					      <div>
-					          <label class="form-label">City *</label>
-					          
-					          <!-- Edit Mode: Show as text -->
-					          <div th:if="${requirement.requirementId} != null" class="read-only-value">
-					              <div class="form-input bg-gray-50">
-					                  <span th:text="${requirement.city?.cityName}">City Name</span>
-					                  <input type="hidden" th:field="*{city.cityId}" />
-					              </div>
-					              <p class="text-xs text-gray-500 mt-1">City cannot be changed</p>
-					          </div>
-					          
-					          <!-- Add Mode: Show as dropdown -->
-					          <div th:unless="${requirement.requirementId} != null">
-					              <select id="city" th:field="*{city.cityId}" class="form-select" required>
-					                  <option value="">-- Select City --</option>
-					                  <option th:each="city : ${cities}"
-					                          th:value="${city.cityId}"
-					                          th:text="${city.cityName}">
-					                  </option>
-					              </select>
-					          </div>
-					      </div>
-					      
-					      <!-- Area Selection - Different for Add vs Edit -->
-					      <div>
-					          <label class="form-label">Area *</label>
-					          
-					          <!-- Edit Mode: Show as text -->
-					          <div th:if="${requirement.requirementId} != null" class="read-only-value">
-					              <div class="form-input bg-gray-50">
-					                  <span th:text="${requirement.area?.locationAreaName}">Area Name</span>
-					                  <input type="hidden" th:field="*{area.locationAreaId}" />
-					              </div>
-					              <p class="text-xs text-gray-500 mt-1">Area cannot be changed</p>
-					          </div>
-					          
-					          <!-- Add Mode: Show as dropdown -->
-					          <div th:unless="${requirement.requirementId} != null">
-					              <select id="area" th:field="*{area.locationAreaId}" class="form-select" required>
-					                  <option value="">-- Select Area --</option>
-					                  <option th:each="a : ${areas}"
-					                          th:value="${a.locationAreaId}"
-					                          th:text="${a.locationAreaName}">
-					                  </option>
-					              </select>
-					          </div>
-					      </div>						  
-					      
-					      <!-- Borewell Type - Always dropdown (editable) -->
-					      <div>
-					          <label class="form-label">Borewell Type *</label>
-					          <select id="borewellType" th:field="*{borewellType.borewelTypeid}" class="form-select" required>
-					              <option value="">-- Select Borewell Type --</option>
-					              <option th:each="b : ${borewellTypes}" 
-					                      th:value="${b.borewelTypeid}" 
-					                      th:text="${b.name}"
-					                      th:selected="${requirement.borewellType != null && requirement.borewellType.borewelTypeid == b.borewelTypeid}">
-					              </option>
-					          </select>
-					      </div>
-						  
-						<div>
-							<label class="form-label">Drilling Size *</label>
-							<select id="reqDrillingDia" th:field="*{reqDrillingDia}" class="form-select" required>
-								<option value="">-- Select Boring Size --</option>
-								<option value="4">4 inch/101.6mm</option>
-								<option value="5">5 inch/127mm</option>
-								<option value="6">6 inch/152.4mm</option>
-								<option value="8">8 inch/203.2mm</option>
-								<option value="10">10 inch/254mm</option>
-								<option value="12">12 inch/304.8mm</option>
-								<option value="oth">Other</option>
-							</select>
-						</div>
+                      <div class="form-grid">
+                          <!-- City Selection - Different for Add vs Edit -->
+                          <div>
+                              <label class="form-label">City *</label>
+                              
+                              <!-- Edit Mode: Show as text -->
+                              <div th:if="${requirement.requirementId} != null" class="read-only-value">
+                                  <div class="form-input bg-gray-50">
+                                      <span th:text="${requirement.city?.cityName}">City Name</span>
+                                      <input type="hidden" th:field="*{city.cityId}" />
+                                  </div>
+                                  <p class="text-xs text-gray-500 mt-1">City cannot be changed</p>
+                              </div>
+                              
+                              <!-- Add Mode: Show as dropdown -->
+                              <div th:unless="${requirement.requirementId} != null">
+                                  <select id="city" th:field="*{city.cityId}" class="form-select" required>
+                                      <option value="">-- Select City --</option>
+                                      <option th:each="city : ${cities}"
+                                              th:value="${city.cityId}"
+                                              th:text="${city.cityName}">
+                                      </option>
+                                  </select>
+                              </div>
+                          </div>
+                          
+                          <!-- Area Selection - Different for Add vs Edit -->
+                          <div>
+                              <label class="form-label">Area *</label>
+                              
+                              <!-- Edit Mode: Show as text -->
+                              <div th:if="${requirement.requirementId} != null" class="read-only-value">
+                                  <div class="form-input bg-gray-50">
+                                      <span th:text="${requirement.area?.locationAreaName}">Area Name</span>
+                                      <input type="hidden" th:field="*{area.locationAreaId}" />
+                                  </div>
+                                  <p class="text-xs text-gray-500 mt-1">Area cannot be changed</p>
+                              </div>
+                              
+                              <!-- Add Mode: Show as dropdown -->
+                              <div th:unless="${requirement.requirementId} != null">
+                                  <select id="area" th:field="*{area.locationAreaId}" class="form-select" required>
+                                      <option value="">-- Select Area --</option>
+                                      <option th:each="a : ${areas}"
+                                              th:value="${a.locationAreaId}"
+                                              th:text="${a.locationAreaName}">
+                                      </option>
+                                  </select>
+                              </div>
+                          </div>                          
+                          
+                          <!-- Borewell Type - Always dropdown (editable) -->
+                          <div>
+                              <label class="form-label">Borewell Type *</label>
+                              <select id="borewellType" th:field="*{borewellType.borewelTypeid}" class="form-select" required>
+                                  <option value="">-- Select Borewell Type --</option>
+                                  <option th:each="b : ${borewellTypes}" 
+                                          th:value="${b.borewelTypeid}" 
+                                          th:text="${b.name}"
+                                          th:selected="${requirement.borewellType != null && requirement.borewellType.borewelTypeid == b.borewelTypeid}">
+                                  </option>
+                              </select>
+                          </div>
+                          
+                        <div>
+                            <label class="form-label">Drilling Size *</label>
+                            <select id="reqDrillingDia" th:field="*{reqDrillingDia}" class="form-select" required>
+                                <option value="">-- Select Boring Size --</option>
+                                <option value="4">4 inch/101.6mm</option>
+                                <option value="5">5 inch/127mm</option>
+                                <option value="6">6 inch/152.4mm</option>
+                                <option value="8">8 inch/203.2mm</option>
+                                <option value="10">10 inch/254mm</option>
+                                <option value="12">12 inch/304.8mm</option>
+                                <option value="oth">Other</option>
+                            </select>
+                        </div>
                         
                         <!-- Drilling Depth -->
                         <div>
@@ -388,21 +539,28 @@
                 if (savedState === 'true') {
                     mainContent.classList.add('main-content-expanded');
                     mainContent.classList.remove('main-content-full');
+                    sidebar.classList.add('sidebar-collapsed');
                 } else {
                     mainContent.classList.remove('main-content-expanded');
                     mainContent.classList.add('main-content-full');
+                    sidebar.classList.remove('sidebar-collapsed');
                 }
             }
             
-            // City-Area dynamic loading
-            document.getElementById("city").addEventListener("change", loadAreas);
+            // City-Area dynamic loading (only for Add mode)
+            const citySelect = document.getElementById("city");
+            if (citySelect) {
+                citySelect.addEventListener("change", loadAreas);
+            }
 
             function loadAreas() {
                 const cityId = document.getElementById("city").value;
                 const areaDropdown = document.getElementById("area");
-                areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
+                if (areaDropdown) {
+                    areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
+                }
 
-                if (cityId) {
+                if (cityId && areaDropdown) {
                     fetch("/api/areas/byCity/" + cityId)
                         .then(res => res.json())
                         .then(data => {
@@ -421,16 +579,57 @@
             const form = document.querySelector('form');
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    const city = document.getElementById('city').value;
-                    const area = document.getElementById('area').value;
-                    const borewellType = document.getElementById('borewellType').value;
+                    const city = document.getElementById('city');
+                    const area = document.getElementById('area');
+                    const borewellType = document.getElementById('borewellType');
                     
-                    if (!city || !area || !borewellType) {
+                    // Only validate if fields exist (they might be hidden in edit mode)
+                    if (city && city.value === '') {
                         e.preventDefault();
-                        alert('Please fill all required fields marked with * before submitting.');
+                        showToast('Please select a City', 'error');
+                        return false;
+                    }
+                    if (area && area.value === '') {
+                        e.preventDefault();
+                        showToast('Please select an Area', 'error');
+                        return false;
+                    }
+                    if (borewellType && borewellType.value === '') {
+                        e.preventDefault();
+                        showToast('Please select a Borewell Type', 'error');
                         return false;
                     }
                 });
+            }
+            
+            // Toast notification function
+            function showToast(message, type) {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+                
+                const toast = document.createElement('div');
+                toast.className = `toast-notification ${type}`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                                      type === 'success' ? 'fa-check-circle' : 
+                                      'fa-info-circle'}"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
             }
         });
         

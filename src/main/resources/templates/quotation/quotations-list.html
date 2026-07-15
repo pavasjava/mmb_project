@@ -13,32 +13,111 @@
     <div th:replace="fragments/head :: head"></div>
     
     <style>
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            background: #f1f5f9;
+            width: 100%;
+        }
+        
         /* Main content alignment for sidebar */
         .main-content {
-            margin-left: 280px;
-            transition: all 0.3s ease;
+            margin-left: 0; /* Changed from 280px to 0 */
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            width: 100%;
         }
         
         .main-content-expanded {
-            margin-left: 80px;
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
         }
         
         .main-content-full {
-            margin-left: 0;
+            margin-left: 0 !important;
         }
         
         .quotations-container {
             min-height: 100vh;
         }
         
+        /* Page Header - Fixed to use full width */
         .page-header {
             background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%);
             padding: 2rem 0;
             margin-bottom: 2rem;
             color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: relative;
+        }
+        
+        .page-header .header-inner {
+            width: 100%;
+            padding: 0 24px;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .page-header .header-text {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .page-header .header-text h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .page-header .header-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .page-header .header-button {
+            flex-shrink: 0;
+        }
+        
+        .page-header .header-button a {
+            background: white;
+            color: #2563eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .page-header .header-button a:hover {
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Container - FIXED: Removed max-width and margin-left */
+        .content-container {
+            width: 100%;
+            padding: 0 24px 24px 24px;
+            margin: 0;
+            box-sizing: border-box;
         }
         
         .card {
@@ -77,6 +156,9 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
         }
         
         .action-btn.edit { background: #3b82f6; color: white; }
@@ -96,11 +178,14 @@
             border-radius: 12px;
             background: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
         }
         
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
         
         .data-table thead {
@@ -116,6 +201,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
         }
         
         .data-table td {
@@ -123,6 +209,7 @@
             border-bottom: 1px solid #f1f5f9;
             color: #475569;
             font-size: 0.95rem;
+            vertical-align: middle;
         }
         
         .data-table tbody tr {
@@ -131,7 +218,6 @@
         
         .data-table tbody tr:hover {
             background: #f8fafc;
-            transform: translateX(4px);
         }
         
         .status-chip {
@@ -166,6 +252,7 @@
             padding: 1.5rem;
             margin-bottom: 2rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
         }
         
         .search-input {
@@ -174,6 +261,7 @@
             border-radius: 8px;
             width: 100%;
             transition: all 0.2s ease;
+            background: white;
         }
         
         .search-input:focus {
@@ -188,6 +276,7 @@
             align-items: center;
             gap: 0.5rem;
             margin-top: 2rem;
+            flex-wrap: wrap;
         }
         
         .pagination-btn {
@@ -213,9 +302,10 @@
         
         .quick-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             margin-bottom: 2rem;
+            width: 100%;
         }
         
         .stat-card {
@@ -224,6 +314,7 @@
             padding: 1.5rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border-left: 4px solid;
+            width: 100%;
         }
         
         .stat-card.total { border-left-color: #3b82f6; }
@@ -231,19 +322,231 @@
         .stat-card.approved { border-left-color: #10b981; }
         .stat-card.revenue { border-left-color: #8b5cf6; }
         
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .toast-notification.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .toast-notification.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .toast-notification.info {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            body {
+                padding-left: 220px;
+            }
+            
+            .data-table {
+                min-width: 700px;
+            }
+            
+            .content-container {
+                padding: 0 16px 16px 16px;
+            }
+            
+            .page-header .header-inner {
+                padding: 0 16px;
+            }
+        }
+        
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
             .main-content {
                 margin-left: 0 !important;
+            }
+            
+            .main-content-expanded {
+                margin-left: 0 !important;
+            }
+            
+            .main-content-full {
+                margin-left: 0 !important;
+            }
+            
+            .content-container {
+                padding: 0 12px 12px 12px;
+            }
+            
+            .page-header .header-inner {
+                padding: 0 12px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .page-header .header-button {
+                width: 100%;
+            }
+            
+            .page-header .header-button a {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .data-table {
+                min-width: 600px;
+                font-size: 0.8rem;
             }
             
             .data-table th,
             .data-table td {
                 padding: 0.75rem 1rem;
-                font-size: 0.875rem;
+                font-size: 0.8rem;
             }
             
+            .action-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+                gap: 0.3rem;
+            }
+            
+            .filter-bar .grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.25rem;
+            }
+            
+            .page-header .header-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
             .quick-stats {
                 grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                min-width: 500px;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 0.5rem;
+                font-size: 0.7rem;
+            }
+            
+            .action-btn {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.65rem;
+            }
+            
+            .stat-card {
+                padding: 0.75rem;
+            }
+            
+            .pagination-btn {
+                padding: 0.3rem 0.7rem;
+                font-size: 0.8rem;
+            }
+            
+            .filter-bar {
+                padding: 1rem;
+            }
+            
+            .content-container {
+                padding: 0 8px 8px 8px;
+            }
+            
+            .page-header .header-inner {
+                padding: 0 8px;
+            }
+            
+            .page-header .header-text h1 {
+                font-size: 1.25rem;
+            }
+            
+            .page-header .header-text p {
+                font-size: 0.875rem;
+            }
+        }
+        
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            .main-content {
+                -webkit-font-smoothing: antialiased;
             }
         }
     </style>
@@ -256,32 +559,24 @@
     
     <!-- Main Content Area -->
     <div class="main-content" id="mainContent">
-        <!-- Page Header -->
-		<div class="page-header relative">
-		    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-		        <div class="flex flex-col">
-		            <div>
-		                <h1 class="text-3xl font-bold mb-2">Quotations Management</h1>
-		                <p class="text-blue-100 opacity-90">
-		                    Create, manage, and track all your quotations in one place
-		                </p>
-		            </div>
-		        </div>
-
-		        <!-- Button positioned to the far right -->
-		        <a href="/quotations/addNewQuotation"
-		           class="absolute right-10 top-1/2 -translate-y-1/2 bg-white text-blue-600 hover:bg-blue-50 
-		                  px-6 py-3 rounded-lg font-semibold shadow-lg transition duration-300 flex items-center gap-2">
-		            <i class="fas fa-plus"></i>
-		            <span>New Quotation</span>
-		        </a>
-
-		    </div>
-		</div>
+        <!-- Page Header - Fixed version -->
+        <div class="page-header">
+            <div class="header-inner">
+                <div class="header-text">
+                    <h1>Quotations Management</h1>
+                    <p>Create, manage, and track all your quotations in one place</p>
+                </div>
+                <div class="header-button">
+                    <a href="/quotations/addNewQuotation">
+                        <i class="fas fa-plus"></i>
+                        <span>New Quotation</span>
+                    </a>
+                </div>
+            </div>
+        </div>
         
         <!-- Main Content Container -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8" style="margin-left: 400px;">
+        <div class="content-container">
             <!-- Quick Stats -->
             <div class="quick-stats">
                 <div class="stat-card total">
@@ -290,7 +585,7 @@
                             <p class="text-sm text-gray-500 mb-1">Total Quotations</p>
                             <h3 class="text-2xl font-bold text-gray-800" th:text="${quotations != null ? #lists.size(quotations) : 0}">0</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-file-invoice text-blue-600 text-xl"></i>
                         </div>
                     </div>
@@ -302,7 +597,7 @@
                             <p class="text-sm text-gray-500 mb-1">Pending</p>
                             <h3 class="text-2xl font-bold text-gray-800">8</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-clock text-yellow-600 text-xl"></i>
                         </div>
                     </div>
@@ -314,7 +609,7 @@
                             <p class="text-sm text-gray-500 mb-1">Approved</p>
                             <h3 class="text-2xl font-bold text-gray-800">24</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-check-circle text-green-600 text-xl"></i>
                         </div>
                     </div>
@@ -326,7 +621,7 @@
                             <p class="text-sm text-gray-500 mb-1">Total Revenue</p>
                             <h3 class="text-2xl font-bold text-gray-800">₹4,85,000</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-rupee-sign text-purple-600 text-xl"></i>
                         </div>
                     </div>
@@ -368,7 +663,7 @@
             <!-- Quotations Table -->
             <div class="card overflow-hidden">
                 <div class="p-6 border-b border-gray-100">
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-wrap justify-between items-center gap-4">
                         <h2 class="text-xl font-semibold text-gray-800">Recent Quotations</h2>
                         <div class="flex items-center gap-2">
                             <button class="text-gray-600 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100">
@@ -446,22 +741,22 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex flex-wrap items-center gap-1">
                                         <a th:href="@{'/quotations/editQuotation/' + ${q.quotationId}}" 
-                                           class="action-btn edit" title="Edit">
+                                           class="action-btn edit text-xs" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <a th:href="@{'/quotations/deleteQuotation/' + ${q.quotationId}}"
-                                           class="action-btn delete" title="Delete"
+                                           class="action-btn delete text-xs" title="Delete"
                                            onclick="return confirm('Are you sure you want to delete this quotation?')">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                         <a th:href="@{'/quotations/downloadQuotation/' + ${q.quotationId}}"
-                                           class="action-btn download" title="Download PDF">
+                                           class="action-btn download text-xs" title="Download PDF">
                                             <i class="fas fa-download"></i>
                                         </a>
                                         <a th:href="@{'/quotations/viewQuotation/' + ${q.quotationId}}"
-                                           class="action-btn view" title="View Details">
+                                           class="action-btn view text-xs" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </div>
@@ -491,7 +786,7 @@
                 
                 <!-- Pagination (if needed) -->
                 <div th:if="${not #lists.isEmpty(quotations)}" class="p-6 border-t border-gray-100">
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-wrap justify-between items-center gap-4">
                         <div class="text-sm text-gray-500">
                             Showing <span class="font-medium">1</span> to <span class="font-medium" th:text="${#lists.size(quotations)}"></span> of <span class="font-medium" th:text="${#lists.size(quotations)}"></span> results
                         </div>
@@ -565,9 +860,11 @@
                 if (savedState === 'true') {
                     mainContent.classList.add('main-content-expanded');
                     mainContent.classList.remove('main-content-full');
+                    sidebar.classList.add('sidebar-collapsed');
                 } else {
                     mainContent.classList.remove('main-content-expanded');
                     mainContent.classList.add('main-content-full');
+                    sidebar.classList.remove('sidebar-collapsed');
                 }
             }
             
@@ -638,6 +935,36 @@
                     }
                 });
             });
+            
+            // Toast notification function
+            function showToast(message, type) {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+                
+                const toast = document.createElement('div');
+                toast.className = `toast-notification ${type}`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                                      type === 'success' ? 'fa-check-circle' : 
+                                      'fa-info-circle'}"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
             
             // Add tooltips to action buttons
             const actionButtons = document.querySelectorAll('.action-btn');

@@ -8,24 +8,35 @@
     <div th:replace="fragments/head :: head"></div>
     
     <style>
-        /* Main content alignment for sidebar */
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            background: #f8fafc;
+        }
+        
+        /* MAIN CONTENT - No margin needed */
         .main-content {
-            margin-left: 280px;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             padding-bottom: 2rem;
+            width: 100%;
         }
         
         .main-content-expanded {
-            margin-left: 80px;
-            width: calc(100% - 80px);
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
         }
         
         .main-content-full {
-            margin-left: 0;
-            width: 100%;
+            margin-left: 0 !important;
         }
         
         /* Top navbar wrapper */
@@ -35,6 +46,7 @@
             position: sticky;
             top: 0;
             z-index: 30;
+            width: 100%;
         }
         
         /* Form container styling */
@@ -42,13 +54,12 @@
             padding: 2rem;
             max-width: 1200px;
             margin: 0 auto;
-			margin-left: 450px;
         }
         
         /* Card styling - Enhanced for larger size */
         .form-card {
             max-width: 1140px;
-            margin: 0rem auto;
+            margin: 0 auto;
             background: white;
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -355,6 +366,37 @@
             animation: slideInRight 0.3s ease;
         }
         
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .toast-notification.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .toast-notification.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .toast-notification.info {
+            background: #3b82f6;
+            color: white;
+        }
+        
         /* Validation error styling */
         .error-message {
             color: #e53e3e;
@@ -374,11 +416,47 @@
             box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
         }
         
-        /* Responsive adjustments for larger form */
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
+        }
+        
         @media (max-width: 1024px) {
+            body {
+                padding-left: 220px;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
             .form-card {
-                max-width: 90%;
-                margin: 1.5rem auto;
+                max-width: 95%;
             }
             
             .form-grid {
@@ -387,14 +465,20 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
             .main-content {
                 margin-left: 0 !important;
-                width: 100% !important;
             }
             
             .main-content-expanded {
                 margin-left: 0 !important;
-                width: 100% !important;
+            }
+            
+            .main-content-full {
+                margin-left: 0 !important;
             }
             
             .form-container {
@@ -452,6 +536,15 @@
             .info-section {
                 padding: 1.5rem;
             }
+            
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -482,31 +575,19 @@
             }
         }
         
-        /* Loading state */
-        .btn.loading {
-            position: relative;
-            color: transparent;
-        }
-        
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease infinite;
-        }
-        
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            .main-content {
+                -webkit-font-smoothing: antialiased;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
     
     <!-- Admin Sidebar -->
     <div th:replace="fragments/admin-navbar :: admin-sidebar"></div>
@@ -566,52 +647,41 @@
                                 </span>
                             </div>
                             
-<!--                             Quality 
+                            <!-- Quality -->
                             <div class="form-group">
                                 <label class="form-label required">
                                     <i class="fas fa-award"></i> Quality
                                 </label>
-                                <input type="text" 
-                                       th:field="*{quality}" 
-                                       class="form-input" 
-                                       placeholder="Enter material quality (e.g., Grade A, Premium)"
-                                       required />
-                            </div>-->
-							<!-- Quality -->
-							<div class="form-group">
-							    <label class="form-label required">
-							        <i class="fas fa-award"></i> Quality
-							    </label>
 
-							    <!-- Text Input (default) -->
-							    <input type="text"
-							           id="qualityText"
-							           class="form-input"
-							           placeholder="Enter material quality (e.g., Grade A, Premium)" />
+                                <!-- Text Input (default) -->
+                                <input type="text"
+                                       id="qualityText"
+                                       class="form-input"
+                                       placeholder="Enter material quality (e.g., Grade A, Premium)" />
 
-							    <!-- CASING PIPE Dropdown -->
-							    <select id="qualityCasingPipe"
-							            class="form-select"
-							            style="display:none;">
-							        <option value="">-- Select Quality --</option>
-							        <option value="40">Schedule 40</option>
-							        <option value="80">Schedule 80</option>
-							    </select>
+                                <!-- CASING PIPE Dropdown -->
+                                <select id="qualityCasingPipe"
+                                        class="form-select"
+                                        style="display:none;">
+                                    <option value="">-- Select Quality --</option>
+                                    <option value="40">Schedule 40</option>
+                                    <option value="80">Schedule 80</option>
+                                </select>
 
-							    <!-- MASTER CASING Dropdown -->
-							    <select id="qualityMasterCasing"
-							            class="form-select"
-							            style="display:none;">
-							        <option value="">-- Select Quality --</option>
-							        <option value="4kg">4kg</option>
-							        <option value="6kg">6kg</option>
-							    </select>
+                                <!-- MASTER CASING Dropdown -->
+                                <select id="qualityMasterCasing"
+                                        class="form-select"
+                                        style="display:none;">
+                                    <option value="">-- Select Quality --</option>
+                                    <option value="4kg">4kg</option>
+                                    <option value="6kg">6kg</option>
+                                </select>
 
-							    <!-- Actual Thymeleaf bound field -->
-							    <input type="hidden"
-							           th:field="*{quality}"
-							           id="qualityHidden" />
-							</div>
+                                <!-- Actual Thymeleaf bound field -->
+                                <input type="hidden"
+                                       th:field="*{quality}"
+                                       id="qualityHidden" />
+                            </div>
                             
                             <!-- Size -->
                             <div class="form-group">
@@ -701,9 +771,11 @@
                 if (savedState === 'true') {
                     mainContent.classList.add('main-content-expanded');
                     mainContent.classList.remove('main-content-full');
+                    sidebar.classList.add('sidebar-collapsed');
                 } else {
                     mainContent.classList.remove('main-content-expanded');
                     mainContent.classList.add('main-content-full');
+                    sidebar.classList.remove('sidebar-collapsed');
                 }
             }
             
@@ -818,11 +890,7 @@
                 existingToasts.forEach(toast => toast.remove());
                 
                 const toast = document.createElement('div');
-                toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
-                    type === 'error' ? 'bg-red-500 text-white' : 
-                    type === 'success' ? 'bg-green-500 text-white' : 
-                    'bg-blue-500 text-white'
-                }`;
+                toast.className = `toast-notification ${type}`;
                 toast.innerHTML = `
                     <div class="flex items-center gap-3">
                         <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
@@ -878,59 +946,59 @@
             console.log('Window fully loaded');
         });
     </script>
-	
-	<script>
-	document.addEventListener("DOMContentLoaded", function () {
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-	    const materialTypeSelect = document.querySelector("select[name='materialType']");
+        const materialTypeSelect = document.querySelector("select[name='materialType']");
 
-	    const qualityText = document.getElementById("qualityText");
-	    const qualityCasing = document.getElementById("qualityCasingPipe");
-	    const qualityMaster = document.getElementById("qualityMasterCasing");
-	    const qualityHidden = document.getElementById("qualityHidden");
+        const qualityText = document.getElementById("qualityText");
+        const qualityCasing = document.getElementById("qualityCasingPipe");
+        const qualityMaster = document.getElementById("qualityMasterCasing");
+        const qualityHidden = document.getElementById("qualityHidden");
 
-	    function hideAll() {
-	        qualityText.style.display = "none";
-	        qualityCasing.style.display = "none";
-	        qualityMaster.style.display = "none";
+        function hideAll() {
+            qualityText.style.display = "none";
+            qualityCasing.style.display = "none";
+            qualityMaster.style.display = "none";
 
-	        qualityText.value = "";
-	        qualityCasing.value = "";
-	        qualityMaster.value = "";
-	    }
+            qualityText.value = "";
+            qualityCasing.value = "";
+            qualityMaster.value = "";
+        }
 
-	    materialTypeSelect.addEventListener("change", function () {
-	        const selectedText =
-	            materialTypeSelect.options[materialTypeSelect.selectedIndex].text.trim();
+        materialTypeSelect.addEventListener("change", function () {
+            const selectedText =
+                materialTypeSelect.options[materialTypeSelect.selectedIndex].text.trim();
 
-	        hideAll();
+            hideAll();
 
-	        if (selectedText === "CASING PIPE") {
-	            qualityCasing.style.display = "block";
-	        }
-	        else if (selectedText === "MASTER CASING") {
-	            qualityMaster.style.display = "block";
-	        }
-	        else {
-	            qualityText.style.display = "block";
-	        }
-	    });
+            if (selectedText === "CASING PIPE") {
+                qualityCasing.style.display = "block";
+            }
+            else if (selectedText === "MASTER CASING") {
+                qualityMaster.style.display = "block";
+            }
+            else {
+                qualityText.style.display = "block";
+            }
+        });
 
-	    // Sync values
-	    qualityText.addEventListener("input", () => {
-	        qualityHidden.value = qualityText.value;
-	    });
+        // Sync values
+        qualityText.addEventListener("input", () => {
+            qualityHidden.value = qualityText.value;
+        });
 
-	    qualityCasing.addEventListener("change", () => {
-	        qualityHidden.value = qualityCasing.value;
-	    });
+        qualityCasing.addEventListener("change", () => {
+            qualityHidden.value = qualityCasing.value;
+        });
 
-	    qualityMaster.addEventListener("change", () => {
-	        qualityHidden.value = qualityMaster.value;
-	    });
+        qualityMaster.addEventListener("change", () => {
+            qualityHidden.value = qualityMaster.value;
+        });
 
-	});
-	</script>
+    });
+    </script>
 
 </body>
 </html>

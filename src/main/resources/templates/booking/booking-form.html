@@ -12,24 +12,35 @@
     <div th:replace="fragments/head :: head"></div>
     
     <style>
-        /* EXACT SAME STYLES AS DRILLING PRICE FORM */
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            background: #f1f5f9;
+        }
+        
+        /* MAIN CONTENT - No margin needed */
         .main-content {
-            margin-left: 280px;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding-bottom: 2rem;
+            padding: 0;
+            width: 100%;
         }
         
         .main-content-expanded {
-            margin-left: 80px;
-            width: calc(100% - 80px);
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
         }
         
         .main-content-full {
-            margin-left: 0;
-            width: 100%;
+            margin-left: 0 !important;
         }
         
         /* Top navbar wrapper */
@@ -47,7 +58,6 @@
             padding: 2rem;
             max-width: 1400px;
             margin: 0 auto;
-            margin-left: 310px;
         }
         
         /* Card styling - Enhanced for larger size */
@@ -204,207 +214,124 @@
             cursor: not-allowed;
         }
         
-		/* Borewell Type Container - Fixed Size */
-		.borewell-type-container {
-		    display: grid;
-		    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-		    gap: 1rem;
-		    margin-top: 0.5rem;
-		}
+        /* Borewell Type Container - Fixed Size */
+        .borewell-type-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
 
-		.borewell-type-option {
-		    display: flex;
-		    flex-direction: column;
-		    align-items: center;
-		    padding: 1rem;
-		    border: 2px solid #e2e8f0;
-		    border-radius: 12px;
-		    cursor: pointer;
-		    transition: all 0.3s ease;
-		    background: #f7fafc;
-		    text-align: center;
-		    position: relative;
-		    overflow: hidden;
-		    height: auto;
-		    min-height: 160px; /* Reduced from 180px */
-		    justify-content: flex-start;
-		}
+        .borewell-type-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            height: auto;
+            min-height: 160px;
+            justify-content: flex-start;
+        }
 
-		/* Original image size */
-		.borewell-type-option img {
-		    width: 100px; /* Fixed width */
-		    height: 70px; /* Fixed height */
-		    object-fit: contain; /* Keep this for full image */
-		    border-radius: 8px;
-		    margin-bottom: 0.75rem;
-		    border: 2px solid #e2e8f0;
-		    background: white;
-		    padding: 5px;
-		    transition: all 0.3s ease;
-		}
+        .borewell-type-option img {
+            width: 100px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
 
-		.borewell-type-option span {
-		    font-size: 0.9rem;
-		    font-weight: 600;
-		    color: #2d3748;
-		    margin-top: auto;
-		}
+        .borewell-type-option span {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: auto;
+        }
 
-		/* Add checkmark for selected option - KEEP THIS */
-		.borewell-type-option.selected::before {
-		    content: '✓';
-		    position: absolute;
-		    top: 8px;
-		    right: 8px;
-		    width: 24px;
-		    height: 24px;
-		    background: #2a5298;
-		    color: white;
-		    border-radius: 50%;
-		    display: flex;
-		    align-items: center;
-		    justify-content: center;
-		    font-size: 14px;
-		    font-weight: bold;
-		    z-index: 2;
-		}
+        .borewell-type-option.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: #2a5298;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 2;
+        }
 
-		/* Add border for selected option - SIMPLIFIED */
-		.borewell-type-option.selected::after {
-		    content: '';
-		    position: absolute;
-		    top: 0;
-		    left: 0;
-		    right: 0;
-		    bottom: 0;
-		    border: 3px solid #2a5298;
-		    border-radius: 10px;
-		    z-index: 1;
-		}
+        .borewell-type-option.selected::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid #2a5298;
+            border-radius: 10px;
+            z-index: 1;
+        }
 
-		/* Enhance selected state */
-		.borewell-type-option.selected {
-		    border-color: #2a5298;
-		    background: linear-gradient(135deg, #e6f0ff 0%, #d4e4ff 100%);
-		    box-shadow: 0 8px 20px rgba(42, 82, 152, 0.2);
-		    transform: translateY(-2px);
-		}
+        .borewell-type-option.selected {
+            border-color: #2a5298;
+            background: linear-gradient(135deg, #e6f0ff 0%, #d4e4ff 100%);
+            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.2);
+            transform: translateY(-2px);
+        }
 
-		.borewell-type-option.selected img {
-		    border-color: #2a5298;
-		    transform: scale(1.02); /* Reduced from 1.05 */
-		}
+        .borewell-type-option.selected img {
+            border-color: #2a5298;
+            transform: scale(1.02);
+        }
 
-		.borewell-type-option.selected span {
-		    color: #2a5298;
-		    font-weight: 700;
-		}
+        .borewell-type-option.selected span {
+            color: #2a5298;
+            font-weight: 700;
+        }
 
-		/* Add hover effect */
-		.borewell-type-option:hover:not(.selected) {
-		    border-color: #4a6fa9;
-		    background: #edf2f7;
-		    transform: translateY(-1px);
-		    box-shadow: 0 4px 12px rgba(42, 82, 152, 0.1);
-		}
+        .borewell-type-option:hover:not(.selected) {
+            border-color: #4a6fa9;
+            background: #edf2f7;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.1);
+        }
 
-		.borewell-type-option:hover:not(.selected) img {
-		    border-color: #4a6fa9;
-		}
+        .borewell-type-option:hover:not(.selected) img {
+            border-color: #4a6fa9;
+        }
 
-		/* Remove the blue overlay background - too heavy */
-		.borewell-type-option.selected::after {
-		    background: transparent; /* Remove the blue overlay */
-		}
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(42, 82, 152, 0.3);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(42, 82, 152, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(42, 82, 152, 0);
+            }
+        }
 
-		/* Keep pulse animation but make it subtler */
-		@keyframes pulse {
-		    0% {
-		        box-shadow: 0 0 0 0 rgba(42, 82, 152, 0.3);
-		    }
-		    70% {
-		        box-shadow: 0 0 0 6px rgba(42, 82, 152, 0);
-		    }
-		    100% {
-		        box-shadow: 0 0 0 0 rgba(42, 82, 152, 0);
-		    }
-		}
-
-		.borewell-type-option.selected {
-		    animation: pulse 1.5s ease;
-		}
-
-		/* Responsive adjustments */
-		@media (max-width: 768px) {
-		    .borewell-type-container {
-		        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-		        gap: 0.8rem;
-		    }
-		    
-		    .borewell-type-option {
-		        min-height: 150px;
-		        padding: 0.8rem;
-		    }
-		    
-		    .borewell-type-option img {
-		        width: 90px;
-		        height: 65px;
-		    }
-		    
-		    .borewell-type-option.selected::before {
-		        top: 6px;
-		        right: 6px;
-		        width: 22px;
-		        height: 22px;
-		        font-size: 13px;
-		    }
-		}
-
-		@media (max-width: 480px) {
-		    .borewell-type-container {
-		        grid-template-columns: repeat(2, 1fr);
-		        gap: 0.6rem;
-		    }
-		    
-		    .borewell-type-option {
-		        min-height: 140px;
-		        padding: 0.7rem;
-		    }
-		    
-		    .borewell-type-option img {
-		        width: 85px;
-		        height: 60px;
-		    }
-		    
-		    .borewell-type-option.selected::before {
-		        top: 5px;
-		        right: 5px;
-		        width: 20px;
-		        height: 20px;
-		        font-size: 12px;
-		    }
-		}
-
-		/* Responsive adjustments */
-		@media (max-width: 768px) {
-		    .borewell-type-option.selected::before {
-		        top: 6px;
-		        right: 6px;
-		        width: 22px;
-		        height: 22px;
-		        font-size: 13px;
-		    }
-		}
-
-		@media (max-width: 480px) {
-		    .borewell-type-option.selected::before {
-		        top: 5px;
-		        right: 5px;
-		        width: 20px;
-		        height: 20px;
-		        font-size: 12px;
-		    }
-		}
+        .borewell-type-option.selected {
+            animation: pulse 1.5s ease;
+        }
         
         /* Radio Button Styling */
         .radio-group {
@@ -657,15 +584,88 @@
             box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
         }
         
-        /* Responsive adjustments */
+        /* Background overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('/images/bgimage.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04;
+            z-index: -1;
+        }
+        
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+        }
+        
+        .toast-notification .flex {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .toast-notification i {
+            font-size: 1.2rem;
+        }
+        
+        .toast-notification .font-medium {
+            font-weight: 600;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
+        }
+        
         @media (max-width: 1024px) {
+            body {
+                padding-left: 220px;
+            }
+            
             .form-container {
-                margin-left: 280px !important;
+                padding: 1.5rem;
             }
             
             .form-card {
-                max-width: 90%;
-                margin: 1.5rem auto;
+                max-width: 95%;
             }
             
             .form-grid {
@@ -674,19 +674,24 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
             .main-content {
                 margin-left: 0 !important;
-                width: 100% !important;
             }
             
             .main-content-expanded {
                 margin-left: 0 !important;
-                width: 100% !important;
+            }
+            
+            .main-content-full {
+                margin-left: 0 !important;
             }
             
             .form-container {
                 padding: 1rem;
-                margin-left: 0 !important;
             }
             
             .form-card {
@@ -748,6 +753,28 @@
             .info-section {
                 padding: 1.5rem;
             }
+            
+            input[type="date"] {
+                max-width: 100%;
+            }
+            
+            .borewell-type-option {
+                min-height: 150px;
+                padding: 0.8rem;
+            }
+            
+            .borewell-type-option img {
+                width: 90px;
+                height: 65px;
+            }
+            
+            .borewell-type-option.selected::before {
+                top: 6px;
+                right: 6px;
+                width: 22px;
+                height: 22px;
+                font-size: 13px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -779,49 +806,51 @@
             
             .borewell-type-container {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 0.6rem;
+            }
+            
+            .borewell-type-option {
+                min-height: 140px;
+                padding: 0.7rem;
+            }
+            
+            .borewell-type-option img {
+                width: 85px;
+                height: 60px;
+            }
+            
+            .borewell-type-option.selected::before {
+                top: 5px;
+                right: 5px;
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+            }
+            
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
             }
         }
         
-        /* Loading state */
-        .btn.loading {
-            position: relative;
-            color: transparent;
-        }
-        
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease infinite;
-        }
-        
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
             }
-        }
-        
-        /* Background overlay */
-        .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background-image: url('/images/bgimage.png');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.04;
-            z-index: -1;
+            
+            .main-content {
+                -webkit-font-smoothing: antialiased;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- ✅ Background Image -->
+<body>
+    <!-- Background Image -->
     <div class="bg-overlay"></div>
     
     <!-- Admin Sidebar -->
@@ -898,39 +927,39 @@
                                     Select the area within the city
                                 </span>
                             </div>
-							
-							<!-- Borewell Size -->
-							<div class="form-group">
-								<label class="form-label required">
-									<i class="fas fa-expand-alt"></i> Borewell Size
-								</label>
-								<select id="drillingSizeSelect" th:field="*{drillingSize}" class="form-select" required>
-									<option value="">-- Select Boring Size --</option>
-									<option value="5">5 inch/127mm</option>
-									<option value="6">6 inch/152.4mm</option>
-									<option value="8">8 inch/203.2mm</option>
-									<option value="oth">Other</option>
-								</select>
-								<div class="mt-2" th:classappend="${booking.drillingSize == 'oth'} ? '' : 'hidden'">
-									<input type="text" id="otherDrillingSize" th:field="*{otherSize}" class="form-input"
-										placeholder="Enter custom drilling size">
-									<span class="form-help">
-										Enter custom drilling size (e.g., 10 inch, 250mm)
-									</span>
-								</div>
-							</div>
-							
-							<!-- Price -->
-							<div class="form-group price-display">
-								<label class="form-label required">
-									<i class="fas fa-rupee-sign"></i> Drilling Price
-								</label>
-								<input type="number" step="0.01" id="price" th:field="*{price}" class="form-input" readonly
-									placeholder="Auto-calculated">
-								<span class="form-help">
-									Price will be calculated automatically
-								</span>
-							</div>
+                            
+                            <!-- Borewell Size -->
+                            <div class="form-group">
+                                <label class="form-label required">
+                                    <i class="fas fa-expand-alt"></i> Borewell Size
+                                </label>
+                                <select id="drillingSizeSelect" th:field="*{drillingSize}" class="form-select" required>
+                                    <option value="">-- Select Boring Size --</option>
+                                    <option value="5">5 inch/127mm</option>
+                                    <option value="6">6 inch/152.4mm</option>
+                                    <option value="8">8 inch/203.2mm</option>
+                                    <option value="oth">Other</option>
+                                </select>
+                                <div class="mt-2 hidden" id="otherSizeContainer">
+                                    <input type="text" id="otherDrillingSize" th:field="*{otherSize}" class="form-input"
+                                        placeholder="Enter custom drilling size">
+                                    <span class="form-help">
+                                        Enter custom drilling size (e.g., 10 inch, 250mm)
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Price -->
+                            <div class="form-group price-display">
+                                <label class="form-label required">
+                                    <i class="fas fa-rupee-sign"></i> Drilling Price
+                                </label>
+                                <input type="number" step="0.01" id="price" th:field="*{price}" class="form-input" readonly
+                                    placeholder="Auto-calculated">
+                                <span class="form-help">
+                                    Price will be calculated automatically
+                                </span>
+                            </div>
                             
                             <!-- Borewell Type Selection -->
                             <div class="form-group full-width">
@@ -1124,13 +1153,12 @@
 
             // Handle other drilling size input
             document.getElementById("drillingSizeSelect").addEventListener("change", function() {
+                const otherContainer = document.getElementById("otherSizeContainer");
                 const otherInput = document.getElementById("otherDrillingSize");
                 if (this.value === "oth") {
-                    otherInput.style.display = "block";
-                    otherInput.parentElement.classList.remove('hidden');
+                    otherContainer.classList.remove('hidden');
                 } else {
-                    otherInput.style.display = "none";
-                    otherInput.parentElement.classList.add('hidden');
+                    otherContainer.classList.add('hidden');
                     otherInput.value = "";
                 }
                 
@@ -1168,7 +1196,10 @@
             
             // Set min date to today
             const today = new Date().toISOString().split('T')[0];
-            document.querySelector('input[type="date"]').min = today;
+            const dateInput = document.querySelector('input[type="date"]');
+            if (dateInput) {
+                dateInput.min = today;
+            }
 
             // Add event listeners for borewell type loading
             document.getElementById("city").addEventListener("change", autoSendSelection);
@@ -1239,12 +1270,12 @@
             const borewellTypeId = document.getElementById("borewellTypeId").value;
             const drillingSize = document.getElementById("drillingSizeSelect").value;
             const casingQuality = document.querySelector('input[name="pipeQuality"]:checked')?.value;
-			console.log("Casing Price Params:", {
-			        companyId,
-			        borewellTypeId,
-			        drillingSize,
-			        casingQuality
-			    });
+            console.log("Casing Price Params:", {
+                companyId,
+                borewellTypeId,
+                drillingSize,
+                casingQuality
+            });
 
             if (companyId && borewellTypeId && drillingSize && casingQuality) {
                 fetch(`/api/bookings/findCasingPrice?companyId=${companyId}&borewellTypeId=${borewellTypeId}&borewellSize=${drillingSize}&quality=${casingQuality}`)
@@ -1444,7 +1475,7 @@
                 existingToasts.forEach(toast => toast.remove());
                 
                 const toast = document.createElement('div');
-                toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
+                toast.className = `toast-notification ${
                     type === 'error' ? 'bg-red-500 text-white' : 
                     type === 'success' ? 'bg-green-500 text-white' : 
                     'bg-blue-500 text-white'

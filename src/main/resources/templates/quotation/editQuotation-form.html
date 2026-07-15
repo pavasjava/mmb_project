@@ -6,6 +6,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+        }
+
         .bg-overlay {
             position: fixed;
             top: 0;
@@ -17,18 +31,38 @@
             z-index: -1;
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8fafc;
+        /* MAIN CONTENT - No margin needed */
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            width: 100%;
+        }
+
+        .main-content-expanded {
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
+        }
+
+        .main-content-full {
+            margin-left: 0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
         }
 
         .container-card {
-            width: 1400px;
+            max-width: 1400px;
+            margin: 0 auto;
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
             border: 1px solid rgba(0, 0, 0, 0.05);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 2rem;
         }
 
         .container-card:hover {
@@ -91,11 +125,17 @@
             font-weight: 600;
             transition: all 0.2s ease;
             border: 1.5px solid #e2e8f0;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-cancel:hover {
             background-color: #e2e8f0;
             transform: translateY(-1px);
+            text-decoration: none;
+            color: #64748b;
         }
 
         .btn-save {
@@ -105,11 +145,17 @@
             border-radius: 10px;
             font-weight: 600;
             transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-save:hover {
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            color: white;
         }
 
         .dropdown-btn {
@@ -219,12 +265,6 @@
             gap: 24px;
         }
 
-        @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* Smooth animations */
         @keyframes fadeIn {
             from {
@@ -242,37 +282,144 @@
             animation: fadeIn 0.3s ease-out;
         }
 
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast-notification.success {
+            background: #10b981;
             color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
         }
 
-        .main-content {
-            margin-left: 280px;
-            transition: all 0.3s ease;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        .toast-notification.error {
+            background: #ef4444;
+            color: white;
         }
 
-        .main-content-expanded {
-            margin-left: 80px;
+        .toast-notification.info {
+            background: #3b82f6;
+            color: white;
         }
 
-        .main-content-full {
-            margin-left: 0;
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                padding-left: 220px;
+            }
+            
+            .container-card {
+                padding: 1.5rem;
+            }
         }
 
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
             .main-content {
                 margin-left: 0 !important;
+            }
+
+            .main-content-expanded {
+                margin-left: 0 !important;
+            }
+
+            .main-content-full {
+                margin-left: 0 !important;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .container-card {
+                padding: 1rem;
+                margin: 0 12px;
+            }
+
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container-card {
+                padding: 0.75rem;
+                margin: 0 8px;
+            }
+
+            .btn-cancel, .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .main-content {
+                -webkit-font-smoothing: antialiased;
             }
         }
     </style>
 </head>
 
-<body class="bg-gray-50">
+<body>
     <!-- Background Overlay -->
     <div class="bg-overlay"></div>
 
@@ -286,7 +433,7 @@
 
         <!-- Main Form Content -->
         <div class="max-w-6xl mx-auto px-4 py-8">
-            <div class="container-card p-8">
+            <div class="container-card">
                 <!-- Header -->
                 <div class="mb-10">
                     <h2 class="text-3xl font-bold text-gray-800 mb-2">Edit Quotation</h2>
@@ -419,7 +566,7 @@
                     </div>
 
                     <!-- Form Actions -->
-                    <div class="pt-8 border-t border-gray-200 flex justify-end space-x-4">
+                    <div class="pt-8 border-t border-gray-200 flex flex-wrap justify-end gap-4">
                         <a href="/quotations/getAllQuotation" class="btn-cancel">
                             <i class="fas fa-times mr-2"></i>Cancel
                         </a>
@@ -443,9 +590,11 @@
                 if (savedState === 'true') {
                     mainContent.classList.add('main-content-expanded');
                     mainContent.classList.remove('main-content-full');
+                    sidebar.classList.add('sidebar-collapsed');
                 } else {
                     mainContent.classList.remove('main-content-expanded');
                     mainContent.classList.add('main-content-full');
+                    sidebar.classList.remove('sidebar-collapsed');
                 }
             }
 
@@ -530,6 +679,50 @@
 
             // Initialize selected materials from existing data (if editing)
             updateSelected();
+
+            // Toast notification function
+            function showToast(message, type) {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+
+                const toast = document.createElement('div');
+                toast.className = `toast-notification ${type}`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                                      type === 'success' ? 'fa-check-circle' : 
+                                      'fa-info-circle'}"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+
+                document.body.appendChild(toast);
+
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+
+            // Form validation
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const customerName = document.querySelector('input[name="customerName"]');
+                    if (customerName && !customerName.value.trim()) {
+                        e.preventDefault();
+                        showToast('Please enter customer name', 'error');
+                        customerName.focus();
+                        return false;
+                    }
+                });
+            }
         });
     </script>
 </body>

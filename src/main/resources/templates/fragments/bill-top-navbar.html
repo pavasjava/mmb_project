@@ -8,17 +8,21 @@
             margin-bottom: 2rem;
             color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            width: 100%;
         }
         
         .top-navbar .page-header h1 {
             font-size: 1.875rem; /* text-3xl equivalent */
             font-weight: bold;
             margin-bottom: 0.5rem; /* mb-2 equivalent */
+            margin-top: 0;
         }
         
         .top-navbar .page-header p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 1rem;
+            margin: 0;
         }
         
         .top-navbar .page-header a {
@@ -32,12 +36,43 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
         }
         
         .top-navbar .page-header a:hover {
             background: #f0f9ff;
             transform: translateY(-2px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* FIX: New styles for better responsive layout */
+        .top-navbar .page-header .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 100%;
+            padding: 0 24px;
+            margin: 0 auto;
+        }
+        
+        .top-navbar .page-header .header-text {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .top-navbar .page-header .header-button {
+            flex-shrink: 0;
+            position: static; /* FIX: Remove absolute positioning */
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .top-navbar .page-header .header-content {
+                padding: 0 16px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -53,28 +88,68 @@
                 padding: 0.5rem 1rem;
                 font-size: 0.875rem;
             }
+            
+            /* FIX: Stack vertically on mobile */
+            .top-navbar .page-header .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0 12px;
+            }
+            
+            .top-navbar .page-header .header-button {
+                width: 100%;
+            }
+            
+            .top-navbar .page-header .header-button a {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .top-navbar .page-header {
+                padding: 1rem 0;
+            }
+            
+            .top-navbar .page-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .top-navbar .page-header p {
+                font-size: 0.875rem;
+            }
+            
+            .top-navbar .page-header a {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            .top-navbar .page-header .header-content {
+                padding: 0 8px;
+            }
+        }
+        
+        /* MacOS specific fixes */
+        @supports (-webkit-appearance: none) {
+            .top-navbar .page-header {
+                -webkit-font-smoothing: antialiased;
+            }
         }
     </style>
 
-    <!-- Page Header - Exact same as your code -->
-    <div class="page-header relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">Bill Management</h1>
-                    <p class="text-blue-100 opacity-90">
-                        Create, manage, and track all your Bills in one place
-                    </p>
-                </div>
+    <!-- Page Header - Fixed version -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1>Bill Management</h1>
+                <p>Create, manage, and track all your Bills in one place</p>
             </div>
-
-            <!-- Button positioned to the far right - Exact same as your code -->
-			<a href="/generateBills/generateNewBill"
-			   class="absolute right-10 top-10 bg-white text-blue-600 hover:bg-blue-50 
-			          px-6 py-3 rounded-lg font-semibold shadow-lg transition duration-300 flex items-center gap-2">
-			    <i class="fas fa-plus"></i>
-			    <span>Create New Bill</span>
-			</a>
+            <div class="header-button">
+                <a href="/generateBills/generateNewBill">
+                    <i class="fas fa-plus"></i>
+                    <span>Create New Bill</span>
+                </a>
+            </div>
         </div>
     </div>
 

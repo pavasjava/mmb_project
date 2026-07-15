@@ -13,24 +13,35 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     
     <style>
-        /* Main content alignment for sidebar */
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-left: 280px; /* KEY FIX: Push everything right for sidebar */
+            overflow-x: hidden;
+            background: #f8fafc;
+        }
+        
+        /* MAIN CONTENT - No margin needed */
         .main-content {
-            margin-left: 280px;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             padding-bottom: 2rem;
+            width: 100%;
         }
         
         .main-content-expanded {
-            margin-left: 80px;
-            width: calc(100% - 80px);
+            margin-left: -200px !important; /* When sidebar is collapsed, pull content left */
         }
         
         .main-content-full {
-            margin-left: 0;
-            width: 100%;
+            margin-left: 0 !important;
         }
         
         /* Top navbar wrapper */
@@ -43,12 +54,25 @@
             width: 100%;
         }
         
+        /* Background overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('/images/bgimage.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04;
+            z-index: -1;
+        }
+        
         /* Form container styling */
         .form-container {
             padding: 2rem;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-			margin-left: 310px;
         }
         
         /* Card styling - Enhanced for larger size */
@@ -361,6 +385,37 @@
             animation: slideInRight 0.3s ease;
         }
         
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .toast-notification.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .toast-notification.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .toast-notification.info {
+            background: #3b82f6;
+            color: white;
+        }
+        
         /* Validation error styling */
         .error-message {
             color: #e53e3e;
@@ -380,11 +435,47 @@
             box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
         }
         
-        /* Responsive adjustments for larger form */
+        /* Loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                padding-left: 240px;
+            }
+        }
+        
         @media (max-width: 1024px) {
+            body {
+                padding-left: 220px;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
             .form-card {
-                max-width: 90%;
-                margin: 1.5rem auto;
+                max-width: 95%;
             }
             
             .form-grid {
@@ -393,14 +484,20 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding-left: 0 !important;
+            }
+            
             .main-content {
                 margin-left: 0 !important;
-                width: 100% !important;
             }
             
             .main-content-expanded {
                 margin-left: 0 !important;
-                width: 100% !important;
+            }
+            
+            .main-content-full {
+                margin-left: 0 !important;
             }
             
             .form-container {
@@ -458,6 +555,15 @@
             .info-section {
                 padding: 1.5rem;
             }
+            
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -488,46 +594,20 @@
             }
         }
         
-        /* Loading state */
-        .btn.loading {
-            position: relative;
-            color: transparent;
-        }
-        
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease infinite;
-        }
-        
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        /* MacOS specific adjustments */
+        @supports (-webkit-appearance: none) {
+            body {
+                -webkit-font-smoothing: antialiased;
             }
-        }
-        
-        /* Background overlay */
-        .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background-image: url('/images/bgimage.png');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.04;
-            z-index: -1;
+            
+            .main-content {
+                -webkit-font-smoothing: antialiased;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- ✅ Background Image -->
+<body>
+    <!-- Background Image -->
     <div class="bg-overlay"></div>
     
     <!-- Admin Sidebar -->
@@ -616,13 +696,12 @@
                                     <option value="8">8 inch/203.2mm</option>
                                     <option value="oth">Other</option>
                                 </select>
-                                <div class="mt-2" th:classappend="${drillingPriceChart.drillingSize == 'oth'} ? '' : 'hidden'">
+                                <div class="mt-2 hidden" id="otherSizeContainer">
                                     <input type="text" 
                                            id="otherDrillingSize" 
                                            th:field="*{otherSize}" 
                                            class="form-input" 
-                                           placeholder="Enter custom drilling size"
-                                           th:required="${drillingPriceChart.drillingSize == 'oth'}">
+                                           placeholder="Enter custom drilling size">
                                     <span class="form-help">
                                         Enter custom drilling size (e.g., 10 inch, 250mm)
                                     </span>
@@ -693,33 +772,36 @@
                 if (savedState === 'true') {
                     mainContent.classList.add('main-content-expanded');
                     mainContent.classList.remove('main-content-full');
+                    sidebar.classList.add('sidebar-collapsed');
                 } else {
                     mainContent.classList.remove('main-content-expanded');
                     mainContent.classList.add('main-content-full');
+                    sidebar.classList.remove('sidebar-collapsed');
                 }
             }
             
             // Handle drilling size selection
             const drillingSelect = document.getElementById("drillingSizeSelect");
-            const otherInputContainer = document.querySelector('[th\\:classappend]');
+            const otherContainer = document.getElementById("otherSizeContainer");
+            const otherInput = document.getElementById("otherDrillingSize");
             
             if (drillingSelect) {
                 drillingSelect.addEventListener("change", function () {
                     if (this.value === "oth") {
-                        otherInputContainer.classList.remove('hidden');
-                        const otherInput = document.getElementById("otherDrillingSize");
-                        if (otherInput) {
-                            otherInput.required = true;
-                        }
+                        otherContainer.classList.remove('hidden');
+                        otherInput.required = true;
                     } else {
-                        otherInputContainer.classList.add('hidden');
-                        const otherInput = document.getElementById("otherDrillingSize");
-                        if (otherInput) {
-                            otherInput.required = false;
-                            otherInput.value = "";
-                        }
+                        otherContainer.classList.add('hidden');
+                        otherInput.required = false;
+                        otherInput.value = "";
                     }
                 });
+                
+                // Trigger on page load if "Other" is selected
+                if (drillingSelect.value === "oth") {
+                    otherContainer.classList.remove('hidden');
+                    otherInput.required = true;
+                }
             }
             
             // Form validation and submission
@@ -758,7 +840,6 @@
                 
                 // Special validation for drilling size
                 if (drillingSelect && drillingSelect.value === 'oth') {
-                    const otherInput = document.getElementById("otherDrillingSize");
                     if (!otherInput || !otherInput.value.trim()) {
                         isValid = false;
                         showFieldError(otherInput, 'Custom drilling size is required when "Other" is selected');
@@ -842,11 +923,7 @@
                 existingToasts.forEach(toast => toast.remove());
                 
                 const toast = document.createElement('div');
-                toast.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-slideInRight ${
-                    type === 'error' ? 'bg-red-500 text-white' : 
-                    type === 'success' ? 'bg-green-500 text-white' : 
-                    'bg-blue-500 text-white'
-                }`;
+                toast.className = `toast-notification ${type}`;
                 toast.innerHTML = `
                     <div class="flex items-center gap-3">
                         <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
@@ -897,27 +974,30 @@
             });
             
             // Area dropdown population based on city selection
-            document.getElementById("city").addEventListener("change", function () {
-                var cityId = this.value;
-                var areaDropdown = document.getElementById("area");
-                areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
+            const citySelect = document.getElementById("city");
+            if (citySelect) {
+                citySelect.addEventListener("change", function () {
+                    var cityId = this.value;
+                    var areaDropdown = document.getElementById("area");
+                    areaDropdown.innerHTML = '<option value="">-- Select Area --</option>';
 
-                if (cityId) {
-                    fetch("/api/areas/byCity/" + cityId)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(area => {
-                                var option = document.createElement("option");
-                                option.value = area.locationAreaId;
-                                option.text = area.locationAreaName;
-                                areaDropdown.appendChild(option);
+                    if (cityId) {
+                        fetch("/api/areas/byCity/" + cityId)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.forEach(area => {
+                                    var option = document.createElement("option");
+                                    option.value = area.locationAreaId;
+                                    option.text = area.locationAreaName;
+                                    areaDropdown.appendChild(option);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error fetching areas:', error);
                             });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching areas:', error);
-                        });
-                }
-            });
+                    }
+                });
+            }
         });
         
         // Fallback: Also try initializing when window loads
